@@ -51,7 +51,6 @@
   }
 
   function getFile() {
-    console.log(list, history);
     const file = $settings.randomized
       ? getRandomFromArray(list)
       : list[0] ?? null;
