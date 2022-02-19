@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf dist && vite build",
     "dev": "vite dev",
-    "deploy": "yarn run build && gh-pages dist"
+    "deploy": "yarn run build && gh-pages -d dist"
   },
   "dependencies": {
     "idb-keyval": "^6.1.0",
