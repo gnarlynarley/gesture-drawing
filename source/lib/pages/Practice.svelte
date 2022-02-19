@@ -228,7 +228,10 @@
   .end-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
 
     h3 {
       margin-bottom: var(--spacing);

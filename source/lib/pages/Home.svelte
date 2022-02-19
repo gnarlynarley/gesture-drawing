@@ -48,9 +48,12 @@
         {#if $references.length > 0}
           <ReferenceDirectory />
         {:else}
-          <h3 class="directory-container__label">
-            No references were added, you can add them by dragging in your files
-          </h3>
+          <div class="empty-directory">
+            <h3 class="empty-directory__label">
+              No references were added, you can add them by dragging in your
+              files
+            </h3>
+          </div>
         {/if}
       </div>
     </DropZone>
@@ -156,11 +159,15 @@
     overflow: auto;
     width: 100%;
     height: 100%;
-    display: grid;
     padding: var(--spacing);
-    align-content: flex-start;
-    justify-items: flex-start;
+  }
 
+  .empty-directory {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-content: center;
+    justify-items: center;
     &__label {
       justify-self: center;
       align-self: center;
