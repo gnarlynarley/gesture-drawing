@@ -130,7 +130,11 @@
   addKeybind("right", nextFile);
 </script>
 
-<div class="container" class:is-paused={state === "paused"}>
+<div
+  class="container"
+  class:is-paused={state === "paused"}
+  class:is-playing={state === "playing"}
+>
   <div class="header">
     <Flex>
       <span class="duration">{formatTime(time)}</span>
@@ -200,6 +204,10 @@
     display: inline-block;
     width: 6em;
     font-size: 0.8em;
+
+    .is-paused & {
+      opacity: 0.5;
+    }
   }
   .container {
     position: fixed;

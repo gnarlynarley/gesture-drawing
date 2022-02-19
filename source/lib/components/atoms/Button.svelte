@@ -4,19 +4,24 @@
   export let disabled: boolean = false;
   export let variant: "primary" | "success" | "default" = "default";
   export let title: string | undefined = undefined;
+  export let displayOnly: boolean = false;
 </script>
 
-<button
-  on:click={onClick}
-  type="button"
-  class="button"
-  class:has-icon={icon}
-  class:primary={variant === "primary"}
-  {title}
-  {disabled}
->
-  <slot />
-</button>
+{#if displayOnly}
+  <span class="button"><slot /></span>
+{:else}
+  <button
+    on:click={onClick}
+    type="button"
+    class="button"
+    class:has-icon={icon}
+    class:primary={variant === "primary"}
+    {title}
+    {disabled}
+  >
+    <slot />
+  </button>
+{/if}
 
 <style lang="scss">
   $spacing: 0.2em;
@@ -33,6 +38,10 @@
     border-radius: var(--border-radius);
     font-weight: normal;
 
+    &:hover {
+      --color: var(--color-accent-600);
+    }
+
     &.has-icon {
       padding: $spacing;
       background: transparent;
@@ -45,10 +54,14 @@
 
     &.primary {
       --color: var(--color-primary);
+
+      &:hover {
+        --color: var(--color-primary-500);
+      }
     }
 
     &[disabled] {
-      opacity: 0.5;
+      --color: var(--color-primary-500);
     }
   }
 </style>
