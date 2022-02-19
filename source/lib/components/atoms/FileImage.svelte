@@ -10,40 +10,56 @@
   export let spread: boolean = false;
   $: src = createBlobUrl(file);
 
-  let element: HTMLElement;
+  let container: HTMLElement;
   let intersecting = false;
+  let triggered = false;
+  $: {
+    if (!triggered && intersecting) {
+      triggered = true;
+    }
+  }
+  $: imagePromise = $src && triggered ? createImage($src) : null;
+
+  let canvas: HTMLCanvasElement | null = null;
+  $: context = canvas?.getContext("2d") ?? null;
+  $: {
+    imagePromise?.then((image) => {
+      if (canvas && context) {
+        drawResizedImage({ canvas, context, image, width: 300 });
+      }
+    });
+  }
 
   let once = false;
   onMount(() => {
-    const pickedCanvas = element;
-    if (!pickedCanvas) return;
     const observer = new IntersectionObserver(
       (entries) => {
         intersecting = entries.at(0)?.isIntersecting ?? false;
         if (intersecting && once) {
-          observer.unobserve(pickedCanvas);
+          observer.unobserve(container);
         }
       },
       { root: document.body },
     );
-    observer.observe(pickedCanvas);
+    observer.observe(container);
 
     return () => {
-      observer.unobserve(pickedCanvas);
+      observer.unobserve(container);
       observer.disconnect();
     };
   });
 </script>
 
 <div
-  bind:this={element}
+  bind:this={container}
   class="container"
   class:is-covering={fit === "cover"}
   class:is-spread={spread}
 >
   <span class="label">{file.name}</span>
   {#if intersecting}
-    <img src={$src} {alt} class="image" loading="lazy" />
+    <!-- <img src={$src} {alt} class="image" loading="lazy" /> -->
+    <canvas bind:this={canvas} title={alt} class="image" />
   {/if}
 </div>
 

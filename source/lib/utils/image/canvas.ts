@@ -5,7 +5,7 @@ export function clearCanvas(
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-export async function drawResizedImage({
+export function drawResizedImage({
   canvas,
   context,
   image,
