@@ -24,7 +24,7 @@
   let time = 0;
   let list = [...$references];
   let history: File[] = [];
-  let currentFile: File | null = getRandomFile();
+  let currentFile: File | null = getFile();
   let timeoutId: number | null = null;
   let imageLoading = true;
 
@@ -41,16 +41,20 @@
     state = "playing";
     list = [...$references];
     history = [];
-    currentFile = getRandomFile();
+    currentFile = getFile();
     timeoutId = null;
+    cleanup();
   }
 
   function toggleState() {
     state = state === "playing" ? "paused" : "playing";
   }
 
-  function getRandomFile() {
-    const file = getRandomFromArray(list);
+  function getFile() {
+    console.log(list, history);
+    const file = $settings.randomized
+      ? getRandomFromArray(list)
+      : list[0] ?? null;
     if (file) {
       const index = list.indexOf(file);
       if (index !== -1) {
@@ -63,24 +67,25 @@
   }
 
   function previousFile() {
-    const nextFileIndex = currentFile
+    const currentFileIndex = currentFile
       ? history.indexOf(currentFile)
-      : history.length - 1;
-    const foundFile =
-      (nextFileIndex !== -1 ? history[nextFileIndex - 1] : null) ?? null;
-    if (foundFile) {
-      currentFile = foundFile;
+      : history.length;
+    const previousFile = history[currentFileIndex - 1] ?? null;
+    if (previousFile !== null) {
+      currentFile = previousFile;
     } else {
       currentFile = currentFile;
     }
   }
 
   function nextFile() {
-    const nextFileIndex = currentFile ? history.indexOf(currentFile) : -1;
-    if (nextFileIndex !== -1 || nextFileIndex !== history.length - 1) {
-      currentFile = getRandomFile();
+    const currentFileIndex = currentFile ? history.indexOf(currentFile) : -1;
+    const nextFile = history[currentFileIndex + 1] ?? null;
+
+    if (nextFile !== null) {
+      currentFile = nextFile;
     } else {
-      currentFile = history[nextFileIndex] ?? null;
+      currentFile = getFile();
     }
   }
 
@@ -91,14 +96,15 @@
   function onStateChange(
     nextState: typeof state,
     nextImageLoaded: typeof imageLoading,
+    nextFile: typeof currentFile,
   ) {
-    if (nextState === "playing" && nextImageLoaded === false) {
+    if (nextState === "playing" && nextImageLoaded === false && nextFile) {
       const delta = 100;
       if (timeoutId !== null) clearInterval(timeoutId);
       timeoutId = window.setInterval(() => {
         time += delta;
         if (time > $settings.duration * 1000) {
-          currentFile = getRandomFile();
+          currentFile = getFile();
         }
       }, delta);
     } else {
@@ -113,7 +119,7 @@
   }
 
   $: onFileChange(currentFile);
-  $: onStateChange(state, imageLoading);
+  $: onStateChange(state, imageLoading, currentFile);
   $: src = currentFile && createBlobUrl(currentFile);
 
   addKeybind("space", toggleState);

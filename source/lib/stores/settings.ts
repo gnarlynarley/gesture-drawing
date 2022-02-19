@@ -8,6 +8,7 @@ export interface PracticeSettings {
   color: boolean;
   flippedHorizontal: boolean;
   flippedVertical: boolean;
+  randomized: boolean;
 }
 
 const defaultSettings: PracticeSettings = {
@@ -15,10 +16,11 @@ const defaultSettings: PracticeSettings = {
   color: true,
   flippedHorizontal: false,
   flippedVertical: false,
+  randomized: true,
 };
 
 export const settings = writable(
-  getItem<PracticeSettings>(key) ?? defaultSettings
+  getItem<PracticeSettings>(key) ?? defaultSettings,
 );
 
 settings.subscribe((value) => {

@@ -16,6 +16,7 @@
   import { settings } from "~lib/stores/settings";
   import ReferenceDirectory from "~lib/components/molecules/ReferenceDirectory.svelte";
   import Modal from "~lib/components/atoms/Modal.svelte";
+  import FileInput from "~lib/components/atoms/FileInput.svelte";
 
   const customDurationValue = "custom";
   const infiniteDurationValue = "infinite";
@@ -30,6 +31,9 @@
       : parseTimeString(practiceDuration);
   $: $settings.duration = duration;
   $: valid = $settings.duration !== 0 && $references.length > 0;
+
+  let randomized: "true" | "false" = "true";
+  $: $settings.randomized = randomized === "true";
 
   let startPracticeModal = false;
   function toggleStartModal() {
@@ -46,7 +50,6 @@
         {:else}
           <h3 class="directory-container__label">
             No references were added, you can add them by dragging in your files
-            or add down below
           </h3>
         {/if}
       </div>
@@ -57,6 +60,7 @@
       <Button variant="primary" disabled={!valid} onClick={toggleStartModal}>
         Start
       </Button>
+      <FileInput onChange={addReferences} label="Add files" />
     </Flex>
   </div>
 </div>
@@ -87,6 +91,12 @@
             bind:group={practiceDuration}
             value={infiniteDurationValue}
           />
+        </Stack>
+      </FormField>
+      <FormField label="Randomized">
+        <Stack>
+          <RadioField label="Yes" bind:group={randomized} value="true" />
+          <RadioField label="No" bind:group={randomized} value="false" />
         </Stack>
       </FormField>
       <Flex>
