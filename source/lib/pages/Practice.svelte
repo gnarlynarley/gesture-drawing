@@ -34,16 +34,17 @@
 
   function cleanup() {
     if (timeoutId !== null) clearInterval(timeoutId);
+    timeoutId = null;
   }
 
   function restartSession() {
+    cleanup();
     time = 0;
     state = "playing";
     list = [...$references];
     history = [];
     currentFile = getFile();
     timeoutId = null;
-    cleanup();
   }
 
   function toggleState() {
