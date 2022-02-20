@@ -27,6 +27,13 @@
   let currentFile: File | null = getFile();
   let timeoutId: number | null = null;
   let imageLoading = true;
+  const originalTitle = document.title;
+
+  $: document.title = `${state.toUpperCase()} | ${originalTitle}`;
+
+  onDestroy(() => {
+    document.title = originalTitle;
+  });
 
   function navigateHome() {
     navigatePage("home");
