@@ -12,7 +12,7 @@
   import Modal from "../atoms/Modal.svelte";
 
   let orderedReferences: Array<File> = [];
-  let state: "browse" | "sorting" = "browse";
+  let state: "browse" | "ordering" = "browse";
 
   function cancelOrderReferences() {
     state = "browse";
@@ -24,7 +24,7 @@
   }
 
   function onFileClick(file: File) {
-    if (state === "sorting") {
+    if (state === "ordering") {
       if (orderedReferences.includes(file)) {
         orderedReferences.splice(orderedReferences.indexOf(file), 1);
       } else {
@@ -50,15 +50,15 @@
     </Modal>
   {/if}
   <div class="buttons">
-    {#if state === "sorting"}
-      <Button onClick={orderReferences}>Done sorting</Button>
-      <Button onClick={cancelOrderReferences}>Cancel sorting</Button>
+    {#if state === "ordering"}
+      <Button variant="primary" onClick={orderReferences}>Done</Button>
+      <Button onClick={cancelOrderReferences}>Cancel</Button>
     {:else}
-      <Button onClick={() => (state = "sorting")}>Sort</Button>
+      <Button onClick={() => (state = "ordering")}>Reorder</Button>
+      <Button onClick={() => (showClearReferenceModal = true)}>Clear</Button>
     {/if}
-    <Button onClick={() => (showClearReferenceModal = true)}>Clear</Button>
   </div>
-  <ul class:is-sorting={state === "sorting"}>
+  <ul class:is-ordering={state === "ordering"}>
     {#each $references as file (file)}
       <li class:is-active={orderedReferences.includes(file)}>
         <button
@@ -69,9 +69,9 @@
           <IconClose />
         </button>
         <FileImage {file} spread fit="cover" />
-        {#if state === "sorting"}
+        {#if state === "ordering"}
           <button
-            class="sort-button"
+            class="order-button"
             type="button"
             on:click={() => onFileClick(file)}
           >
@@ -111,7 +111,7 @@
     background-color: var(--color-accent-200);
     color: white;
 
-    .is-sorting & {
+    .is-ordering & {
       opacity: 0.5;
 
       &.is-active,
@@ -135,7 +135,7 @@
       z-index: 1;
     }
 
-    .sort-button {
+    .order-button {
       position: absolute;
       top: 0;
       left: 0;
@@ -158,7 +158,7 @@
         z-index: -1;
       }
 
-      @at-root li.is-active .sort-button:after {
+      @at-root li.is-active .order-button:after {
         opacity: 0.5;
       }
     }
