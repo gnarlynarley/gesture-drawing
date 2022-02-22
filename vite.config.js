@@ -5,115 +5,116 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import sveltePreprocess from "svelte-preprocess";
 
+const publicPath = "/gesture-drawing/";
 const icons = [
   {
-    src: "/assets/16.png",
+    src: `${publicPath}assets/16.png`,
     sizes: "16x16",
   },
   {
-    src: "/assets/20.png",
+    src: `${publicPath}assets/20.png`,
     sizes: "20x20",
   },
   {
-    src: "/assets/29.png",
+    src: `${publicPath}assets/29.png`,
     sizes: "29x29",
   },
   {
-    src: "/assets/32.png",
+    src: `${publicPath}assets/32.png`,
     sizes: "32x32",
   },
   {
-    src: "/assets/40.png",
+    src: `${publicPath}assets/40.png`,
     sizes: "40x40",
   },
   {
-    src: "/assets/50.png",
+    src: `${publicPath}assets/50.png`,
     sizes: "50x50",
   },
   {
-    src: "/assets/57.png",
+    src: `${publicPath}assets/57.png`,
     sizes: "57x57",
   },
   {
-    src: "/assets/58.png",
+    src: `${publicPath}assets/58.png`,
     sizes: "58x58",
   },
   {
-    src: "/assets/60.png",
+    src: `${publicPath}assets/60.png`,
     sizes: "60x60",
   },
   {
-    src: "/assets/64.png",
+    src: `${publicPath}assets/64.png`,
     sizes: "64x64",
   },
   {
-    src: "/assets/72.png",
+    src: `${publicPath}assets/72.png`,
     sizes: "72x72",
   },
   {
-    src: "/assets/76.png",
+    src: `${publicPath}assets/76.png`,
     sizes: "76x76",
   },
   {
-    src: "/assets/80.png",
+    src: `${publicPath}assets/80.png`,
     sizes: "80x80",
   },
   {
-    src: "/assets/87.png",
+    src: `${publicPath}assets/87.png`,
     sizes: "87x87",
   },
   {
-    src: "/assets/100.png",
+    src: `${publicPath}assets/100.png`,
     sizes: "100x100",
   },
   {
-    src: "/assets/114.png",
+    src: `${publicPath}assets/114.png`,
     sizes: "114x114",
   },
   {
-    src: "/assets/120.png",
+    src: `${publicPath}assets/120.png`,
     sizes: "120x120",
   },
   {
-    src: "/assets/128.png",
+    src: `${publicPath}assets/128.png`,
     sizes: "128x128",
   },
   {
-    src: "/assets/144.png",
+    src: `${publicPath}assets/144.png`,
     sizes: "144x144",
   },
   {
-    src: "/assets/152.png",
+    src: `${publicPath}assets/152.png`,
     sizes: "152x152",
   },
   {
-    src: "/assets/167.png",
+    src: `${publicPath}assets/167.png`,
     sizes: "167x167",
   },
   {
-    src: "/assets/180.png",
+    src: `${publicPath}assets/180.png`,
     sizes: "180x180",
   },
   {
-    src: "/assets/192.png",
+    src: `${publicPath}assets/192.png`,
     sizes: "192x192",
   },
   {
-    src: "/assets/256.png",
+    src: `${publicPath}assets/256.png`,
     sizes: "256x256",
   },
   {
-    src: "/assets/512.png",
+    src: `${publicPath}assets/512.png`,
     sizes: "512x512",
   },
   {
-    src: "/assets/1024.png",
+    src: `${publicPath}assets/1024.png`,
     sizes: "1024x1024",
   },
 ];
 
 export default defineConfig({
-  base: "/gesture-drawing/",
+  base: publicPath,
   root: path.resolve(__dirname, "./source"),
   build: {
     outDir: path.resolve(__dirname, "./dist"),
