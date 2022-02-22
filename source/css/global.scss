@@ -10,7 +10,6 @@
 
 $color-primary: #ff0342;
 $color-text: #efefef;
-$color-background: #0d0d0e;
 $color-background: #1b1a1a;
 
 :root {
@@ -33,11 +32,10 @@ $color-background: #1b1a1a;
   --border-width: 2px;
   --animation-speed: 150ms;
   --shadow: 0 2px 5px rgba(black, 0.4);
+  --pwacompat-splash-font: 24px var(--font-family);
 }
 
 html {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 120%;
   font-family: var(--font-family);
 }
@@ -63,6 +61,7 @@ button {
   border: none;
   color: currentColor;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 input {
