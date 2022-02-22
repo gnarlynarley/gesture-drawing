@@ -2,7 +2,8 @@
   export let onClick: (() => void) | undefined = undefined;
   export let icon: boolean = false;
   export let disabled: boolean = false;
-  export let variant: "primary" | "success" | "default" = "default";
+  export let variant: "primary" | "success" | "default" | "transparent" =
+    "default";
   export let title: string | undefined = undefined;
   export let displayOnly: boolean = false;
 </script>
@@ -16,30 +17,36 @@
     class="button"
     class:has-icon={icon}
     class:primary={variant === "primary"}
+    class:transparent={variant === "transparent"}
     {title}
     {disabled}
   >
-    <slot />
+    <span><slot /></span>
   </button>
 {/if}
 
 <style lang="scss">
   $spacing: 0.2em;
   .button {
-    --color: var(--color-accent-500);
+    --color: var(--color-accent-100);
     --text: currentColor;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     background: var(--color);
     border: var(--border-width) solid var(--color);
     color: var(--text);
     text-align: center;
     font-size: 1em;
     font-family: inherit;
-    padding: $spacing 0.8em;
+    padding: ($spacing * 2) 0.8em $spacing;
     border-radius: var(--border-radius);
     font-weight: normal;
+    font-size: 0.9em;
+    line-height: 1;
 
     &:hover {
-      --color: var(--color-accent-600);
+      --color: var(--color-accent-200);
     }
 
     &.has-icon {
@@ -58,6 +65,11 @@
       &:hover {
         --color: var(--color-primary-500);
       }
+    }
+
+    &.transparent {
+      background: transparent;
+      border-color: transparent;
     }
 
     &[disabled] {

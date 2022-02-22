@@ -10,57 +10,56 @@
   export let spread: boolean = false;
   $: src = createBlobUrl(file);
 
-  let container: HTMLElement;
-  let intersecting = false;
-  let triggered = false;
-  $: {
-    if (!triggered && intersecting) {
-      triggered = true;
-    }
-  }
-  $: imagePromise = $src && triggered ? createImage($src) : null;
+  // let container: HTMLElement;
+  // let intersecting = false;
+  // let triggered = false;
+  // $: {
+  //   if (!triggered && intersecting) {
+  //     triggered = true;
+  //   }
+  // }
+  // $: imagePromise = $src && triggered ? createImage($src) : null;
 
-  let canvas: HTMLCanvasElement | null = null;
-  $: context = canvas?.getContext("2d") ?? null;
-  $: {
-    imagePromise?.then((image) => {
-      if (canvas && context) {
-        drawResizedImage({ canvas, context, image, width: 300 });
-      }
-    });
-  }
+  // let canvas: HTMLCanvasElement | null = null;
+  // $: context = canvas?.getContext("2d") ?? null;
+  // $: {
+  //   imagePromise?.then((image) => {
+  //     if (canvas && context) {
+  //       drawResizedImage({ canvas, context, image, width: 300 });
+  //     }
+  //   });
+  // }
 
-  let once = false;
-  onMount(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        intersecting = entries.at(0)?.isIntersecting ?? false;
-        if (intersecting && once) {
-          observer.unobserve(container);
-        }
-      },
-      { root: document.body },
-    );
-    observer.observe(container);
+  // let once = false;
+  // onMount(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       intersecting = entries.at(0)?.isIntersecting ?? false;
+  //       if (intersecting && once) {
+  //         observer.unobserve(container);
+  //       }
+  //     },
+  //     { root: document.body },
+  //   );
+  //   observer.observe(container);
 
-    return () => {
-      observer.unobserve(container);
-      observer.disconnect();
-    };
-  });
+  //   return () => {
+  //     observer.unobserve(container);
+  //     observer.disconnect();
+  //   };
+  // });
 </script>
 
 <div
-  bind:this={container}
   class="container"
   class:is-covering={fit === "cover"}
   class:is-spread={spread}
 >
   <span class="label">{file.name}</span>
-  {#if intersecting}
-    <!-- <img src={$src} {alt} class="image" loading="lazy" /> -->
+  <img src={$src} {alt} class="image" loading="lazy" />
+  <!-- {#if intersecting}
     <canvas bind:this={canvas} title={alt} class="image" />
-  {/if}
+  {/if} -->
 </div>
 
 <style lang="scss">
@@ -84,8 +83,10 @@
     width: 100%;
     overflow: hidden;
     font-size: 0.7em;
-    text-shadow: 0 0 1px rgba(black, 0.5);
+    text-shadow: 0 2px 1px rgba(black, 0.5);
     padding: 0.5em;
+    text-align: left;
+    background: rgba(black, 0.2);
   }
   .image {
     .is-covering & {

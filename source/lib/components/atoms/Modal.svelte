@@ -5,6 +5,9 @@
   import IconClose from "./IconClose.svelte";
 
   export let onClose: () => void;
+  export let onAccept: (() => void) | undefined = undefined;
+  export let onAcceptLabel = "Ok";
+  export let onCancelLabel = "Cancel";
 
   addKeybind("esc", onClose);
 </script>
@@ -17,6 +20,14 @@
       </Button>
     </div>
     <slot />
+    <div class="modal__button-bar">
+      <Button variant="transparent" onClick={onClose}>
+        {onCancelLabel}
+      </Button>
+      <Button variant="primary" onClick={onAccept}>
+        {onAcceptLabel}
+      </Button>
+    </div>
   </div>
   <div class="background" on:click={onClose} role="presentation" />
 </div>
@@ -26,6 +37,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 1;
     width: 100%;
     height: 100%;
     padding: var(--spacing);
@@ -44,6 +56,7 @@
     box-shadow: var(--shadow);
     border: 1px solid var(--color-accent-100);
     padding: var(--spacing);
+    padding-top: 2em;
     border-radius: var(--border-radius);
     max-width: 30em;
 
@@ -51,6 +64,12 @@
       position: absolute;
       right: 0;
       top: 0;
+    }
+
+    &__button-bar {
+      display: flex;
+      justify-content: space-between;
+      padding-top: calc(var(--spacing) * 2);
     }
   }
 

@@ -68,7 +68,11 @@
   </div>
 </div>
 {#if startPracticeModal}
-  <Modal onClose={toggleStartModal}>
+  <Modal
+    onClose={toggleStartModal}
+    onAccept={() => navigatePage("practice")}
+    onAcceptLabel="Start canvas"
+  >
     <Stack>
       <FormField label="Duration">
         <Stack>
@@ -102,15 +106,6 @@
           <RadioField label="No" bind:group={randomized} value="false" />
         </Stack>
       </FormField>
-      <Flex>
-        <Button
-          variant="primary"
-          disabled={!valid}
-          onClick={() => navigatePage("practice")}
-        >
-          Start
-        </Button>
-      </Flex>
     </Stack>
   </Modal>
 {/if}

@@ -4,8 +4,18 @@
   import { currentPage } from "~lib/utils/navigation";
 </script>
 
-{#if $currentPage === "home"}
-  <Home />
-{:else if $currentPage === "practice"}
-  <Practice />
-{/if}
+<main>
+  {#if $currentPage === "home"}
+    <Home />
+  {:else if $currentPage === "practice"}
+    <Practice />
+  {/if}
+</main>
+
+<style lang="scss">
+  main {
+    position: relative;
+    z-index: 0;
+    height: 100%;
+  }
+</style>
