@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
   import { settings } from "~lib/stores/settings";
-  import { references } from "~lib/stores/references";
+  import { references, type ReferenceFile } from "~lib/stores/references";
   import getRandomFromArray from "~lib/utils/getRandomFromArray";
   import addKeybind from "~lib/utils/svelte/addKeybind";
   import toggleFullScreen from "~lib/utils/toggleFullScreen";
@@ -23,8 +23,8 @@
   let state: "playing" | "paused" = "playing";
   let time = 0;
   let list = [...$references];
-  let history: File[] = [];
-  let currentFile: File | null = getFile();
+  let history: ReferenceFile[] = [];
+  let currentFile: ReferenceFile | null = getFile();
   let timeoutId: number | null = null;
   let imageLoading = true;
   const originalTitle = document.title;
@@ -119,7 +119,7 @@
     }
   }
 
-  async function onFileChange(newFile: File | null) {
+  async function onFileChange(newFile: ReferenceFile | null) {
     time = 0;
     imageLoading = true;
     imageLoading = false;
@@ -127,7 +127,7 @@
 
   $: onFileChange(currentFile);
   $: onStateChange(state, imageLoading, currentFile);
-  $: src = currentFile && createBlobUrl(currentFile);
+  $: src = currentFile && createBlobUrl(currentFile.file);
 
   addKeybind("space", toggleState);
   addKeybind("f", toggleFullScreen);
@@ -183,7 +183,7 @@
             class:is-grayscale={!$settings.color}
             class:is-horizontally-flipped={$settings.flippedHorizontal}
             class:is-vertically-flipped={$settings.flippedVertical}
-            alt={currentFile.name || ""}
+            alt={currentFile.name}
             src={$src}
           />
         {/if}

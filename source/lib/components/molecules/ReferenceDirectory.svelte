@@ -1,17 +1,18 @@
 <script lang="ts">
-  import App from "source/App.svelte";
-
   import {
+    addReferences,
     clearReferences,
     references,
     removeReference,
+type ReferenceFile,
   } from "~lib/stores/references";
   import Button from "../atoms/Button.svelte";
   import FileImage from "../atoms/FileImage.svelte";
+  import FileInput from "../atoms/FileInput.svelte";
   import IconClose from "../atoms/IconClose.svelte";
   import Modal from "../atoms/Modal.svelte";
 
-  let orderedReferences: Array<File> = [];
+  let orderedReferences: Array<ReferenceFile> = [];
   let state: "browse" | "ordering" = "browse";
 
   function cancelOrderReferences() {
@@ -23,7 +24,7 @@
     cancelOrderReferences();
   }
 
-  function onFileClick(file: File) {
+  function onFileClick(file: ReferenceFile) {
     if (state === "ordering") {
       if (orderedReferences.includes(file)) {
         orderedReferences.splice(orderedReferences.indexOf(file), 1);
@@ -37,51 +38,48 @@
   let showClearReferenceModal = false;
 </script>
 
-{#if $references.length === 0}
-  <p>No files found.</p>
-{:else}
-  {#if showClearReferenceModal}
-    <Modal
-      onClose={() => (showClearReferenceModal = false)}
-      onAccept={clearReferences}
-      onAcceptLabel="Clear references"
-    >
-      Are you sure you want to remove all reference files?
-    </Modal>
-  {/if}
-  <div class="buttons">
-    {#if state === "ordering"}
-      <Button variant="primary" onClick={orderReferences}>Done</Button>
-      <Button onClick={cancelOrderReferences}>Cancel</Button>
-    {:else}
-      <Button onClick={() => (state = "ordering")}>Reorder</Button>
-      <Button onClick={() => (showClearReferenceModal = true)}>Clear</Button>
-    {/if}
-  </div>
-  <ul class:is-ordering={state === "ordering"}>
-    {#each $references as file (file)}
-      <li class:is-active={orderedReferences.includes(file)}>
-        <button
-          class="remove-button"
-          type="button"
-          on:click={() => removeReference(file)}
-        >
-          <IconClose />
-        </button>
-        <FileImage {file} spread fit="cover" />
-        {#if state === "ordering"}
-          <button
-            class="order-button"
-            type="button"
-            on:click={() => onFileClick(file)}
-          >
-            <span>{orderedReferences.indexOf(file) + 1 || ""}</span>
-          </button>
-        {/if}
-      </li>
-    {/each}
-  </ul>
+{#if showClearReferenceModal}
+  <Modal
+    onClose={() => (showClearReferenceModal = false)}
+    onAccept={clearReferences}
+    onAcceptLabel="Clear references"
+  >
+    Are you sure you want to remove all reference files?
+  </Modal>
 {/if}
+<div class="buttons">
+  {#if state === "ordering"}
+    <Button variant="primary" onClick={orderReferences}>Done</Button>
+    <Button onClick={cancelOrderReferences}>Cancel</Button>
+  {:else}
+    <FileInput onChange={addReferences} label="Add files" />
+    <Button onClick={() => (state = "ordering")}>Reorder</Button>
+    <Button onClick={() => (showClearReferenceModal = true)}>Clear</Button>
+  {/if}
+</div>
+<ul class:is-ordering={state === "ordering"}>
+  {#each $references as reference (reference)}
+    <li class:is-active={orderedReferences.includes(reference)}>
+      <button
+        class="remove-button"
+        type="button"
+        on:click={() => removeReference(reference)}
+      >
+        <IconClose />
+      </button>
+      <FileImage name={reference.name} file={reference.file} spread fit="cover" />
+      {#if state === "ordering"}
+        <button
+          class="order-button"
+          type="button"
+          on:click={() => onFileClick(reference)}
+        >
+          <span>{orderedReferences.indexOf(reference) + 1 || ""}</span>
+        </button>
+      {/if}
+    </li>
+  {/each}
+</ul>
 
 <style lang="scss">
   ul,
@@ -95,7 +93,6 @@
     --columns: 1;
     width: 100%;
     display: grid;
-    grid-gap: var(--spacing);
     grid-template-columns: repeat(var(--columns), 1fr);
 
     @for $i from 1 through 8 {

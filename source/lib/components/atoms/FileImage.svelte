@@ -4,8 +4,9 @@
   import createImage from "~lib/utils/image/createImage";
   import createBlobUrl from "../../utils/svelte/createBlobUrl";
 
+  export let name: string | undefined = undefined;
   export let fit: "cover" | "contain" = "contain";
-  export let file: File;
+  export let file: Blob;
   export let alt: string = "";
   export let spread: boolean = false;
   $: src = createBlobUrl(file);
@@ -55,7 +56,9 @@
   class:is-covering={fit === "cover"}
   class:is-spread={spread}
 >
-  <span class="label">{file.name}</span>
+  {#if name}
+    <span class="label">{name}</span>
+  {/if}
   <img src={$src} {alt} class="image" loading="lazy" />
   <!-- {#if intersecting}
     <canvas bind:this={canvas} title={alt} class="image" />

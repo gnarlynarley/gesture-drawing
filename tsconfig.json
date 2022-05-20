@@ -1,11 +1,13 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
+    "types": ["vite/client"],
     "module": "ESNext",
     "target": "ESNext",
     "strict": true,
     "allowJs": true,
     "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
       "~lib/*": ["./source/lib/*"]
     }

@@ -141,4 +141,7 @@ export default defineConfig({
       preprocess: [sveltePreprocess({ typescript: true, emitCss: false })],
     }),
   ],
+  server: {
+    port: 4000,
+  },
 });

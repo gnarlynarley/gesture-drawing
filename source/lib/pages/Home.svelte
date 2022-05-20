@@ -45,16 +45,7 @@
   <div class="drop-zone content">
     <DropZone isValidValue={isReference} onChange={addReferences}>
       <div class="directory-container">
-        {#if $references.length > 0}
-          <ReferenceDirectory />
-        {:else}
-          <div class="empty-directory">
-            <h3 class="empty-directory__label">
-              No references were added, you can add them by dragging in your
-              files
-            </h3>
-          </div>
-        {/if}
+        <ReferenceDirectory />
       </div>
     </DropZone>
   </div>
@@ -63,7 +54,6 @@
       <Button variant="primary" disabled={!valid} onClick={toggleStartModal}>
         Start
       </Button>
-      <FileInput onChange={addReferences} label="Add files" />
     </Flex>
   </div>
 </div>
@@ -155,19 +145,5 @@
     width: 100%;
     height: 100%;
     padding: var(--spacing);
-  }
-
-  .empty-directory {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    &__label {
-      justify-self: center;
-      align-self: center;
-      width: 80%;
-      text-align: center;
-    }
   }
 </style>

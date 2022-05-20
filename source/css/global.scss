@@ -20,7 +20,7 @@ $font-family: "Roboto Serif", sans-serif;
   --color-background: #{$color-background};
   --color-primary: #{$color-primary};
   --color-primary-100: #{mix($color-primary, $color-background, 5%)};
-  --color-primary-500: #{lighten($color-primary, 5%)};
+  --color-primary-500: #{mix($color-primary, $color-background, 30%)};
   --color-primary-900: #{mix($color-primary, $color-background, 95%)};
   --color-accent-100: #{lighten($color-background, 5%)};
   --color-accent-200: #{lighten($color-background, 15%)};
@@ -65,6 +65,8 @@ button {
   color: currentColor;
   cursor: pointer;
   touch-action: manipulation;
+  font-size: 1em;
+  font-family: inherit;
 }
 
 input {
