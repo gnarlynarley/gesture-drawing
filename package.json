@@ -9,15 +9,19 @@
     "deploy": "yarn run build && gh-pages -d dist"
   },
   "dependencies": {
+    "idb": "^7.0.2",
     "idb-keyval": "^6.1.0",
     "image-blob-reduce": "^4.1.0",
+    "localforage": "^1.10.0",
     "pwacompat": "^2.0.17",
     "svelte": "^3.48.0",
+    "uuid": "^8.3.2",
     "vite-tsconfig-paths": "^3.4.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "1.0.0-next.42",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/uuid": "^8.3.4",
     "gh-pages": "^3.2.3",
     "rimraf": "^3.0.2",
     "sass": "^1.51.0",

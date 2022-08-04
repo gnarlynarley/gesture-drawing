@@ -9,33 +9,48 @@
   padding: 0;
 }
 
-$color-primary: #ff0342;
+$color-primary: #fdc50d;
 $color-text: #efefef;
-$color-background: #1b1a1a;
+$color-background: #28282b;
 $font-family: "Merriweather", sans-serif;
 $font-family: "Roboto Serif", sans-serif;
 
 :root {
   --color-text: #{$color-text};
   --color-background: #{$color-background};
+  --color-background--transparent: #{rgba(lighten($color-background, 5%), 50%)};
   --color-primary: #{$color-primary};
-  --color-primary-100: #{mix($color-primary, $color-background, 5%)};
-  --color-primary-500: #{mix($color-primary, $color-background, 30%)};
-  --color-primary-900: #{mix($color-primary, $color-background, 95%)};
-  --color-accent-100: #{lighten($color-background, 5%)};
-  --color-accent-200: #{lighten($color-background, 15%)};
-  --color-accent-300: #{lighten($color-background, 25%)};
-  --color-accent-400: #{lighten($color-background, 30%)};
-  --color-accent-500: #{lighten($color-background, 35%)};
-  --color-accent-600: #{lighten($color-background, 50%)};
+  --color-primary-100: #{lighten($color-primary, 5%)};
+  --color-primary-500: #{lighten($color-primary, 10%)};
+  --color-primary-900: #{lighten($color-primary, 15%)};
+  --color-accent-100: #{lighten($color-background, 2%)};
+  --color-accent-200: #{lighten($color-background, 5%)};
+  --color-accent-300: #{lighten($color-background, 12%)};
   --font-family: #{$font-family};
-  --font-size-heading: 1.2em;
-  --spacing: 1rem;
-  --border-radius: 0.3em;
-  --border-width: 2px;
+  --font-size-heading: 1.2rem;
+  --spacing: 0.5rem;
+  --border-radius: 0.3rem;
+  --border-color: var(--color-accent-300);
+  --border-width: 1px;
   --animation-speed: 150ms;
-  --shadow: 0 2px 5px rgba(black, 0.4);
+  --shadow: 0 3px 0 #{rgba(black, 0.2)};
   --pwacompat-splash-font: 24px var(--font-family);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-text: #{$color-background};
+    --color-background: #{$color-text};
+    --color-background--transparent: #{rgba(lighten($color-text, 5%), 50%)};
+    --color-primary: #{$color-primary};
+    --color-primary-100: #{lighten($color-primary, 5%)};
+    --color-primary-500: #{lighten($color-primary, 10%)};
+    --color-primary-900: #{lighten($color-primary, 15%)};
+    --color-accent-100: #{lighten($color-text, 2%)};
+    --color-accent-200: #{lighten($color-text, 5%)};
+    --color-accent-300: #{lighten($color-text, 12%)};
+    --shadow: 0 2px 5px #{rgba(black, 0.1)};
+  }
 }
 
 html {

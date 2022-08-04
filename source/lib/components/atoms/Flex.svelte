@@ -9,6 +9,7 @@
 
     > :global(* + *) {
       margin-left: var(--spacing);
+      flex-shrink: 0;
     }
   }
 </style>

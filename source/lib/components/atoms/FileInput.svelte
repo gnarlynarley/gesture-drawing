@@ -14,8 +14,14 @@
 </script>
 
 <label>
-  <Button displayOnly>{label}</Button>
-  <input bind:this={input} type="file" on:change={handleOnChange} multiple accept="image/*" />
+  <Button displayOnly variant="transparent">{label}</Button>
+  <input
+    bind:this={input}
+    type="file"
+    on:change={handleOnChange}
+    multiple
+    accept="image/*"
+  />
 </label>
 
 <style>

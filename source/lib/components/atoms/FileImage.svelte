@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { clearCanvas, drawResizedImage } from "~lib/utils/image/canvas";
   import createImage from "~lib/utils/image/createImage";
+  import { resizeImage } from "~lib/utils/image/resizeImage";
   import createBlobUrl from "../../utils/svelte/createBlobUrl";
 
   export let name: string | undefined = undefined;
@@ -10,45 +11,6 @@
   export let alt: string = "";
   export let spread: boolean = false;
   $: src = createBlobUrl(file);
-
-  // let container: HTMLElement;
-  // let intersecting = false;
-  // let triggered = false;
-  // $: {
-  //   if (!triggered && intersecting) {
-  //     triggered = true;
-  //   }
-  // }
-  // $: imagePromise = $src && triggered ? createImage($src) : null;
-
-  // let canvas: HTMLCanvasElement | null = null;
-  // $: context = canvas?.getContext("2d") ?? null;
-  // $: {
-  //   imagePromise?.then((image) => {
-  //     if (canvas && context) {
-  //       drawResizedImage({ canvas, context, image, width: 300 });
-  //     }
-  //   });
-  // }
-
-  // let once = false;
-  // onMount(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       intersecting = entries.at(0)?.isIntersecting ?? false;
-  //       if (intersecting && once) {
-  //         observer.unobserve(container);
-  //       }
-  //     },
-  //     { root: document.body },
-  //   );
-  //   observer.observe(container);
-
-  //   return () => {
-  //     observer.unobserve(container);
-  //     observer.disconnect();
-  //   };
-  // });
 </script>
 
 <div
@@ -60,9 +22,6 @@
     <span class="label">{name}</span>
   {/if}
   <img src={$src} {alt} class="image" loading="lazy" />
-  <!-- {#if intersecting}
-    <canvas bind:this={canvas} title={alt} class="image" />
-  {/if} -->
 </div>
 
 <style lang="scss">

@@ -19,6 +19,9 @@
   import createBlobUrl from "~lib/utils/svelte/createBlobUrl";
   import Flex from "~lib/components/atoms/Flex.svelte";
   import formatTime from "~lib/utils/formatTime";
+  import Glass from "~lib/components/atoms/Glass.svelte";
+  import Spacer from "~lib/components/atoms/Spacer.svelte";
+  import Tooltip from "~lib/components/atoms/Tooltip.svelte";
 
   let state: "playing" | "paused" = "playing";
   let time = 0;
@@ -143,36 +146,59 @@
   class:is-playing={state === "playing"}
 >
   <div class="header">
-    <Flex>
-      <span class="duration">{formatTime(time)}</span>
-      <SettingsButtonsRow />
-    </Flex>
-    <div>
-      {#if state === "playing"}
-        <Button icon onClick={toggleState} title="Pause">
-          <IconPause />
-        </Button>
-      {:else}
-        <Button icon onClick={toggleState} title="Play">
-          <IconPlay />
-        </Button>
-      {/if}
-      <Button icon onClick={previousFile} title="Go back">
-        <IconSkipPrevious />
-      </Button>
-      <Button icon onClick={nextFile} title="Next">
-        <IconSkipNext />
-      </Button>
-      <Button icon onClick={toggleFullScreen} title="Toggle fullscreen mode">
-        <IconFullScreen />
-      </Button>
-      <Button icon onClick={restartSession} title="Restart">
-        <IconReload />
-      </Button>
-      <Button icon onClick={navigateHome} title="Close">
-        <IconClose />
-      </Button>
-    </div>
+    <Glass>
+      <Flex>
+        <span class="duration">{formatTime(time)}</span>
+        <SettingsButtonsRow />
+        <Spacer />
+        {#if state === "playing"}
+          <Tooltip label="Pause (space)">
+            <Button icon onClick={toggleState} title="Pause (space)">
+              <IconPause />
+            </Button>
+          </Tooltip>
+        {:else}
+          <Tooltip label="Play (space)">
+            <Button icon onClick={toggleState} title="Play (space)">
+              <IconPlay />
+            </Button>
+          </Tooltip>
+        {/if}
+        <Tooltip label="Go back (j)">
+          <Button icon onClick={previousFile} title="Go back (j)">
+            <IconSkipPrevious />
+          </Button>
+        </Tooltip>
+
+        <Tooltip label="Next (l)">
+          <Button icon onClick={nextFile} title="Next (l)">
+            <IconSkipNext />
+          </Button>
+        </Tooltip>
+
+        <Tooltip label="Toggle fullscreen mode (f)">
+          <Button
+            icon
+            onClick={toggleFullScreen}
+            title="Toggle fullscreen mode (f)"
+          >
+            <IconFullScreen />
+          </Button>
+        </Tooltip>
+
+        <Tooltip label="Restart">
+          <Button icon onClick={restartSession} title="Restart">
+            <IconReload />
+          </Button>
+        </Tooltip>
+
+        <Tooltip label="Close">
+          <Button icon onClick={navigateHome} title="Close">
+            <IconClose />
+          </Button>
+        </Tooltip>
+      </Flex>
+    </Glass>
   </div>
   <div class="main">
     <div class="main__inner">
@@ -286,7 +312,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 3em;
+    margin-top: var(--spacing);
 
     .container.is-paused & {
       opacity: 0.1;
@@ -296,10 +322,7 @@
   .header {
     grid-area: header;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all var(--animation-speed) ease-in-out;
-    filter: drop-shadow(0 1px 3px rgba(black, 0.1));
+    position: relative;
+    z-index: 1;
   }
 </style>

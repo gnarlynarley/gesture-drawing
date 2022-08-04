@@ -9,7 +9,14 @@
 </script>
 
 {#if displayOnly}
-  <span class="button"><slot /></span>
+  <span
+    class="button"
+    class:has-icon={icon}
+    class:primary={variant === "primary"}
+    class:transparent={variant === "transparent"}
+  >
+    <slot />
+  </span>
 {:else}
   <button
     on:click={onClick}
@@ -44,6 +51,7 @@
     font-weight: normal;
     font-size: 0.9em;
     line-height: 1;
+    white-space: nowrap;
 
     &:hover {
       --color: var(--color-accent-200);
@@ -53,7 +61,6 @@
       padding: $spacing;
       background: transparent;
       border-color: transparent;
-
       &.primary {
         color: var(--color-primary);
       }
@@ -61,6 +68,7 @@
 
     &.primary {
       --color: var(--color-primary);
+      --text: var(--color-background);
 
       &:hover {
         --color: var(--color-primary-500);

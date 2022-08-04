@@ -1,26 +1,29 @@
 <script lang="ts">
   import Button from "~lib/components/atoms/Button.svelte";
-  import DropZone from "~lib/components/atoms/DropZone.svelte";
   import Flex from "~lib/components/atoms/Flex.svelte";
   import FormField from "~lib/components/atoms/FormField.svelte";
   import Input from "~lib/components/atoms/Input.svelte";
   import RadioField from "~lib/components/atoms/RadioField.svelte";
   import Stack from "~lib/components/atoms/Stack.svelte";
   import {
-    references,
-    isReference,
     addReferences,
+    clearReferences,
+    references,
   } from "~lib/stores/references";
   import parseTimeString from "~lib/utils/parseTimeString";
   import { navigatePage } from "~lib/utils/navigation";
   import { settings } from "~lib/stores/settings";
   import ReferenceDirectory from "~lib/components/molecules/ReferenceDirectory.svelte";
   import Modal from "~lib/components/atoms/Modal.svelte";
+  import Glass from "~lib/components/atoms/Glass.svelte";
   import FileInput from "~lib/components/atoms/FileInput.svelte";
+  import Spacer from "~lib/components/atoms/Spacer.svelte";
+  import { getFilesFromDropEvent } from "~lib/utils/drop";
 
   const customDurationValue = "custom";
   const infiniteDurationValue = "infinite";
   const practiceDurations = ["30s", "1m", "1m30s", "2m", "5m", "1h"];
+  let container: HTMLDivElement;
   let practiceDuration = practiceDurations[0];
   let customDuration = "1m30s";
   $: duration =
@@ -36,25 +39,69 @@
   $: $settings.randomized = randomized === "true";
 
   let startPracticeModal = false;
+  let showClearReferenceModal = false;
   function toggleStartModal() {
     startPracticeModal = !startPracticeModal;
   }
+
+  let dragActive = false;
+
+  async function handleDrop(ev: DragEvent) {
+    ev.preventDefault();
+    const rect = container.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const y = ev.clientY - rect.top;
+    const splash = { x, y };
+    dragActive = false;
+    const newFiles = await getFilesFromDropEvent(ev);
+    addReferences(newFiles);
+  }
+
+  function handleDragOver(ev: DragEvent) {
+    ev.preventDefault();
+  }
+  function handleDragEnter() {
+    dragActive = true;
+  }
+  function handleDragLeave() {
+    dragActive = false;
+  }
 </script>
 
-<div class="container">
-  <div class="drop-zone content">
-    <DropZone isValidValue={isReference} onChange={addReferences}>
-      <div class="directory-container">
-        <ReferenceDirectory />
-      </div>
-    </DropZone>
+<div
+  class="container"
+  bind:this={container}
+  on:drop={handleDrop}
+  on:dragover={handleDragOver}
+  on:dragenter={handleDragEnter}
+  on:dragleave={handleDragLeave}
+>
+  {#if showClearReferenceModal}
+    <Modal
+      onClose={() => (showClearReferenceModal = false)}
+      onAccept={clearReferences}
+      onAcceptLabel="Clear references"
+    >
+      Are you sure you want to remove all reference files?
+    </Modal>
+  {/if}
+  <div class="header-bar">
+    <Glass>
+      <Flex>
+        <FileInput onChange={addReferences} label="Add files" />
+        <Button
+          variant="transparent"
+          onClick={() => (showClearReferenceModal = true)}>Clear</Button
+        >
+        <Spacer />
+        <Button variant="primary" disabled={!valid} onClick={toggleStartModal}>
+          Start
+        </Button>
+      </Flex>
+    </Glass>
   </div>
-  <div class="button-bar content">
-    <Flex>
-      <Button variant="primary" disabled={!valid} onClick={toggleStartModal}>
-        Start
-      </Button>
-    </Flex>
+  <div class="directory-container">
+    <ReferenceDirectory />
   </div>
 </div>
 {#if startPracticeModal}
@@ -102,48 +149,20 @@
 
 <style lang="scss">
   .container {
-    --spacing: 0.5em;
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template:
-      "main" 1fr
-      "buttons" auto;
-    grid-gap: var(--spacing);
+    overflow: auto;
     padding: var(--spacing);
-
-    @media screen and (max-width: 40em) {
-      grid-template:
-        "main" 1fr
-        "buttons" auto;
-    }
-  }
-
-  .content {
-    padding: var(--spacing);
-  }
-
-  .button-bar {
-    grid-area: buttons;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .drop-zone {
-    grid-area: main;
-    flex: 1;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
   }
 
   .directory-container {
-    overflow: auto;
-    width: 100%;
-    height: 100%;
-    padding: var(--spacing);
+    margin: var(--spacing);
+  }
+
+  .header-bar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1;
   }
 </style>

@@ -2,6 +2,7 @@
   import addKeybind from "../../utils/svelte/addKeybind";
 
   import Button from "./Button.svelte";
+  import Glass from "./Glass.svelte";
   import IconClose from "./IconClose.svelte";
 
   export let onClose: () => void;
@@ -14,20 +15,28 @@
 
 <div class="container">
   <div class="modal">
-    <div class="modal__close-button">
-      <Button icon onClick={onClose}>
-        <IconClose />
-      </Button>
-    </div>
-    <slot />
-    <div class="modal__button-bar">
-      <Button variant="transparent" onClick={onClose}>
-        {onCancelLabel}
-      </Button>
-      <Button variant="primary" onClick={onAccept}>
-        {onAcceptLabel}
-      </Button>
-    </div>
+    <Glass>
+      <div class="modal__close-button">
+        <Button icon onClick={onClose}>
+          <IconClose />
+        </Button>
+      </div>
+      <slot />
+      <div class="modal__button-bar">
+        <Button variant="transparent" onClick={onClose}>
+          {onCancelLabel}
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            onAccept?.();
+            onClose();
+          }}
+        >
+          {onAcceptLabel}
+        </Button>
+      </div>
+    </Glass>
   </div>
   <div class="background" on:click={onClose} role="presentation" />
 </div>
@@ -52,10 +61,6 @@
     overflow: auto;
     width: 100%;
     max-height: 100%;
-    background: var(--color-background);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--color-accent-100);
-    padding: var(--spacing);
     padding-top: 2em;
     border-radius: var(--border-radius);
     max-width: 30em;
