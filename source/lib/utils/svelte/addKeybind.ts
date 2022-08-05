@@ -10,6 +10,7 @@ const keyMap: Record<string, string> = {
 export default function addKeybind(key: string, callback: () => void) {
   function keydownHandler(event: KeyboardEvent) {
     if (keyMap[key] === event.key || event.key === key) {
+      event.preventDefault();
       callback();
     }
   }
