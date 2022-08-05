@@ -26,15 +26,17 @@
         <Button variant="transparent" onClick={onClose}>
           {onCancelLabel}
         </Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            onAccept?.();
-            onClose();
-          }}
-        >
-          {onAcceptLabel}
-        </Button>
+        {#if onAcceptLabel}
+          <Button
+            variant="primary"
+            onClick={() => {
+              onAccept?.();
+              onClose();
+            }}
+          >
+            {onAcceptLabel}
+          </Button>
+        {/if}
       </div>
     </Glass>
   </div>

@@ -22,6 +22,9 @@
   import Glass from "~lib/components/atoms/Glass.svelte";
   import Spacer from "~lib/components/atoms/Spacer.svelte";
   import Tooltip from "~lib/components/atoms/Tooltip.svelte";
+  import blockNavigation from "~lib/utils/blockNavigation";
+
+  blockNavigation(true);
 
   let state: "playing" | "paused" = "playing";
   let time = 0;
