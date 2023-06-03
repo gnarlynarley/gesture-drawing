@@ -9,39 +9,8 @@
   padding: 0;
 }
 
-$color-primary: #fdc50d;
-$color-text: #efefef;
-$color-background: #28282b;
 $font-family: "Merriweather", sans-serif;
 $font-family: "Roboto Serif", sans-serif;
-
-@mixin theme-variables($theme) {
-  $ink: $color-text;
-  $background: $color-background;
-
-  @if $theme == "light" {
-    $ink: $color-background;
-    $background: $color-text;
-  }
-
-  --color-text: #{$ink};
-  --color-background: #{$background};
-  --color-background--transparent: #{rgba(lighten($background, 5%), 50%)};
-  --color-primary: #{$color-primary};
-  --color-primary-100: #{lighten($color-primary, 5%)};
-  --color-primary-500: #{lighten($color-primary, 10%)};
-  --color-primary-900: #{lighten($color-primary, 15%)};
-  --color-accent-100: #{lighten($background, 2%)};
-  --color-accent-200: #{lighten($background, 5%)};
-  --color-accent-300: #{lighten($background, 12%)};
-  --border-color: var(--color-accent-300);
-
-  @if $theme == "light" {
-    --shadow: 0 2px 5px #{rgba(black, 0.1)};
-  } @else {
-    --shadow: 0 3px 0 #{rgba(black, 0.2)};
-  }
-}
 
 :root {
   --font-family: #{$font-family};
@@ -51,24 +20,29 @@ $font-family: "Roboto Serif", sans-serif;
   --border-width: 1px;
   --animation-speed: 150ms;
   --pwacompat-splash-font: 24px var(--font-family);
-  @include theme-variables("dark");
-}
 
-@media (prefers-color-scheme: light) {
-  :root {
-    @include theme-variables("light");
+  --color-text: #efefef;
+  --color-background: #28282b;
 
-    // --color-text: #{$color-background};
-    // --color-background: #{$color-text};
-    // --color-background--transparent: #{rgba(lighten($color-text, 5%), 50%)};
-    // --color-primary: #{$color-primary};
-    // --color-primary-100: #{lighten($color-primary, 5%)};
-    // --color-primary-500: #{lighten($color-primary, 10%)};
-    // --color-primary-900: #{lighten($color-primary, 15%)};
-    // --color-accent-100: #{lighten($color-text, 2%)};
-    // --color-accent-200: #{lighten($color-text, 5%)};
-    // --color-accent-300: #{lighten($color-text, 12%)};
+  @media (prefers-color-scheme: light) {
+    --color-text: #222;
+    --color-background: #eeeeee;
   }
+
+  --color-background--transparent: color-mix(
+    in lch,
+    var(--color-background),
+    transparent 60%
+  );
+  --color-primary: #fdc50d;
+  --color-primary-100: #{color-mix(in lch, var(--color-primary), white 10%)};
+  --color-primary-500: #{color-mix(in lch, var(--color-primary), white 15%)};
+  --color-primary-900: #{color-mix(in lch, var(--color-primary), white 20%)};
+  --color-accent-100: #{color-mix(in lch, var(--color-background), white 10%)};
+  --color-accent-200: #{color-mix(in lch, var(--color-background), white 15%)};
+  --color-accent-300: #{color-mix(in lch, var(--color-background), white 20%)};
+  --border-color: var(--color-accent-300);
+  --shadow: 0 3px 3px #{rgba(black, 0.2)};
 }
 
 html {
