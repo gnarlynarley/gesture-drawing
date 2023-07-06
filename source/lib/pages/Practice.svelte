@@ -34,6 +34,7 @@
   let timeoutId: number | null = null;
   let imageLoading = true;
   const originalTitle = document.title;
+  $: currentPractice = history.length + 1;
 
   $: document.title = `${state.toUpperCase()} | ${originalTitle}`;
 

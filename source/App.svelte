@@ -46,6 +46,10 @@
         <li><code>space</code> pause the timer</li>
         <li><code>f</code> toggle fullscreen</li>
       </ul>
+
+      <p>
+        Got feedback, hit me up on <a href="https://twitter.com/GnarlyNarley">twitter</a>!
+      </p>
     </div>
   </Modal>
 {/if}

@@ -1,17 +1,11 @@
 <script lang="ts">
   import Button from "~lib/components/atoms/Button.svelte";
   import Flex from "~lib/components/atoms/Flex.svelte";
-  import FormField from "~lib/components/atoms/FormField.svelte";
-  import Input from "~lib/components/atoms/Input.svelte";
-  import RadioField from "~lib/components/atoms/RadioField.svelte";
-  import Stack from "~lib/components/atoms/Stack.svelte";
   import {
     addReferences,
     clearReferences,
     references,
   } from "~lib/stores/references";
-  import parseTimeString from "~lib/utils/parseTimeString";
-  import { navigatePage } from "~lib/utils/navigation";
   import { settings } from "~lib/stores/settings";
   import ReferenceDirectory from "~lib/components/molecules/ReferenceDirectory.svelte";
   import Modal from "~lib/components/atoms/Modal.svelte";
@@ -19,24 +13,12 @@
   import FileInput from "~lib/components/atoms/FileInput.svelte";
   import Spacer from "~lib/components/atoms/Spacer.svelte";
   import { getFilesFromDropEvent } from "~lib/utils/drop";
+  import SettingsModal from "~lib/components/molecules/SettingsModal.svelte";
+  import { navigatePage } from "~lib/utils/navigation";
 
-  const customDurationValue = "custom";
-  const infiniteDurationValue = "infinite";
-  const practiceDurations = ["30s", "1m", "1m30s", "2m", "5m", "1h"];
+  
   let container: HTMLDivElement;
-  let practiceDuration = practiceDurations[0];
-  let customDuration = "1m30s";
-  $: duration =
-    practiceDuration === customDurationValue
-      ? parseTimeString(customDuration)
-      : practiceDuration === infiniteDurationValue
-      ? Infinity
-      : parseTimeString(practiceDuration);
-  $: $settings.duration = duration;
-  $: valid = $settings.duration !== 0 && $references.length > 0;
-
-  let randomized: "true" | "false" = "true";
-  $: $settings.randomized = randomized === "true";
+    $: valid = $settings.duration !== 0 && $references.length > 0;
 
   let startPracticeModal = false;
   let showClearReferenceModal = false;
@@ -51,7 +33,6 @@
     const rect = container.getBoundingClientRect();
     const x = ev.clientX - rect.left;
     const y = ev.clientY - rect.top;
-    const splash = { x, y };
     dragActive = false;
     const newFiles = await getFilesFromDropEvent(ev);
     addReferences(newFiles);
@@ -105,46 +86,7 @@
   </div>
 </div>
 {#if startPracticeModal}
-  <Modal
-    onClose={toggleStartModal}
-    onAccept={() => navigatePage("practice")}
-    onAcceptLabel="Start canvas"
-  >
-    <Stack>
-      <FormField label="Duration">
-        <Stack>
-          {#each practiceDurations as duration}
-            <RadioField
-              label={duration}
-              bind:group={practiceDuration}
-              value={duration}
-            />
-          {/each}
-          <RadioField
-            label="Custom"
-            bind:group={practiceDuration}
-            value={customDurationValue}
-          >
-            <Input
-              bind:value={customDuration}
-              disabled={practiceDuration !== customDurationValue}
-            />
-          </RadioField>
-          <RadioField
-            label="Disabled"
-            bind:group={practiceDuration}
-            value={infiniteDurationValue}
-          />
-        </Stack>
-      </FormField>
-      <FormField label="Randomized">
-        <Stack>
-          <RadioField label="Yes" bind:group={randomized} value="true" />
-          <RadioField label="No" bind:group={randomized} value="false" />
-        </Stack>
-      </FormField>
-    </Stack>
-  </Modal>
+ <SettingsModal onAccept={() => navigatePage('practice')} onClose={toggleStartModal}/>
 {/if}
 
 <style lang="scss">

@@ -22,7 +22,7 @@ $font-family: "Roboto Serif", sans-serif;
   --pwacompat-splash-font: 24px var(--font-family);
 
   --color-text: #efefef;
-  --color-background: #28282b;
+  --color-background: #1b1b1d;
 
   @media (prefers-color-scheme: light) {
     --color-text: #222;
@@ -92,4 +92,8 @@ p {
   & + & {
     padding-top: 0.6em;
   }
+}
+
+a {
+  color: var(--color-primary);
 }
