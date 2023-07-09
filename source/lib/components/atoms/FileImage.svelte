@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { clearCanvas, drawResizedImage } from "~lib/utils/image/canvas";
-  import createImage from "~lib/utils/image/createImage";
-  import { resizeImage } from "~lib/utils/image/resizeImage";
   import createBlobUrl from "../../utils/svelte/createBlobUrl";
 
   export let name: string | undefined = undefined;

@@ -48,7 +48,9 @@
       </ul>
 
       <p>
-        Got feedback, hit me up on <a href="https://twitter.com/GnarlyNarley">twitter</a>!
+        Got feedback, hit me up on <a href="https://twitter.com/GnarlyNarley"
+          >twitter</a
+        >!
       </p>
     </div>
   </Modal>
@@ -56,9 +58,7 @@
 
 <style lang="scss">
   main {
-    position: relative;
     z-index: 0;
-    height: 100%;
   }
 
   .help-button {

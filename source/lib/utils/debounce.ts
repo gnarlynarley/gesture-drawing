@@ -1,7 +1,7 @@
 export default function debounce<A extends any[]>(
-  wait: number,
-  immediate: boolean,
   cb: (...args: A) => void,
+  wait: number,
+  immediate?: boolean,
 ) {
   var timeoutId: number | null = null;
 
