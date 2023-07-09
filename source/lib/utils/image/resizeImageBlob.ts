@@ -19,7 +19,6 @@ export default async function resizeImageBlob(
   width: number,
   height: number,
 ) {
-  console.log("resizing");
   let resizedImageData = cache.get(blob);
 
   if (resizedImageData === undefined) {

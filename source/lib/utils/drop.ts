@@ -32,7 +32,6 @@ async function getAllFileEntries(
         filePromises.push(readFile(entry));
       }
     } else if (entryIsDirectory(entry)) {
-      console.log({ entry });
       queue.push(...(await readAllDirectoryEntries(entry.createReader())));
     }
   }
