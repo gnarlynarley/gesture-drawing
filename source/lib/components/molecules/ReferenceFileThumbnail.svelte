@@ -24,6 +24,7 @@
 
   let thumbnail: ImageData | null = null;
   let thumbnailPromise: Promise<void> | null = null;
+  let thumbnailLoading = true;
 
   $: isVisible = !isScrolling && isIntersecting;
   $: {
@@ -34,6 +35,7 @@
         IMAGE_HEIGHT,
       ).then((imageData) => {
         thumbnail = imageData;
+        thumbnailLoading = false;
       });
     }
   }
@@ -44,22 +46,53 @@
   }
 </script>
 
-<div bind:this={container} class="container">
+<div
+  bind:this={container}
+  class="container"
+  class:is-loading={isVisible && thumbnailLoading}
+>
   {#if isVisible}
     <canvas
       bind:this={canvas}
       width={`${IMAGE_WIDTH}px`}
       height={`${IMAGE_HEIGHT}px`}
     />
+    <span class="name">{reference.name}</span>
   {/if}
 </div>
 
 <style lang="scss">
   .container {
+    position: relative;
     aspect-ratio: 1 / 1;
     background-color: var(--color-accent-300);
     border-radius: var(--spacing);
     overflow: hidden;
+
+    &.is-loading {
+      animation: is-loading 1s ease-in-out infinite;
+    }
+  }
+
+  @keyframes is-loading {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(black, 0.5);
   }
 
   canvas {

@@ -33,8 +33,9 @@
   });
 </script>
 
-<div bind:this={container} style:height={containerHeight}>
+<div class="container" bind:this={container} style:height={containerHeight}>
   <Stack>
+    <h3>References ({references.length})</h3>
     <div class="grid">
       {#each references as reference (reference.id)}
         <ReferenceFileThumbnail {isScrolling} {reference} />

@@ -5,7 +5,7 @@ function entryIsFile(entry: FileSystemEntry): entry is FileSystemFileEntry {
 }
 
 function entryIsDirectory(
-  entry: FileSystemEntry
+  entry: FileSystemEntry,
 ): entry is FileSystemDirectoryEntry {
   return entry.isDirectory;
 }
@@ -13,7 +13,7 @@ function entryIsDirectory(
 // Drop handler function to get all files
 async function getAllFileEntries(
   dataTransferItemList: DataTransferItemList | null,
-  isValidEntry: (entry: FileSystemFileEntry) => boolean
+  isValidEntry: (entry: FileSystemFileEntry) => boolean,
 ): Promise<File[]> {
   if (dataTransferItemList === null) return [];
   let filePromises: Promise<File>[] = [];
@@ -32,6 +32,7 @@ async function getAllFileEntries(
         filePromises.push(readFile(entry));
       }
     } else if (entryIsDirectory(entry)) {
+      console.log({ entry });
       queue.push(...(await readAllDirectoryEntries(entry.createReader())));
     }
   }
@@ -42,7 +43,7 @@ async function getAllFileEntries(
 // Get all the entries (files or sub-directories) in a directory
 // by calling readEntries until it returns empty array
 async function readAllDirectoryEntries(
-  directoryReader: FileSystemDirectoryReader
+  directoryReader: FileSystemDirectoryReader,
 ) {
   let entries = [];
   let read = await readEntries(directoryReader);
@@ -63,7 +64,7 @@ async function readFile(entry: FileSystemFileEntry): Promise<File> {
 // readEntries will return only some of the entries in a directory
 // e.g. Chrome returns at most 100 entries at a time
 async function readEntries(
-  reader: FileSystemDirectoryReader
+  reader: FileSystemDirectoryReader,
 ): Promise<FileSystemEntry[]> {
   try {
     return await new Promise<FileSystemEntry[]>((resolve, reject) => {
@@ -75,13 +76,11 @@ async function readEntries(
   }
 }
 
-export async function getFilesFromDropEvent(
-  ev: DragEvent,
-) {
+export async function getFilesFromDropEvent(ev: DragEvent) {
   ev.preventDefault();
   const entries = await getAllFileEntries(
     ev.dataTransfer?.items ?? null,
-    isReference
+    isReference,
   );
   return entries;
 }

@@ -29,10 +29,6 @@
 
   async function handleDrop(ev: DragEvent) {
     ev.preventDefault();
-    const rect = container.getBoundingClientRect();
-    const x = ev.clientX - rect.left;
-    const y = ev.clientY - rect.top;
-    dragActive = false;
     const newFiles = await getFilesFromDropEvent(ev);
     addReferences(newFiles);
   }
@@ -92,6 +88,9 @@
 {/if}
 
 <style lang="scss">
+  .container {
+    min-height: 100vh;
+  }
   .directory-container {
     margin: var(--spacing);
   }
