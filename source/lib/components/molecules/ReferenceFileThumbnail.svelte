@@ -2,9 +2,11 @@
   import { onDestroy, onMount } from "svelte";
   import type { ReferenceFile } from "~lib/stores/references";
   import resizeImageBlob from "~lib/utils/image/resizeImageBlob";
+  import IconClose from "../atoms/IconClose.svelte";
 
   export let reference: ReferenceFile;
   export let isScrolling = false;
+  export let onReferenceDeleteClick: (() => void) | undefined = undefined;
 
   const IMAGE_WIDTH = 500;
   const IMAGE_HEIGHT = 500;
@@ -58,6 +60,16 @@
       height={`${IMAGE_HEIGHT}px`}
     />
     <span class="name">{reference.name}</span>
+
+    {#if onReferenceDeleteClick}
+      <button
+        class="delete-button"
+        type="button"
+        on:click={onReferenceDeleteClick}
+      >
+        <IconClose />
+      </button>
+    {/if}
   {/if}
 </div>
 
@@ -65,9 +77,10 @@
   .container {
     position: relative;
     aspect-ratio: 1 / 1;
-    background-color: var(--color-accent-300);
+    background-color: var(--color-accent-100);
     border-radius: var(--spacing);
     overflow: hidden;
+    box-shadow: var(--shadow);
 
     &.is-loading {
       animation: is-loading 1s ease-in-out infinite;
@@ -93,6 +106,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     background: rgba(black, 0.5);
+    color: white;
+  }
+
+  .delete-button {
+    position: absolute;
+    top: var(--spacing);
+    right: var(--spacing);
   }
 
   canvas {

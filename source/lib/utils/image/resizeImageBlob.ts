@@ -8,7 +8,6 @@ type EventValue = {
 
 const worker = new Worker();
 const emitter = new EventEmitter<EventValue>();
-const cache = new WeakMap<Blob, ImageData>();
 
 worker.addEventListener("message", (ev) => {
   emitter.emit(ev.data);
@@ -19,20 +18,16 @@ export default async function resizeImageBlob(
   width: number,
   height: number,
 ) {
-  let resizedImageData = cache.get(blob);
-
-  if (resizedImageData === undefined) {
-    resizedImageData = await new Promise<ImageData>((resolve) => {
-      const id = Math.random();
-      const unsubscribe = emitter.on((value) => {
-        if (value.id === id) {
-          resolve(value.resizedImageData);
-          unsubscribe();
-        }
-      });
-      worker.postMessage({ id, blob, width, height });
+  const resizedImageData = await new Promise<ImageData>((resolve) => {
+    const id = Math.random();
+    const unsubscribe = emitter.on((value) => {
+      if (value.id === id) {
+        resolve(value.resizedImageData);
+        unsubscribe();
+      }
     });
-  }
+    worker.postMessage({ id, blob, width, height });
+  });
 
   return resizedImageData;
 }

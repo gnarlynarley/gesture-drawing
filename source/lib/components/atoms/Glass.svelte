@@ -7,7 +7,7 @@
     background: var(--color-background--transparent);
     padding: var(--spacing);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(2px);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
   }

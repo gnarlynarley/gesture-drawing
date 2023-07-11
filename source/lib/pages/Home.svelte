@@ -4,6 +4,7 @@
   import {
     addReferences,
     clearReferences,
+    removeReference,
     references,
   } from "~lib/stores/references";
   import { settings } from "~lib/stores/settings";
@@ -25,33 +26,42 @@
     startPracticeModal = !startPracticeModal;
   }
 
-  let dragActive = false;
+  let dragCounter = 0;
+  $: dragActive = dragCounter > 0;
 
   async function handleDrop(ev: DragEvent) {
     ev.preventDefault();
     const newFiles = await getFilesFromDropEvent(ev);
+    dragCounter = 0;
     addReferences(newFiles);
   }
 
   function handleDragOver(ev: DragEvent) {
     ev.preventDefault();
   }
-  function handleDragEnter() {
-    dragActive = true;
+  function handleDragEnter(ev: DragEvent) {
+    dragCounter += 1;
   }
-  function handleDragLeave() {
-    dragActive = false;
+  function handleDragLeave(ev: DragEvent) {
+    dragCounter -= 1;
   }
+
+  $: document.body.style.pointerEvents = dragActive ? "none" : "";
 </script>
 
-<div
-  class="container"
-  bind:this={container}
+<svelte:window
   on:drop={handleDrop}
   on:dragover={handleDragOver}
   on:dragenter={handleDragEnter}
   on:dragleave={handleDragLeave}
->
+/>
+
+<div class="container" bind:this={container}>
+  {#if dragActive}
+    <div class="drag-overlay">
+      <span>Drop files and folders to add</span>
+    </div>
+  {/if}
   {#if showClearReferenceModal}
     <Modal
       onClose={() => (showClearReferenceModal = false)}
@@ -77,7 +87,10 @@
     </Glass>
   </div>
   <div class="directory-container">
-    <ReferenceFileGrid references={$references} />
+    <ReferenceFileGrid
+      references={$references}
+      onReferenceDeleteClick={removeReference}
+    />
   </div>
 </div>
 {#if startPracticeModal}
@@ -90,7 +103,33 @@
 <style lang="scss">
   .container {
     min-height: 100vh;
+    position: relative;
+    z-index: 0;
   }
+
+  .drag-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: color-mix(in lab, var(--color-background), transparent 10%);
+    z-index: 2;
+    pointer-events: none;
+
+    span {
+      padding: 5em;
+      display: block;
+      width: calc(100% - (var(--offset) * 2));
+      height: calc(100% - (var(--offset) * 2));
+      border: 1px dashed currentColor;
+      border-radius: 0.3em;
+    }
+  }
+
   .directory-container {
     margin: var(--spacing);
   }

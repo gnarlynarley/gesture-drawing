@@ -5,6 +5,7 @@
   import { onDestroy } from "svelte";
 
   export let references: ReferenceFile[];
+  export let onReferenceDeleteClick: (reference: ReferenceFile) => void;
 
   let container: HTMLDivElement | undefined = undefined;
   let containerHeight: string | null = null;
@@ -38,7 +39,11 @@
     <h3>References ({references.length})</h3>
     <div class="grid">
       {#each references as reference (reference.id)}
-        <ReferenceFileThumbnail {isScrolling} {reference} />
+        <ReferenceFileThumbnail
+          {isScrolling}
+          {reference}
+          onReferenceDeleteClick={() => onReferenceDeleteClick(reference)}
+        />
       {/each}
     </div>
   </Stack>
@@ -47,7 +52,7 @@
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
     gap: var(--spacing);
   }
 </style>

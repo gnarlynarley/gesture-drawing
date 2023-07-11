@@ -32,15 +32,15 @@ $font-family: "Roboto Serif", sans-serif;
   --color-background--transparent: color-mix(
     in lch,
     var(--color-background),
-    transparent 60%
+    transparent 5%
   );
   --color-primary: #fdc50d;
-  --color-primary-100: #{color-mix(in lch, var(--color-primary), white 10%)};
-  --color-primary-500: #{color-mix(in lch, var(--color-primary), white 15%)};
-  --color-primary-900: #{color-mix(in lch, var(--color-primary), white 20%)};
-  --color-accent-100: #{color-mix(in lch, var(--color-background), white 10%)};
-  --color-accent-200: #{color-mix(in lch, var(--color-background), white 15%)};
-  --color-accent-300: #{color-mix(in lch, var(--color-background), white 20%)};
+  --color-primary-100: #{color-mix(in lch, var(--color-primary), var(--color-text) 10%)};
+  --color-primary-500: #{color-mix(in lch, var(--color-primary), var(--color-text) 15%)};
+  --color-primary-900: #{color-mix(in lch, var(--color-primary), var(--color-text) 20%)};
+  --color-accent-100: #{color-mix(in lch, var(--color-background), var(--color-text) 10%)};
+  --color-accent-200: #{color-mix(in lch, var(--color-background), var(--color-text) 15%)};
+  --color-accent-300: #{color-mix(in lch, var(--color-background), var(--color-text) 20%)};
   --border-color: var(--color-accent-300);
   --shadow: 0 3px 3px #{rgba(black, 0.2)};
 }
