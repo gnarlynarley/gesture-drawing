@@ -6,39 +6,19 @@
   import IconClose from "./IconClose.svelte";
 
   export let onClose: () => void;
-  export let onAccept: (() => void) | undefined = undefined;
-  export let onAcceptLabel = "Ok";
-  export let onCancelLabel = "Cancel";
+  export let full: boolean = false;
 
   addKeybind("esc", onClose);
 </script>
 
-<div class="container">
+<div class="container" class:is-full={full}>
   <div class="modal">
-    <Glass>
-      <div class="modal__close-button">
-        <Button icon onClick={onClose}>
-          <IconClose />
-        </Button>
-      </div>
-      <slot />
-      <div class="modal__button-bar">
-        <Button variant="transparent" onClick={onClose}>
-          {onCancelLabel}
-        </Button>
-        {#if onAcceptLabel}
-          <Button
-            variant="primary"
-            onClick={() => {
-              onAccept?.();
-              onClose();
-            }}
-          >
-            {onAcceptLabel}
-          </Button>
-        {/if}
-      </div>
-    </Glass>
+    <div class="modal__close-button">
+      <Button icon onClick={onClose}>
+        <IconClose />
+      </Button>
+    </div>
+    <slot />
   </div>
   <div class="background" on:click={onClose} role="presentation" />
 </div>
@@ -63,20 +43,19 @@
     overflow: auto;
     width: 100%;
     max-height: 100%;
-    padding-top: 2em;
     border-radius: var(--border-radius);
     max-width: 30em;
+
+    .is-full & {
+      max-width: none;
+      height: 100%;
+    }
 
     &__close-button {
       position: absolute;
       right: 0;
       top: 0;
-    }
-
-    &__button-bar {
-      display: flex;
-      justify-content: space-between;
-      padding-top: calc(var(--spacing) * 2);
+      z-index: 1;
     }
   }
 
@@ -87,7 +66,7 @@
     z-index: -1;
     width: 100%;
     height: 100%;
-    background: var(--color-background);
-    opacity: 0.9;
+    background: color-mix(in srgb, var(--color-background), transparent 5%);
+    backdrop-filter: blur(2px);
   }
 </style>

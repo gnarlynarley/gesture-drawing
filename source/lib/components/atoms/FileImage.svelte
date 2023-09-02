@@ -12,6 +12,7 @@
 <div
   class="container"
   class:is-covering={fit === "cover"}
+  class:is-contained={fit === "contain"}
   class:is-spread={spread}
 >
   {#if name}
@@ -22,9 +23,6 @@
 
 <style lang="scss">
   .container {
-    object-fit: contain;
-    background-color: var(--color-accent-200);
-
     &.is-spread {
       position: absolute;
       top: 0;
@@ -49,6 +47,9 @@
   .image {
     .is-covering & {
       object-fit: cover;
+    }
+    .is-contained & {
+      object-fit: contain;
     }
 
     .is-spread & {

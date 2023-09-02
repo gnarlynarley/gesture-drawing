@@ -59,7 +59,7 @@
       width={`${IMAGE_WIDTH}px`}
       height={`${IMAGE_HEIGHT}px`}
     />
-    <span class="name">{reference.name}</span>
+    <button on:click class="name">{reference.name}</button>
 
     {#if onReferenceDeleteClick}
       <button
