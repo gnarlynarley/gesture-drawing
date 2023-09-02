@@ -12,54 +12,19 @@
 
   const customDurationValue = "custom";
   const infiniteDurationValue = "infinite";
-  const practiceDurations = ["30s", "1m", "1m30s", "2m", "5m", "1h"];
-  let practiceDuration = practiceDurations[0];
+  let minutes = Math.floor($settings.duration / 60);
+  let seconds = $settings.duration % 60;
   let customDuration = "1m30s";
   let randomized = $settings.randomized;
-  $: duration =
-    practiceDuration === customDurationValue
-      ? parseTimeString(customDuration)
-      : practiceDuration === infiniteDurationValue
-      ? Infinity
-      : parseTimeString(practiceDuration);
-  $: $settings.duration = duration;
+  $: $settings.duration = minutes * 60 + seconds;
 </script>
 
-<Modal
-  onClose={onClose}
-  onAccept={onAccept}
-  onAcceptLabel="Start canvas"
->
+<Modal {onClose} {onAccept} onAcceptLabel="Start">
   <Stack>
     <FormField label="Duration">
-      <Stack>
-        {#each practiceDurations as duration}
-          <RadioField
-            label={duration}
-            bind:group={practiceDuration}
-            value={duration}
-          />
-        {/each}
-        <RadioField
-          label="Custom"
-          bind:group={practiceDuration}
-          value={customDurationValue}
-        >
-          <Input
-            bind:value={customDuration}
-            disabled={practiceDuration !== customDurationValue}
-          />
-        </RadioField>
-        <RadioField
-          label="Disabled"
-          bind:group={practiceDuration}
-          value={infiniteDurationValue}
-        />
-      </Stack>
-    </FormField>
-    <FormField label="Randomized">
-      <Stack>
-        <input type="checkbox" bind:checked={randomized} />
+      <Stack horizontal>
+        <Input label="minutes" bind:value={minutes} />
+        <Input label="seconds" bind:value={seconds} />
       </Stack>
     </FormField>
   </Stack>

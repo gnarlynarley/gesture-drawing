@@ -54,5 +54,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
     gap: var(--spacing);
+    width: 100%;
   }
 </style>

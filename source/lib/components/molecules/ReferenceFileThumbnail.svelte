@@ -28,9 +28,9 @@
   let thumbnailPromise: Promise<void> | null = null;
   let thumbnailLoading = true;
 
-  $: isVisible = !isScrolling && isIntersecting;
+  $: isVisible = isIntersecting;
   $: {
-    if (isVisible) {
+    if (isIntersecting && !isScrolling) {
       thumbnailPromise = resizeImageBlob(
         reference.file,
         IMAGE_WIDTH,

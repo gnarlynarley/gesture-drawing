@@ -33,10 +33,10 @@
 {/if}
 
 <style lang="scss">
-  $spacing: 0.2em;
   .button {
     --color: var(--color-accent-100);
     --text: currentColor;
+    font-size: 1rem;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -44,11 +44,10 @@
     border: var(--border-width) solid var(--color);
     color: var(--text);
     text-align: center;
-    font-size: 1em;
     font-family: inherit;
-    padding: ($spacing * 2) 0.8em $spacing;
-    border-radius: var(--border-radius);
     font-weight: normal;
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
     font-size: 0.9em;
     line-height: 1;
     white-space: nowrap;
@@ -58,7 +57,7 @@
     }
 
     &.has-icon {
-      padding: $spacing;
+      padding: var(--spacing);
       background: transparent;
       border-color: transparent;
       &.primary {
@@ -73,11 +72,6 @@
       &:hover {
         --color: var(--color-primary-500);
       }
-    }
-
-    &.transparent {
-      background: transparent;
-      border-color: transparent;
     }
 
     &[disabled] {

@@ -1,4 +1,4 @@
-import { isReference } from "~lib/stores/references";
+import { isReferenceEntry } from "~lib/stores/references";
 
 function entryIsFile(entry: FileSystemEntry): entry is FileSystemFileEntry {
   return entry.isFile;
@@ -79,7 +79,7 @@ export async function getFilesFromDropEvent(ev: DragEvent) {
   ev.preventDefault();
   const entries = await getAllFileEntries(
     ev.dataTransfer?.items ?? null,
-    isReference,
+    isReferenceEntry,
   );
   return entries;
 }

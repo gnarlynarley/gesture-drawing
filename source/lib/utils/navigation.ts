@@ -6,3 +6,7 @@ export const currentPage = writable<PageName>("home");
 export function navigatePage(page: PageName) {
   currentPage.set(page);
 }
+
+export function navigatePractice() {
+  navigatePage("practice");
+}

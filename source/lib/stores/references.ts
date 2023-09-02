@@ -34,7 +34,7 @@ imageStore
     references.update((prev) => prev.concat(filterArray(localReferences))),
   );
 
-export function isReference(entry: FileSystemEntry): boolean {
+export function isReferenceEntry(entry: FileSystemEntry): boolean {
   return /\.(jpg|jpeg|png|gif)$/.test(entry.name);
 }
 
@@ -45,9 +45,9 @@ export async function addReferences(files: File[]) {
     );
     references.update((prev) => prev.concat(newReferences));
     await Promise.all(
-      newReferences.map((reference) => {
-        return imageStore.setItem(reference.id, reference);
-      }),
+      newReferences.map((reference) =>
+        imageStore.setItem(reference.id, reference),
+      ),
     );
   } catch (error) {
     console.error("error", error);

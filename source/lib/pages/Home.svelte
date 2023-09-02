@@ -9,7 +9,7 @@
   } from "~lib/stores/references";
   import { settings } from "~lib/stores/settings";
   import Modal from "~lib/components/atoms/Modal.svelte";
-  import Glass from "~lib/components/atoms/Glass.svelte";
+  import Box from "~lib/components/atoms/Box.svelte";
   import FileInput from "~lib/components/atoms/FileInput.svelte";
   import Spacer from "~lib/components/atoms/Spacer.svelte";
   import { getFilesFromDropEvent } from "~lib/utils/drop";
@@ -72,7 +72,7 @@
     </Modal>
   {/if}
   <div class="header-bar">
-    <Glass>
+    <Box>
       <Flex>
         <FileInput onChange={addReferences} label="Add files" />
         <Button
@@ -84,7 +84,7 @@
           Start
         </Button>
       </Flex>
-    </Glass>
+    </Box>
   </div>
   <div class="directory-container">
     <ReferenceFileGrid

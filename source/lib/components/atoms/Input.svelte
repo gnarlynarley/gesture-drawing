@@ -1,9 +1,23 @@
 <script lang="ts">
-  export let value: string;
+  export let value: string | number;
   export let disabled: boolean = false;
+  export let label: string | null = null;
+
+  const id = Math.random().toString();
 </script>
 
-<input type="text" bind:value {disabled} />
+<div>
+  {#if label !== null}
+    <label for={id}>
+      {label}
+    </label>
+  {/if}
+  {#if typeof value === "number"}
+    <input {id} type="number" bind:value {disabled} />
+  {:else}
+    <input {id} type="text" bind:value {disabled} />
+  {/if}
+</div>
 
 <style lang="scss">
   input {
@@ -11,7 +25,7 @@
     border: var(--border-width) solid var(--color);
     background: var(--color-background);
     color: var(--color-text);
-    padding: 0.2em;
+    padding: var(--spacing);
     width: 100%;
 
     &[disabled] {

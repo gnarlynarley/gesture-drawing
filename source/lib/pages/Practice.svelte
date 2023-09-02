@@ -19,7 +19,7 @@
   import createBlobUrl from "~lib/utils/svelte/createBlobUrl";
   import Flex from "~lib/components/atoms/Flex.svelte";
   import formatTime from "~lib/utils/formatTime";
-  import Glass from "~lib/components/atoms/Glass.svelte";
+  import Glass from "~lib/components/atoms/Box.svelte";
   import Spacer from "~lib/components/atoms/Spacer.svelte";
   import Tooltip from "~lib/components/atoms/Tooltip.svelte";
   import blockNavigation from "~lib/utils/blockNavigation";
@@ -34,7 +34,6 @@
   let timeoutId: number | null = null;
   let imageLoading = true;
   const originalTitle = document.title;
-  $: currentPractice = history.length + 1;
 
   $: document.title = `${state.toUpperCase()} | ${originalTitle}`;
 
@@ -252,7 +251,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--color-background);
     display: grid;
     grid-template:
       "header" auto
