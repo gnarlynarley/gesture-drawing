@@ -73,8 +73,8 @@
         <Stack>
           <p>Are you sure you want to remove all reference files?</p>
           <div class="button-container">
-            <Button on:click={closeClearModal}>cancel</Button>
-            <Button on:click={clearReferences}>Clear</Button>
+            <Button onClick={closeClearModal}>cancel</Button>
+            <Button onClick={clearReferences}>Clear</Button>
           </div>
         </Stack>
       </Box>
