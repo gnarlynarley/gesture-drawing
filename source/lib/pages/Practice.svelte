@@ -23,6 +23,9 @@
   import Spacer from "~lib/components/atoms/Spacer.svelte";
   import Tooltip from "~lib/components/atoms/Tooltip.svelte";
   import blockNavigation from "~lib/utils/blockNavigation";
+  import Modal from "~lib/components/atoms/Modal.svelte";
+  import ReferenceFileGrid from "~lib/components/organisms/ReferenceFileGrid.svelte";
+  import IconHistory from "~lib/components/atoms/IconHistory.svelte";
 
   blockNavigation(true);
 
@@ -33,10 +36,9 @@
   let currentFile: ReferenceFile | null = getFile();
   let timeoutId: number | null = null;
   let imageLoading = true;
+
   const originalTitle = document.title;
-
   $: document.title = `${state.toUpperCase()} | ${originalTitle}`;
-
   onDestroy(() => {
     document.title = originalTitle;
   });
@@ -141,7 +143,18 @@
   addKeybind("left", previousFile);
   addKeybind("l", nextFile);
   addKeybind("right", nextFile);
+
+  let historyModalOpen = false;
+  function toggleHistoryModal() {
+    historyModalOpen = !historyModalOpen;
+  }
 </script>
+
+{#if historyModalOpen}
+  <Modal onClose={toggleHistoryModal} full>
+    <ReferenceFileGrid references={history} showNumber />
+  </Modal>
+{/if}
 
 <div
   class="container"
@@ -154,6 +167,11 @@
         <span class="duration">{formatTime(time)}</span>
         <SettingsButtonsRow />
         <Spacer />
+        <Tooltip label="Show history">
+          <Button icon onClick={toggleHistoryModal} title="Show history">
+            <IconHistory />
+          </Button>
+        </Tooltip>
         {#if state === "playing"}
           <Tooltip label="Pause (space)">
             <Button icon onClick={toggleState} title="Pause (space)">

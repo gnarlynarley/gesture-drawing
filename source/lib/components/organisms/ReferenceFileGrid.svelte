@@ -7,7 +7,10 @@
   import FileImage from "../atoms/FileImage.svelte";
 
   export let references: ReferenceFile[];
-  export let onReferenceDeleteClick: (reference: ReferenceFile) => void;
+  export let onReferenceDeleteClick:
+    | ((reference: ReferenceFile) => void)
+    | undefined = undefined;
+  export let showNumber: boolean = false;
 
   let container: HTMLDivElement | undefined = undefined;
   let containerHeight: string | null = null;
@@ -52,14 +55,14 @@
     </Modal>
   {/if}
   <Stack>
-    <h3>References ({references.length})</h3>
     <div class="grid">
-      {#each references as reference (reference.id)}
+      {#each references as reference, index}
         <ReferenceFileThumbnail
           on:click={() => openReferenceModal(reference)}
           {isScrolling}
           {reference}
-          onReferenceDeleteClick={() => onReferenceDeleteClick(reference)}
+          {onReferenceDeleteClick}
+          number={showNumber ? index + 1 : null}
         />
       {/each}
     </div>

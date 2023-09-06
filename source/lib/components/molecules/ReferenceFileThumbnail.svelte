@@ -6,7 +6,10 @@
 
   export let reference: ReferenceFile;
   export let isScrolling = false;
-  export let onReferenceDeleteClick: (() => void) | undefined = undefined;
+  export let onReferenceDeleteClick:
+    | ((reference: ReferenceFile) => void)
+    | undefined = undefined;
+  export let number: number | null = null;
 
   const IMAGE_WIDTH = 500;
   const IMAGE_HEIGHT = 500;
@@ -65,10 +68,14 @@
       <button
         class="delete-button"
         type="button"
-        on:click={onReferenceDeleteClick}
+        on:click={() => onReferenceDeleteClick?.(reference)}
       >
         <IconClose />
       </button>
+    {/if}
+
+    {#if number !== null}
+      <span class="number">{number}</span>
     {/if}
   {/if}
 </div>
@@ -113,6 +120,15 @@
     position: absolute;
     top: var(--spacing);
     right: var(--spacing);
+  }
+
+  .number {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: var(--spacing);
+    line-height: 1;
+    background: color-mix(in srgb, var(--color-background), transparent 50%);
   }
 
   canvas {

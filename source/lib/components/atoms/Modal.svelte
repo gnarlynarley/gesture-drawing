@@ -18,7 +18,6 @@
     </div>
     <slot />
   </div>
-  <div class="background" on:click={onClose} role="presentation" />
 </div>
 
 <style lang="scss">
@@ -33,15 +32,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: auto;
+    background: color-mix(in srgb, var(--color-background), transparent 5%);
+    backdrop-filter: blur(2px);
   }
 
   .modal {
     position: relative;
     z-index: 0;
-    overflow: auto;
     width: 100%;
     max-height: 100%;
-    border-radius: var(--border-radius);
     max-width: 30em;
 
     .is-full & {
@@ -55,16 +55,5 @@
       top: 0;
       z-index: 1;
     }
-  }
-
-  .background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    background: color-mix(in srgb, var(--color-background), transparent 5%);
-    backdrop-filter: blur(2px);
   }
 </style>
