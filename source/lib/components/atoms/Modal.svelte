@@ -1,8 +1,6 @@
 <script lang="ts">
   import addKeybind from "../../utils/svelte/addKeybind";
-
   import Button from "./Button.svelte";
-  import Glass from "./Box.svelte";
   import IconClose from "./IconClose.svelte";
 
   export let onClose: () => void;

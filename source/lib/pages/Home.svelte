@@ -16,6 +16,7 @@
   import SettingsModal from "~lib/components/molecules/SettingsModal.svelte";
   import { navigatePage } from "~lib/utils/navigation";
   import ReferenceFileGrid from "~lib/components/organisms/ReferenceFileGrid.svelte";
+  import Stack from "~lib/components/atoms/Stack.svelte";
 
   let container: HTMLDivElement;
   $: valid = $settings.duration !== 0 && $references.length > 0;
@@ -46,6 +47,10 @@
     dragCounter -= 1;
   }
 
+  function closeClearModal() {
+    showClearReferenceModal = false;
+  }
+
   $: document.body.style.pointerEvents = dragActive ? "none" : "";
 </script>
 
@@ -63,12 +68,16 @@
     </div>
   {/if}
   {#if showClearReferenceModal}
-    <Modal
-      onClose={() => (showClearReferenceModal = false)}
-      onAccept={clearReferences}
-      onAcceptLabel="Clear references"
-    >
-      Are you sure you want to remove all reference files?
+    <Modal onClose={closeClearModal}>
+      <Box>
+        <Stack>
+          <p>Are you sure you want to remove all reference files?</p>
+          <div class="button-container">
+            <Button on:click={closeClearModal}>cancel</Button>
+            <Button on:click={clearReferences}>Clear</Button>
+          </div>
+        </Stack>
+      </Box>
     </Modal>
   {/if}
   <div class="header-bar">
@@ -105,6 +114,12 @@
     min-height: 100vh;
     position: relative;
     z-index: 0;
+  }
+
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 
   .drag-overlay {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Box from "~lib/components/atoms/Box.svelte";
   import Button from "~lib/components/atoms/Button.svelte";
   import IconHelp from "~lib/components/atoms/IconHelp.svelte";
   import Modal from "~lib/components/atoms/Modal.svelte";
@@ -31,28 +32,30 @@
 
 {#if closeModalActive}
   <Modal onClose={closeModal}>
-    <div class="help-content">
-      <h2>Help</h2>
+    <Box>
+      <div class="help-content">
+        <h2>Help</h2>
 
-      <p>
-        Use this tool for timed drawing exersizes where you take a reference,
-        and try to draw it in a limited amount of time.
-      </p>
+        <p>
+          Use this tool for timed drawing exersizes where you take a reference,
+          and try to draw it in a limited amount of time.
+        </p>
 
-      <h3>Shortcuts</h3>
-      <ul>
-        <li><code>j</code> navigate to the previous image</li>
-        <li><code>l</code> navigate to the next image</li>
-        <li><code>space</code> pause the timer</li>
-        <li><code>f</code> toggle fullscreen</li>
-      </ul>
+        <h3>Shortcuts</h3>
+        <ul>
+          <li><code>j</code> navigate to the previous image</li>
+          <li><code>l</code> navigate to the next image</li>
+          <li><code>space</code> pause the timer</li>
+          <li><code>f</code> toggle fullscreen</li>
+        </ul>
 
-      <p>
-        Got feedback, hit me up on <a href="https://twitter.com/GnarlyNarley"
-          >twitter</a
-        >!
-      </p>
-    </div>
+        <p>
+          Got feedback, hit me up on <a href="https://twitter.com/GnarlyNarley"
+            >twitter</a
+          >!
+        </p>
+      </div>
+    </Box>
   </Modal>
 {/if}
 
