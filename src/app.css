@@ -1,0 +1,67 @@
+@import "@fontsource-variable/merriweather";
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-primary: oklab(0.83 -0.21 0.09);
+  --color-background: #1f1f22;
+  --color-accent: color-mix(in oklab, var(--color-background), white 8%);
+  --color-text: #ccc;
+  --gutter: 0.8em;
+  --spacing: 2em;
+  --border-radius: 0.3em;
+}
+
+html {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "Merriweather Variable", serif;
+  font-size: 100%;
+}
+
+body {
+  background-size: 3em 3em;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-accent), transparent 70%) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-accent), transparent 70%) 1px,
+      transparent 1px
+    );
+}
+
+button {
+  all: unset;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+&::active {
+  outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
