@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ImageFileHandle } from "$lib/models";
+  import { ImageFileHandle } from "$lib/models";
   import type { QueueItem } from "$lib/utils/createQueue.svelte";
   import parseTime from "$lib/utils/parseTime";
   import type { Schedule } from "$lib/utils/schedule";
@@ -10,6 +10,8 @@
   };
 
   const { entries }: Props = $props();
+  let selectedFile = $state<File | null>(null);
+
   const groupedPromise = $derived(
     Promise.all(
       entries
@@ -38,22 +40,57 @@
         }),
     ),
   );
+
+  function onImageClick(file: File) {
+    selectedFile = file;
+  }
+
+  function onImageClose() {
+    selectedFile = null;
+  }
+
+  function onkeydown(ev: KeyboardEvent) {
+    switch (ev.key) {
+      case "Escape": {
+        onImageClose();
+        break;
+      }
+    }
+  }
 </script>
+
+<svelte:window {onkeydown} />
 
 <div class="wrapper">
   {#await groupedPromise then grouped}
     {#each grouped as item}
       <div class="item">
-        <p>Duration: {parseTime(item.schedule.duration)}</p>
+        <h2>Duration: {parseTime(item.schedule.duration)}</h2>
         <div class="grid">
-          {#each item.files as file}
-            <FileHandleImage {file} />
+          {#each item.files as file, index}
+            <button
+              class="image"
+              type="button"
+              onclick={() => onImageClick(file)}
+            >
+              <span class="label">
+                Picture #{index + 1}
+              </span>
+              <FileHandleImage {file} />
+            </button>
           {/each}
         </div>
       </div>
     {/each}
   {/await}
 </div>
+{#if selectedFile}
+  <button type="button" class="fullscreen" onclick={onImageClose}>
+    <div class="inner">
+      <FileHandleImage fit cover file={selectedFile} />
+    </div>
+  </button>
+{/if}
 
 <style>
   .wrapper {
@@ -72,8 +109,39 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--gutter);
     align-content: stretch;
+  }
+
+  .image {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gutter);
+
+    :global(image) {
+      flex-grow: 1;
+    }
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background-color: color-mix(
+      in oklab,
+      var(--color-background),
+      transparent 10%
+    );
+    display: flex;
+
+    .inner {
+      width: 100%;
+      position: relative;
+      margin: var(--spacing);
+    }
   }
 </style>

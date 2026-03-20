@@ -4,9 +4,10 @@
   type Props = {
     file: File;
     cover?: boolean;
+    fit?: boolean;
   };
 
-  const { file, cover }: Props = $props();
+  const { file, cover, fit }: Props = $props();
 
   let src = $state<string | null>(null);
 
@@ -20,7 +21,7 @@
 </script>
 
 {#if src}
-  <img class="image" class:cover {src} alt={file.name} />
+  <img class="image" class:cover class:fit {src} alt={file.name} />
 {:else}
   <span>loading...</span>
 {/if}
@@ -40,6 +41,10 @@
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    &.fit {
+      object-fit: scale-down;
     }
   }
 </style>

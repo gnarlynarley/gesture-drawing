@@ -89,7 +89,7 @@
 
   $effect(() => {
     if (!playing) return;
-    if (view === "pending") return;
+    if (!(view === "intermission" || view === "drawing")) return;
     let lastTime = performance.now();
     const intervalId = setInterval(() => {
       const currentTime = performance.now();
@@ -128,7 +128,7 @@
         <RefreshCcwIcon />
       </Button>
     {/if}
-    {#if view === "drawing"}
+    {#if view === "drawing" || view === "pending"}
       <Button onclick={togglePlay} title={playing ? "Pause" : "Play"}>
         {#if playing}
           <PauseIcon width="3" />
@@ -160,8 +160,6 @@
   <div class="content">
     {#if view === "intermission"}
       <h1>Intermission</h1>
-    {:else if view === "pending"}
-      <h1>pending</h1>
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
@@ -181,7 +179,6 @@
     overflow: hidden;
     display: grid;
     grid-template-rows: auto 1fr auto;
-    gap: var(--spacing);
     width: 100%;
 
     &.scroll {
@@ -215,7 +212,12 @@
     flex-direction: column;
     position: relative;
     padding: var(--spacing);
-    gap: var(--spacing);
+    gap: var(--gutter);
+
+    .wrapper:not(.scroll) & {
+      align-items: center;
+      justify-content: center;
+    }
 
     .image {
       position: relative;
