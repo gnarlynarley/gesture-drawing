@@ -6,9 +6,9 @@ import {
 } from "./schedule";
 
 const schedules: Schedule[] = [
-  { amount: 5, duration: 30 },
-  { amount: 3, duration: 60 },
-  { amount: 2, duration: 300 },
+  { id: "1", amount: 5, duration: 30 },
+  { id: "2", amount: 3, duration: 60 },
+  { id: "3", amount: 2, duration: 300 },
 ];
 
 describe("getSchedule", () => {

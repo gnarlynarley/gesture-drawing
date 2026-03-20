@@ -10,13 +10,14 @@
   import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
   import playDing from "$lib/utils/playDing";
   import { type Schedule } from "$lib/utils/schedule";
-  import FileHandleImage from "$lib/components/FileHandleImage.svelte";
+  import FileHandleImage from "$lib/components/FileImage.svelte";
   import Timebar from "$lib/components/Timebar.svelte";
   import createQueue from "$lib/utils/createQueue.svelte";
   import parseTime from "$lib/utils/parseTime";
+  import type { ImageFileHandle } from "$lib/models";
 
   type Props = {
-    files: FileSystemFileHandle[];
+    files: ImageFileHandle[];
     stopPractice: () => void;
     schedules: Schedule[];
     intermissionTime: number;
@@ -26,6 +27,7 @@
   const { files, stopPractice, schedules, intermissionTime, autoPlay }: Props =
     $props();
   const queue = $derived(createQueue(files, schedules));
+  let currentFile = $state<File | null>(null);
 
   let totalTime = $state(0);
   let time = $state(0);
@@ -36,7 +38,7 @@
   let view = $state<ViewState>("drawing");
   let playing = $state(true);
 
-  function next(skipIntermission = false) {
+  async function next(skipIntermission = false) {
     const isIntermission = view === "intermission";
 
     time = 0;
@@ -53,6 +55,7 @@
       if (queue.state.current) {
         totalTime = queue.state.current.schedule.duration * 1000;
         time = queue.state.current.schedule.duration * 1000;
+        currentFile = await queue.state.current.item.getFile();
       } else {
         playing = false;
         view = "end";
@@ -156,9 +159,9 @@
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
-    {:else if queue.state.current}
+    {:else if view === "drawing" && currentFile}
       <div class="image">
-        <FileHandleImage cover handle={queue.state.current.item} />
+        <FileHandleImage cover file={currentFile} />
       </div>
     {/if}
   </div>

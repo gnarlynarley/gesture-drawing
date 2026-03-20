@@ -1,32 +1,26 @@
 <script lang="ts">
+  import type { ImageFileHandle } from "$lib/models";
+
   type Props = {
-    handle: FileSystemFileHandle;
+    file: File;
     cover?: boolean;
   };
 
-  const { handle, cover }: Props = $props();
+  const { file, cover }: Props = $props();
 
   let src = $state<string | null>(null);
 
   $effect(() => {
-    let active = true;
-    let url: string | null = null;
-
-    handle.getFile().then((file) => {
-      if (!active) return false;
-
-      url = URL.createObjectURL(file);
-      src = url;
-    });
+    src = URL.createObjectURL(file);
 
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (src) URL.revokeObjectURL(src);
     };
   });
 </script>
 
 {#if src}
-  <img class="image" class:cover {src} alt={handle.name} />
+  <img class="image" class:cover {src} alt={file.name} />
 {:else}
   <span>loading...</span>
 {/if}
