@@ -1,53 +1,74 @@
 <script lang="ts">
   type Props = {
     value: number;
+    label?: string;
   };
 
-  let { value = $bindable() }: Props = $props();
+  let { value = $bindable(), label }: Props = $props();
   const seconds = $derived(value % 60);
   const minutes = $derived(Math.floor(value / 60));
+  const id = $props.id();
 </script>
 
 <div class="wrapper">
-  <input
-    type="number"
-    min="0"
-    bind:value={
-      () => minutes,
-      (v) => {
-        value = v * 60 + seconds || 0;
+  {#if label}
+    <label for={id}>{label}</label>
+  {/if}
+  <div class="inputs">
+    <input
+      {id}
+      type="number"
+      min="0"
+      bind:value={
+        () => minutes,
+        (v) => {
+          value = v * 60 + seconds || 0;
+        }
       }
-    }
-  />
-  <span>:</span>
-  <input
-    type="number"
-    min="0"
-    max="59"
-    bind:value={
-      () => seconds.toString().padStart(2, "0"),
-      (v) => {
-        value = Number.parseFloat(v) + minutes * 60 || 0;
+    />
+    <span>:</span>
+    <input
+      type="number"
+      min="0"
+      max="59"
+      bind:value={
+        () => seconds.toString().padStart(2, "0"),
+        (v) => {
+          value = Number.parseFloat(v) + minutes * 60 || 0;
+        }
       }
-    }
-  />
+    />
+  </div>
 </div>
 
 <style>
   .wrapper {
+    display: grid;
+    gap: var(--gutter);
+  }
+
+  .inputs {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 0.3em;
+  }
+
+  input {
     padding: var(--gutter);
     background-color: var(--color-accent);
     display: flex;
     border-radius: var(--border-radius);
     width: 100%;
+    border: 2px solid transparent;
 
-    &:focus-within {
-      outline: 2px solid var(--color-primary);
-      outline-offset: 2px;
+    &:first-of-type {
+      text-align: right;
     }
-  }
 
-  input {
-    field-sizing: content;
+    &:focus-visible {
+      border-color: var(--color-primary);
+      outline: none;
+    }
   }
 </style>

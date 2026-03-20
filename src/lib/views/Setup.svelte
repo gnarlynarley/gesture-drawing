@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Button from '$lib/components/Button.svelte';
-  import Checkbox from '$lib/components/Checkbox.svelte';
-  import DragList from '$lib/components/DragList.svelte';
-  import Input from '$lib/components/Input.svelte';
-  import TimeInput from '$lib/components/TimeInput.svelte';
-  import { chooseDirectory } from '$lib/stores/directory.svelte';
-  import { settings } from '$lib/stores/setting.svelte';
-  import createId from '$lib/utils/createId';
-  import type { Schedule } from '$lib/utils/schedule';
-  import { blur, fade } from 'svelte/transition';
+  import Button from "$lib/components/Button.svelte";
+  import Checkbox from "$lib/components/Checkbox.svelte";
+  import DragList from "$lib/components/DragList.svelte";
+  import Input from "$lib/components/Input.svelte";
+  import TimeInput from "$lib/components/TimeInput.svelte";
+  import { chooseDirectory } from "$lib/stores/directory.svelte";
+  import { settings } from "$lib/stores/setting.svelte";
+  import createId from "$lib/utils/createId";
+  import type { Schedule } from "$lib/utils/schedule";
+  import { blur, fade } from "svelte/transition";
 
   type Props = {
     files: unknown[] | null;
@@ -62,18 +62,18 @@
 
   <div class="box">
     <div class="items">
-      <div class="item">
-        <span>Amount</span>
-        <span>Duration</span>
-      </div>
       <DragList bind:items={$settings.schedules}>
         {#snippet content(schedule, index)}
           <div class="item" transition:fade>
             <Input
               name="amount"
+              label="Amount"
               bind:value={$settings.schedules[index].amount}
             />
-            <TimeInput bind:value={$settings.schedules[index].duration} />
+            <TimeInput
+              label="Time"
+              bind:value={$settings.schedules[index].duration}
+            />
             <Button tabindex={-1} onclick={() => deleteSchedule(schedule)}>
               &times
             </Button>
@@ -115,16 +115,9 @@
     gap: var(--gutter);
 
     .item {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      justify-items: end;
+      display: flex;
       gap: var(--gutter);
-
-      label {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-      }
+      align-items: flex-end;
     }
   }
 </style>

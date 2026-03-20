@@ -9,7 +9,6 @@
 
   let { name, value = $bindable(), label }: Props = $props();
 
-  const valueType = $derived(typeof value);
   const type = $derived.by((): HTMLInputAttributes["type"] => {
     switch (typeof value) {
       case "boolean":
