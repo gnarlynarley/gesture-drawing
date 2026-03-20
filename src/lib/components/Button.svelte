@@ -3,30 +3,39 @@
 
   type Props = HTMLButtonAttributes & {
     primary?: boolean;
+    bordered?: boolean;
   };
 
-  const { primary, children, type = "button", ...props }: Props = $props();
+  const {
+    primary,
+    bordered,
+    children,
+    type = "button",
+    ...props
+  }: Props = $props();
 </script>
 
-<button {type} class="u-focus" class:primary {...props}>
+<button {type} class="u-focus" class:primary class:bordered {...props}>
   {@render children?.()}
 </button>
 
 <style lang="scss">
   button {
-    --color: var(--color-accent);
+    --button-color: var(--color-accent);
+    --color: var(--button-color);
     padding: var(--gutter);
     background-color: var(--color);
     text-align: center;
     border-radius: var(--border-radius);
     flex-shrink: 0;
+    border: 2px solid var(--color);
 
     :global(svg) {
       display: block;
     }
 
     &.primary {
-      --color: var(--color-primary);
+      --button-color: var(--color-primary);
       color: var(--color-background);
     }
 
@@ -36,13 +45,22 @@
     }
 
     &:hover {
-      background-color: color-mix(in oklab, var(--color), white 15%);
+      --color: color-mix(in oklab, var(--button-color), white 15%);
     }
 
     &[disabled] {
       opacity: 0.6;
-      background-color: var(--color-accent);
       cursor: not-allowed;
+    }
+
+    &.bordered {
+      border-color: var(--color);
+      background-color: transparent;
+      color: var(--color);
+
+      &:hover {
+        background-color: transparent;
+      }
     }
   }
 </style>

@@ -6,6 +6,8 @@
     PauseIcon,
     PlayIcon,
     RefreshCcwIcon,
+    FlipHorizontal2Icon,
+    PaletteIcon,
   } from "@lucide/svelte";
   import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
   import playDing from "$lib/utils/playDing";
@@ -32,6 +34,17 @@
   let totalTime = $state(0);
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
+
+  let flipped = $state(false);
+  let grayscale = $state(false);
+
+  function toggleFlip() {
+    flipped = !flipped;
+  }
+
+  function toggleGrayscale() {
+    grayscale = !grayscale;
+  }
 
   type ViewState = "drawing" | "intermission" | "pending" | "end";
 
@@ -121,7 +134,13 @@
 
 <svelte:window {onkeydown} />
 
-<div class="wrapper" class:playing class:scroll={view === "end"}>
+<div
+  class="wrapper"
+  class:playing
+  class:scroll={view === "end"}
+  class:flipped
+  class:grayscale
+>
   <div class="toolbar">
     {#if view === "end"}
       <Button onclick={reset}>
@@ -138,6 +157,13 @@
       </Button>
       <Button onclick={() => next(true)} title="Next">
         <ForwardIcon />
+      </Button>
+      <div class="divider"></div>
+      <Button onclick={toggleFlip} primary={flipped} bordered>
+        <FlipHorizontal2Icon />
+      </Button>
+      <Button onclick={toggleGrayscale} primary={grayscale} bordered>
+        <PaletteIcon />
       </Button>
       {#if queue.state.current}
         <div class="text">
@@ -187,7 +213,12 @@
   }
 
   .toolbar {
-    background-color: var(--color-background);
+    background-color: color-mix(
+      in oklab,
+      var(--color-background),
+      transparent 8%
+    );
+    backdrop-filter: blur(8px);
     border: 2px solid var(--color-accent);
     padding: var(--gutter);
     display: flex;
@@ -204,6 +235,12 @@
 
     .push {
       width: 100%;
+    }
+
+    .divider {
+      width: 2px;
+      height: 50%;
+      background-color: var(--color-accent);
     }
   }
 
@@ -223,6 +260,13 @@
       position: relative;
       width: 100%;
       height: 100%;
+
+      .wrapper.flipped & {
+        scale: -1 1;
+      }
+      .wrapper.grayscale & {
+        filter: saturate(0%);
+      }
     }
   }
 </style>
