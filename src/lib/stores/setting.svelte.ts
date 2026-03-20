@@ -1,10 +1,10 @@
-import { writable } from 'svelte/store';
-import { scheduleSchema, type Schedule } from '../utils/schedule';
-import localforage from 'localforage';
-import * as v from 'valibot';
-import createId from '$lib/utils/createId';
+import { writable } from "svelte/store";
+import { scheduleSchema, type Schedule } from "../utils/schedule";
+import localforage from "localforage";
+import * as v from "valibot";
+import createId from "$lib/utils/createId";
 
-const SETTINGS_KEY = 'gesture-app.settings';
+const SETTINGS_KEY = "gesture-app.settings";
 const INTERMISSION_TIME_DEFAULT = 3;
 const SCHEDULES_DEFAULT: Schedule[] = [
   {
@@ -35,13 +35,13 @@ const settingsStateSchema = v.object({
   directory: v.union([v.instance(FileSystemDirectoryHandle), v.null()]),
   schedules: v.optional(v.array(scheduleSchema), SCHEDULES_DEFAULT),
   intermissionTime: v.optional(v.number(), INTERMISSION_TIME_DEFAULT),
-  autoPlay: v.optional(v.boolean(), false),
+  autoPlay: v.optional(v.boolean(), true),
 });
 
 export const settings = writable<SettingsState>({
   directory: null,
   schedules: SCHEDULES_DEFAULT,
-  autoPlay: false,
+  autoPlay: true,
   intermissionTime: INTERMISSION_TIME_DEFAULT,
 });
 
