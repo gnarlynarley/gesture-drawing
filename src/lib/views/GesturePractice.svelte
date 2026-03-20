@@ -186,7 +186,7 @@
     {#if view === "intermission"}
       <h1>Intermission</h1>
       <Charr />
-      <p>Get ready for the next</p>
+      <p>Get ready</p>
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
