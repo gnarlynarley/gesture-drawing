@@ -9,14 +9,14 @@
     FlipHorizontal2Icon,
     PaletteIcon,
   } from "@lucide/svelte";
-  import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
-  import playDing from "$lib/utils/playDing";
   import { type Schedule } from "$lib/utils/schedule";
-  import FileHandleImage from "$lib/components/FileImage.svelte";
   import Timebar from "$lib/components/Timebar.svelte";
   import createQueue from "$lib/utils/createQueue.svelte";
   import parseTime from "$lib/utils/parseTime";
   import type { ImageFileHandle } from "$lib/models";
+  import Charr from "$lib/components/Charr.svelte";
+  import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
+  import FileImage from "$lib/components/FileImage.svelte";
 
   type Props = {
     files: ImageFileHandle[];
@@ -111,7 +111,6 @@
       time -= ellapsed;
 
       if (time <= 0) {
-        playDing();
         if (autoPlay) {
           next();
         }
@@ -186,12 +185,14 @@
   <div class="content">
     {#if view === "intermission"}
       <h1>Intermission</h1>
+      <Charr />
+      <p>Get ready for the next</p>
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
     {:else if view === "drawing" && currentFile}
       <div class="image">
-        <FileHandleImage cover file={currentFile} />
+        <FileImage cover file={currentFile} />
       </div>
     {/if}
   </div>

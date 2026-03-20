@@ -8,7 +8,7 @@
 }
 
 :root {
-  --color-primary: oklab(0.83 -0.21 0.09);
+  --color-primary: oklab(82.19300000000001% 0.03389 0.16433);
   --color-background: #1f1f22;
   --color-accent: color-mix(in oklab, var(--color-background), white 8%);
   --color-text: #ccc;
@@ -67,5 +67,5 @@ input[type="number"] {
 }
 
 ::selection {
-  background-color: color-mix(in oklab, var(--color-primary), transparent 80%);
+  background-color: color-mix(in oklab, var(--color-primary), transparent 70%);
 }
