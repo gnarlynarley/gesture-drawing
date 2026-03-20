@@ -33,12 +33,13 @@
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
 
-  type ViewState = "drawing" | "intermission" | "end";
+  type ViewState = "drawing" | "intermission" | "pending" | "end";
 
   let view = $state<ViewState>("drawing");
   let playing = $state(true);
 
   async function next(skipIntermission = false) {
+    if (view === "pending") return;
     const isIntermission = view === "intermission";
 
     time = 0;
@@ -55,7 +56,9 @@
       if (queue.state.current) {
         totalTime = queue.state.current.schedule.duration * 1000;
         time = queue.state.current.schedule.duration * 1000;
+        view = "pending";
         currentFile = await queue.state.current.item.getFile();
+        view = "drawing";
       } else {
         playing = false;
         view = "end";
@@ -86,6 +89,7 @@
 
   $effect(() => {
     if (!playing) return;
+    if (view === "pending") return;
     let lastTime = performance.now();
     const intervalId = setInterval(() => {
       const currentTime = performance.now();
@@ -156,6 +160,8 @@
   <div class="content">
     {#if view === "intermission"}
       <h1>Intermission</h1>
+    {:else if view === "pending"}
+      <h1>pending</h1>
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
