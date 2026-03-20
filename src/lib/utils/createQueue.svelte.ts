@@ -2,7 +2,7 @@ import {
   getSchedule,
   getCurrentPageFromSchedules,
   type Schedule,
-} from "./schedule";
+} from './schedule';
 
 export type QueueItem<T> = {
   item: T;
@@ -11,7 +11,6 @@ export type QueueItem<T> = {
 };
 
 export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
-  console.log(schedules);
   let state = $state({
     queue: Array.from(arr),
     history: [] as QueueItem<T>[],

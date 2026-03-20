@@ -1,21 +1,25 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
-  import Checkbox from "$lib/components/Checkbox.svelte";
-  import Input from "$lib/components/Input.svelte";
-  import TimeInput from "$lib/components/TimeInput.svelte";
-  import { chooseDirectory } from "$lib/stores/directory.svelte";
-  import { settings } from "$lib/stores/setting.svelte";
-  import type { Schedule } from "$lib/utils/schedule";
-  import { blur, fade } from "svelte/transition";
+  import Button from '$lib/components/Button.svelte';
+  import Checkbox from '$lib/components/Checkbox.svelte';
+  import DragList from '$lib/components/DragList.svelte';
+  import Input from '$lib/components/Input.svelte';
+  import TimeInput from '$lib/components/TimeInput.svelte';
+  import { chooseDirectory } from '$lib/stores/directory.svelte';
+  import { settings } from '$lib/stores/setting.svelte';
+  import createId from '$lib/utils/createId';
+  import type { Schedule } from '$lib/utils/schedule';
+  import { blur, fade } from 'svelte/transition';
 
   type Props = {
-    startPractice: null | (() => void);
+    files: unknown[] | null;
+    startPractice: () => void;
   };
 
-  let { startPractice }: Props = $props();
+  let { startPractice, files }: Props = $props();
 
   function addSchedule() {
     $settings.schedules.push({
+      id: createId(),
       amount: 0,
       duration: 0,
     });
@@ -29,6 +33,10 @@
       $settings.schedules = $settings.schedules;
     }
   }
+
+  const canStart = $derived(
+    files && files.length > 0 && $settings.schedules.length > 0,
+  );
 </script>
 
 <div class="wrapper">
@@ -58,26 +66,25 @@
         <span>Amount</span>
         <span>Duration</span>
       </div>
-      {#each $settings.schedules as schedule}
-        <div class="item" transition:fade>
-          <Input name="amount" bind:value={schedule.amount} />
-          <TimeInput bind:value={schedule.duration} />
-          <Button tabindex={-1} onclick={() => deleteSchedule(schedule)}>
-            &times
-          </Button>
-        </div>
-      {/each}
+      <DragList bind:items={$settings.schedules}>
+        {#snippet content(schedule, index)}
+          <div class="item" transition:fade>
+            <Input
+              name="amount"
+              bind:value={$settings.schedules[index].amount}
+            />
+            <TimeInput bind:value={$settings.schedules[index].duration} />
+            <Button tabindex={-1} onclick={() => deleteSchedule(schedule)}>
+              &times
+            </Button>
+          </div>
+        {/snippet}
+      </DragList>
     </div>
     <Button onclick={addSchedule}>Add schedule</Button>
   </div>
 
-  <Button
-    primary
-    onclick={startPractice ?? undefined}
-    disabled={!startPractice}
-  >
-    Start
-  </Button>
+  <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
 </div>
 
 <style lang="scss">
@@ -89,9 +96,10 @@
     flex-direction: column;
     gap: var(--spacing);
     padding: var(--gutter);
-    max-width: 30em;
+    max-width: 40em;
     width: 100%;
     background-color: var(--color-background);
+    padding: var(--gutter);
   }
 
   .box {
@@ -105,14 +113,12 @@
 
   .items {
     gap: var(--gutter);
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
 
     .item {
       display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr auto;
       justify-items: end;
+      gap: var(--gutter);
 
       label {
         display: flex;

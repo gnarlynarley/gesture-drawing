@@ -1,25 +1,22 @@
 <script lang="ts">
-  import Setup from "$lib/views/Setup.svelte";
-  import { files } from "$lib/stores/directory.svelte";
-  import GesturePractice from "$lib/views/GesturePractice.svelte";
-  import { pendingSettings, settings } from "$lib/stores/setting.svelte";
-  import NotificationManager from "$lib/components/NotificationManager.svelte";
-  import Box from "$lib/components/Box.svelte";
+  import Setup from '$lib/views/Setup.svelte';
+  import { files } from '$lib/stores/directory.svelte';
+  import GesturePractice from '$lib/views/GesturePractice.svelte';
+  import { pendingSettings, settings } from '$lib/stores/setting.svelte';
+  import NotificationManager from '$lib/components/NotificationManager.svelte';
+  import Box from '$lib/components/Box.svelte';
 
   let start = $state(false);
-  let startPractice = $derived(
-    $files
-      ? () => {
-          start = true;
-        }
-      : null,
-  );
+
+  function startPractice() {
+    start = true;
+  }
 
   function stopPractice() {
     start = false;
   }
 
-  const apiSupported = "showDirectoryPicker" in self;
+  const apiSupported = 'showDirectoryPicker' in self;
 </script>
 
 <div class="wrapper">
@@ -34,7 +31,7 @@
           autoPlay={$settings.autoPlay}
         />
       {:else}
-        <Setup {startPractice} />
+        <Setup {startPractice} files={$files} />
       {/if}
     {/await}
   {:else}

@@ -1,24 +1,29 @@
-import { writable } from "svelte/store";
-import { scheduleSchema, type Schedule } from "../utils/schedule";
-import localforage from "localforage";
-import * as v from "valibot";
+import { writable } from 'svelte/store';
+import { scheduleSchema, type Schedule } from '../utils/schedule';
+import localforage from 'localforage';
+import * as v from 'valibot';
+import createId from '$lib/utils/createId';
 
-const SETTINGS_KEY = "gesture-app.settings";
+const SETTINGS_KEY = 'gesture-app.settings';
 const INTERMISSION_TIME_DEFAULT = 3;
 const SCHEDULES_DEFAULT: Schedule[] = [
   {
+    id: createId(),
     amount: 10,
     duration: 30,
   },
   {
+    id: createId(),
     amount: 5,
     duration: 120,
   },
   {
+    id: createId(),
     amount: 2,
     duration: 300,
   },
   {
+    id: createId(),
     amount: 1,
     duration: 600,
   },
