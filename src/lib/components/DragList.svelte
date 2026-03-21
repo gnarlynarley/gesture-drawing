@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends { id: string | number }">
-  import type { Snippet } from 'svelte';
-  import { flip } from 'svelte/animate';
-  import { blur } from 'svelte/transition';
+  import type { Snippet } from "svelte";
+  import { flip } from "svelte/animate";
+  import { blur } from "svelte/transition";
 
   type Props = {
     items: T[];
@@ -42,16 +42,16 @@
     insertionIndex = index;
 
     if (event.dataTransfer) {
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', String(index));
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", String(index));
 
-      const hiddenDragImage = document.createElement('div');
-      hiddenDragImage.style.width = '1px';
-      hiddenDragImage.style.height = '1px';
-      hiddenDragImage.style.opacity = '0';
-      hiddenDragImage.style.position = 'fixed';
-      hiddenDragImage.style.top = '0';
-      hiddenDragImage.style.left = '0';
+      const hiddenDragImage = document.createElement("div");
+      hiddenDragImage.style.width = "1px";
+      hiddenDragImage.style.height = "1px";
+      hiddenDragImage.style.opacity = "0";
+      hiddenDragImage.style.position = "fixed";
+      hiddenDragImage.style.top = "0";
+      hiddenDragImage.style.left = "0";
 
       document.body.appendChild(hiddenDragImage);
       event.dataTransfer.setDragImage(hiddenDragImage, 0, 0);
@@ -70,7 +70,7 @@
     event.preventDefault();
 
     if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'move';
+      event.dataTransfer.dropEffect = "move";
     }
 
     const currentTarget = event.currentTarget as HTMLElement;
@@ -156,16 +156,14 @@
 
 <style lang="scss">
   .wrapper {
-    display: grid;
-    gap: var(--gutter);
+    display: flex;
+    flex-direction: column;
   }
 
   .item {
-    --border-size: 2px;
+    --border-size: 1px;
     border-block: var(--border-size) solid transparent;
     padding: calc(var(--gutter) - (var(--border-size) * 2));
-    border-radius: var(--border-radius);
-    display: grid;
 
     .wrapper.is-drag-inside &:not(.is-dragging).is-before {
       border-block-start-color: var(--color-primary);
@@ -174,7 +172,6 @@
       border-block-end-color: var(--color-primary);
     }
     &.is-dragging {
-      display: grid;
       background-color: color-mix(
         in oklab,
         var(--color-primary),

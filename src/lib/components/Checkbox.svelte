@@ -3,9 +3,10 @@
     checked: boolean;
     name: string;
     label?: string;
+    description?: string;
   };
 
-  let { checked = $bindable(), name, label }: Props = $props();
+  let { checked = $bindable(), name, label, description }: Props = $props();
   const id = $props.id();
 </script>
 
@@ -19,6 +20,9 @@
   <label for={id} class="wrapper">
     {@render checkbox()}
     <span>{label}</span>
+    {#if description}
+      <small>({description})</small>
+    {/if}
   </label>
 {:else}
   {@render checkbox()}

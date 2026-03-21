@@ -5,9 +5,10 @@
     name: string;
     value: number | string;
     label?: string;
+    description?: string;
   };
 
-  let { name, value = $bindable(), label }: Props = $props();
+  let { name, value = $bindable(), label, description }: Props = $props();
 
   const type = $derived.by((): HTMLInputAttributes["type"] => {
     switch (typeof value) {
@@ -29,6 +30,11 @@
 {#if label}
   <div class="wrapper">
     <label for={id}>{label}</label>
+    {#if description}
+      <p class="description">
+        <small>{description}</small>
+      </p>
+    {/if}
     {@render input()}
   </div>
 {:else}
@@ -44,6 +50,10 @@
   label {
     flex-shrink: 0;
     flex-grow: 1;
+  }
+
+  .description {
+    margin-top: -0.5em;
   }
 
   input {

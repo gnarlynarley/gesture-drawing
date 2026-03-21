@@ -50,8 +50,8 @@
   .inputs {
     display: flex;
     align-items: center;
-    width: 100%;
     gap: 0.3em;
+    flex-shrink: 1;
   }
 
   input {
@@ -59,8 +59,9 @@
     background-color: var(--color-accent);
     display: flex;
     border-radius: var(--border-radius);
-    width: 100%;
+    /* width: 100%; */
     border: 2px solid transparent;
+    width: 4em;
 
     &:first-of-type {
       text-align: right;

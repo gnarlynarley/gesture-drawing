@@ -41,7 +41,7 @@
 </script>
 
 <div class="wrapper">
-  <Box>
+  <Box xl>
     <h1>Setup</h1>
 
     <Button onclick={chooseDirectory}>
@@ -55,12 +55,14 @@
     <Input
       label="Intermission time"
       name="intermissiontime"
+      description="Time in seconds between every picture so you can adjust the canvas or etc."
       bind:value={$settings.intermissionTime}
     />
 
     <Checkbox
       label="Autoplay"
       name="autoplay"
+      description="Automatically advance to the next picture"
       bind:checked={$settings.autoPlay}
     />
 
@@ -70,12 +72,12 @@
           {#snippet content(schedule, index)}
             <div class="item" transition:fade>
               <Input
+                label={index === 0 ? "Amount of pictures" : undefined}
                 name="amount"
-                label="Amount"
                 bind:value={$settings.schedules[index].amount}
               />
               <TimeInput
-                label="Time"
+                label={index === 0 ? "Time" : undefined}
                 bind:value={$settings.schedules[index].duration}
               />
               <Button tabindex={-1} onclick={() => deleteSchedule(schedule)}>
@@ -103,9 +105,12 @@
 
   .items {
     gap: var(--gutter);
+    display: grid;
 
     .item {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      grid-column: 1 / -1;
       gap: var(--gutter);
       align-items: flex-end;
     }
