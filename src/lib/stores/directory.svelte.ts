@@ -52,8 +52,6 @@ settings.subscribe((state) => {
         files.set(handles);
       });
     }
-  } else {
-    files.set(null);
   }
 });
 
