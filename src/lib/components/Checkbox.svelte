@@ -33,6 +33,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--gutter);
+    padding-inline: var(--gutter);
   }
 
   .checkbox {

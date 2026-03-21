@@ -163,7 +163,7 @@
   .item {
     --border-size: 1px;
     border-block: var(--border-size) solid transparent;
-    padding: calc(var(--gutter) - (var(--border-size) * 2));
+    padding-block: calc(var(--gutter) - (var(--border-size) * 2));
 
     .wrapper.is-drag-inside &:not(.is-dragging).is-before {
       border-block-start-color: var(--color-primary);
