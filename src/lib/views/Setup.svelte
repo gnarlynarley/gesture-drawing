@@ -69,11 +69,11 @@
           bind:checked={$settings.autoPlay}
         />
 
-        <Checkbox
+        <!-- <Checkbox
           label="With sounds"
           name="sound"
           bind:checked={$settings.sound}
-        />
+        /> -->
       </Box>
 
       <Box>
