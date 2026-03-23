@@ -25,6 +25,7 @@
         schedules={$settings.schedules}
         intermissionTime={$settings.intermissionTime}
         autoPlay={$settings.autoPlay}
+        sound={$settings.sound}
       />
     {:else}
       <Setup {startPractice} files={$files} />

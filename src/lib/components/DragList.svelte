@@ -3,9 +3,14 @@
   import { flip } from "svelte/animate";
   import { blur } from "svelte/transition";
 
+  type DragState = {
+    before: boolean;
+    after: boolean;
+    dragging: boolean;
+  };
   type Props = {
     items: T[];
-    content: Snippet<[T, number]>;
+    content: Snippet<[T, number, DragState]>;
   };
 
   let { items = $bindable(), content }: Props = $props();
@@ -15,20 +20,35 @@
   let isDragOutsideWrapper = $state(false);
 
   let wrapperElement: HTMLDivElement | null = null;
+  let itemElements = $state<Array<HTMLElement | null>>([]);
 
   const isPointInsideWrapper = (clientX: number, clientY: number) => {
-    if (!wrapperElement) {
-      return false;
+    if (wrapperElement) {
+      const rect = wrapperElement.getBoundingClientRect();
+
+      if (rect.width > 0 && rect.height > 0) {
+        return (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        );
+      }
     }
 
-    const rect = wrapperElement.getBoundingClientRect();
+    return itemElements.some((element) => {
+      if (!element) {
+        return false;
+      }
 
-    return (
-      clientX >= rect.left &&
-      clientX <= rect.right &&
-      clientY >= rect.top &&
-      clientY <= rect.bottom
-    );
+      const rect = element.getBoundingClientRect();
+      return (
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom
+      );
+    });
   };
 
   const clearDragState = () => {
@@ -82,12 +102,53 @@
     insertionIndex = isBefore ? index : index + 1;
   };
 
+  const getInsertionIndexFromPoint = (clientY: number) => {
+    if (items.length === 0) {
+      return 0;
+    }
+
+    for (let index = 0; index < items.length; index += 1) {
+      const element = itemElements[index];
+      if (!element) {
+        continue;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const middle = rect.top + rect.height / 2;
+      if (clientY < middle) {
+        return index;
+      }
+    }
+
+    return items.length;
+  };
+
   const onWindowDragOver = (event: DragEvent) => {
     if (draggedIndex === null) {
       return;
     }
 
-    isDragOutsideWrapper = !isPointInsideWrapper(event.clientX, event.clientY);
+    const isInside = isPointInsideWrapper(event.clientX, event.clientY);
+    isDragOutsideWrapper = !isInside;
+
+    if (isInside) {
+      insertionIndex = getInsertionIndexFromPoint(event.clientY);
+    }
+  };
+
+  const onWindowDrop = (event: DragEvent) => {
+    if (draggedIndex === null) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (isPointInsideWrapper(event.clientX, event.clientY)) {
+      insertionIndex = getInsertionIndexFromPoint(event.clientY);
+      moveDraggedItem();
+    }
+
+    clearDragState();
   };
 
   const moveDraggedItem = () => {
@@ -119,7 +180,7 @@
   };
 </script>
 
-<svelte:window ondragover={onWindowDragOver} />
+<svelte:window ondragover={onWindowDragOver} ondrop={onWindowDrop} />
 
 <div
   bind:this={wrapperElement}
@@ -131,17 +192,16 @@
   ondrop={onDrop}
 >
   {#each items as item, index (item.id)}
+    {@const dragState: DragState = {
+        before: draggedIndex !== null &&
+          insertionIndex === index,
+        after: draggedIndex !== null &&
+          insertionIndex === index + 1,
+        dragging: draggedIndex === index
+    }}
     <div
-      animate:flip={{ duration: 150 }}
-      transition:blur
       class="item"
-      class:is-before={draggedIndex !== null &&
-        insertionIndex === index &&
-        draggedIndex !== insertionIndex - 1}
-      class:is-after={draggedIndex !== null &&
-        insertionIndex === index + 1 &&
-        draggedIndex !== insertionIndex}
-      class:is-dragging={draggedIndex === index}
+      bind:this={itemElements[index]}
       role="listitem"
       draggable="true"
       ondragstart={(event) => onDragStart(event, index)}
@@ -149,39 +209,19 @@
       ondrop={onDrop}
       ondragend={clearDragState}
     >
-      {@render content(item, index)}
+      {@render content(item, index, dragState)}
     </div>
   {/each}
 </div>
 
 <style lang="scss">
   .wrapper {
-    display: flex;
-    flex-direction: column;
+    display: contents;
   }
 
   .item {
-    --border-size: 1px;
-    border-block: var(--border-size) solid transparent;
-    padding-block: calc(var(--gutter) - (var(--border-size) * 2));
-
-    .wrapper.is-drag-inside &:not(.is-dragging).is-before {
-      border-block-start-color: var(--color-primary);
-    }
-    .wrapper.is-drag-inside &:not(.is-dragging).is-after {
-      border-block-end-color: var(--color-primary);
-    }
-    &.is-dragging {
-      background-color: color-mix(
-        in oklab,
-        var(--color-primary),
-        var(--color-accent) 90%
-      );
-      border-color: color-mix(
-        in oklab,
-        var(--color-primary),
-        var(--color-accent) 90%
-      );
-    }
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
   }
 </style>

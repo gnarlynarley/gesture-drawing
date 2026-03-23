@@ -3,7 +3,8 @@ import { settings } from "./setting.svelte";
 import { addNotification } from "./notifications.svelte";
 import { ImageFileHandle } from "$lib/models";
 
-const FILE_SYSTEM_API_SUPPORTED = "showDirectoryPicker" in self;
+// const FILE_SYSTEM_API_SUPPORTED = "showDirectoryPicker" in self;
+const FILE_SYSTEM_API_SUPPORTED = false;
 
 function isImageName(name: string): boolean {
   const extension = name.split(".").pop();

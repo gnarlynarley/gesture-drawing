@@ -1,8 +1,5 @@
-import {
-  getSchedule,
-  getCurrentPageFromSchedules,
-  type Schedule,
-} from './schedule';
+import getRandomFromArray from "./getRandomFromArray";
+import { getCurrentPageFromSchedules, type Schedule } from "./schedule";
 
 export type QueueItem<T> = {
   item: T;
@@ -11,49 +8,63 @@ export type QueueItem<T> = {
 };
 
 export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
+  let random = getRandomFromArray(arr);
   let state = $state({
-    queue: Array.from(arr),
+    queue: [] as QueueItem<T>[],
     history: [] as QueueItem<T>[],
     current: null as QueueItem<T> | null,
     reachedEnd: false,
   });
 
-  function createNext(): QueueItem<T> | null {
-    const randomIndex = Math.floor(Math.random() * state.queue.length);
-    const item = state.queue[randomIndex];
-    const schedule = getSchedule(schedules, state.history.length + 1);
-    const page = getCurrentPageFromSchedules(
-      schedules,
-      state.history.length + 1,
-    );
-    if (!item || !schedule) {
-      return null;
+  function next() {
+    state.current = state.queue.shift() ?? null;
+    if (state.current) {
+      state.history.push(state.current);
+    } else {
+      state.reachedEnd = true;
     }
-
-    return { item, page, schedule };
   }
 
-  function getNext() {
-    const next = createNext();
-    if (next === null) {
-      state.reachedEnd = true;
-      return;
+  function skip() {
+    if (state.current) {
+      const next = random.get();
+      if (next) {
+        state.current = {
+          ...state.current,
+          item: next,
+        };
+      }
     }
-    state.current = next;
-    state.history.push(state.current);
-    state.queue.splice(state.queue.indexOf(next.item), 1);
+  }
+
+  function getNext(): QueueItem<T> | null {
+    return state.queue[state.queue.length - 1] ?? null;
   }
 
   function hasNext(): boolean {
-    return !!createNext();
+    return state.queue.length > 0;
   }
 
   function reset() {
-    state.queue = Array.from(arr);
+    random = getRandomFromArray(arr);
+    state.queue = [];
+    outer: for (const schedule of schedules) {
+      for (let index = 0; index < schedule.amount; index += 1) {
+        const item = random.get();
+        if (item === null) break outer;
+        state.queue.push({
+          item,
+          page: getCurrentPageFromSchedules(schedules, index + 1),
+          schedule,
+        });
+      }
+    }
     state.history = [];
     state.current = null;
     state.reachedEnd = false;
   }
 
-  return { state, getNext, hasNext, reset };
+  reset();
+
+  return { state, next, skip, getNext, hasNext, reset };
 }

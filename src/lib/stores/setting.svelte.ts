@@ -36,6 +36,7 @@ const settingsStateSchema = v.object({
   schedules: v.optional(v.array(scheduleSchema), SCHEDULES_DEFAULT),
   intermissionTime: v.optional(v.number(), INTERMISSION_TIME_DEFAULT),
   autoPlay: v.optional(v.boolean(), true),
+  sound: v.optional(v.boolean(), true),
 });
 
 export const settings = writable<SettingsState>({
@@ -43,6 +44,7 @@ export const settings = writable<SettingsState>({
   schedules: SCHEDULES_DEFAULT,
   autoPlay: true,
   intermissionTime: INTERMISSION_TIME_DEFAULT,
+  sound: true,
 });
 
 export const pendingSettings = localforage

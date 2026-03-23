@@ -17,6 +17,9 @@
   import Charr from "$lib/components/Charr.svelte";
   import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
   import FileImage from "$lib/components/FileImage.svelte";
+  import Spinner from "$lib/components/Spinner.svelte";
+  import beep from "$lib/utils/beep";
+  import createImage from "$lib/utils/createImage";
 
   type Props = {
     files: ImageFileHandle[];
@@ -24,10 +27,17 @@
     schedules: Schedule[];
     intermissionTime: number;
     autoPlay: boolean;
+    sound: boolean;
   };
 
-  const { files, stopPractice, schedules, intermissionTime, autoPlay }: Props =
-    $props();
+  const {
+    files,
+    stopPractice,
+    schedules,
+    intermissionTime,
+    autoPlay,
+    sound,
+  }: Props = $props();
   const queue = $derived(createQueue(files, schedules));
   let currentFile = $state<File | null>(null);
 
@@ -51,6 +61,23 @@
   let view = $state<ViewState>("drawing");
   let playing = $state(true);
 
+  async function loadImage(file: File | null) {
+    if (file === null) {
+      currentFile = null;
+    } else {
+      const src = URL.createObjectURL(file);
+      await createImage(src);
+      URL.revokeObjectURL(src);
+      currentFile = file;
+    }
+  }
+
+  function playsound() {
+    if (sound) {
+      beep();
+    }
+  }
+
   async function next(skipIntermission = false) {
     if (view === "pending") return;
     const isIntermission = view === "intermission";
@@ -59,7 +86,7 @@
 
     // if intermission, set the practice. Else set the intermission state
     if (skipIntermission || isIntermission || intermissionTime === 0) {
-      queue.getNext();
+      queue.next();
       if (queue.state.reachedEnd) {
         playing = false;
         view = "end";
@@ -70,14 +97,15 @@
         totalTime = queue.state.current.schedule.duration * 1000;
         time = queue.state.current.schedule.duration * 1000;
         view = "pending";
-        currentFile = await queue.state.current.item.getFile();
+        await loadImage(await queue.state.current.item.getFile());
         view = "drawing";
       } else {
         playing = false;
         view = "end";
       }
     } else {
-      if (queue.hasNext()) {
+      const next = queue.getNext();
+      if (next !== null) {
         view = "intermission";
         totalTime = intermissionTime * 1000;
         time = intermissionTime * 1000;
@@ -86,6 +114,15 @@
         view = "end";
       }
     }
+  }
+
+  async function skip() {
+    if (!queue.state.current) return;
+    queue.skip();
+    view = "pending";
+    await loadImage(await queue.state.current.item.getFile());
+    view = "drawing";
+    time = queue.state.current.schedule.duration * 1000;
   }
 
   function reset() {
@@ -114,6 +151,7 @@
         if (autoPlay) {
           next();
         }
+        playsound();
       }
     }, 10);
 
@@ -139,6 +177,7 @@
   class:scroll={view === "end"}
   class:flipped
   class:grayscale
+  class:exceeded-time={currentTime > totalTime}
 >
   <div class="toolbar">
     {#if view === "end"}
@@ -154,21 +193,29 @@
           <PlayIcon />
         {/if}
       </Button>
+
       <Button onclick={() => next(true)} title="Next">
         <ForwardIcon />
       </Button>
+
+      <Button onclick={skip} title="Next">
+        <ForwardIcon />
+      </Button>
+
       <div class="divider"></div>
+
       <Button onclick={toggleFlip} primary={flipped} bordered>
         <FlipHorizontal2Icon />
       </Button>
+
       <Button onclick={toggleGrayscale} primary={grayscale} bordered>
         <PaletteIcon />
       </Button>
       {#if queue.state.current}
         <div class="text">
-          {parseTime(currentTime / 1000)} / {parseTime(
-            queue.state.current.schedule.duration,
-          )}
+          <span class="highlighted">{parseTime(currentTime / 1000)} </span>
+          <span>/</span>
+          <span>{parseTime(queue.state.current.schedule.duration)}</span>
         </div>
         <div class="text">
           {queue.state.current.page}/{queue.state.current.schedule.amount}
@@ -184,9 +231,10 @@
 
   <div class="content">
     {#if view === "intermission"}
-      <h1>Intermission</h1>
       <Charr />
-      <p>Get ready</p>
+      <h1>Intermission</h1>
+    {:else if view === "pending"}
+      <Spinner />
     {:else if view === "end"}
       <h1>Reached the end</h1>
       <FileHandleImageGrid entries={queue.state.history} />
@@ -232,6 +280,10 @@
 
     .text {
       flex-shrink: 0;
+
+      .exceeded-time & .highlighted {
+        color: var(--color-primary);
+      }
     }
 
     .push {

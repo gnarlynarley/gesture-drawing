@@ -9,7 +9,8 @@
 
 :root {
   --color-primary: oklab(82.19300000000001% 0.03389 0.16433);
-  --color-background: #1f1f22;
+  --color-secondary: oklab(87.51% -0.20622 0.11891);
+  --color-background: #1b1b1c;
   --color-accent: color-mix(in oklab, var(--color-background), white 8%);
   --color-text: #ccc;
   --gutter: 0.8em;
@@ -49,10 +50,6 @@ input {
   border: none;
   background: transparent;
   padding: 0;
-}
-
-&::active {
-  outline: none;
 }
 
 input::-webkit-outer-spin-button,
