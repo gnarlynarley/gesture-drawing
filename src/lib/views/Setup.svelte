@@ -7,7 +7,6 @@
   import TimeInput from "$lib/components/TimeInput.svelte";
   import { chooseDirectory } from "$lib/stores/directory.svelte";
   import { settings } from "$lib/stores/setting.svelte";
-  import beep from "$lib/utils/beep";
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
   import { blur } from "svelte/transition";
@@ -46,7 +45,7 @@
     <h1>Setup</h1>
 
     <div class="options">
-      <Box>
+      <Box xl>
         <Button onclick={chooseDirectory}>
           {#if canStart}
             Choose different folder

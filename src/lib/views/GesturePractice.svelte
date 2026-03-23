@@ -1,7 +1,8 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
   import {
-    ForwardIcon,
+    ArrowBigRightIcon,
+    ArrowBigRightDashIcon,
     LogOutIcon,
     PauseIcon,
     PlayIcon,
@@ -195,11 +196,11 @@
       </Button>
 
       <Button onclick={() => next(true)} title="Next">
-        <ForwardIcon />
+        <ArrowBigRightIcon />
       </Button>
 
-      <Button onclick={skip} title="Next">
-        <ForwardIcon />
+      <Button onclick={skip} title="Skip">
+        <ArrowBigRightDashIcon />
       </Button>
 
       <div class="divider"></div>
