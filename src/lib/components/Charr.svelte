@@ -1,5 +1,30 @@
 <script lang="ts">
-  import src from "./Charr.image.phoebe.png";
+  import phoebeSrc from "./Charr.image.phoebe.png";
+  import memeSrc from "./Charr.image.meme.png";
+  import swaggatarSrc from "./Charr.image.swaggatar.jpg";
+
+  const now = new Date();
+  const memeImages = [memeSrc, swaggatarSrc];
+  const isAprilFools = now.getMonth() === 3 && now.getDate() === 1;
+  const hasMeme = isAprilFools && Math.random() < 0.5;
+
+  let src = $state(phoebeSrc);
+
+  if (hasMeme) {
+    src = memeImages[Math.floor(Math.random() * memeImages.length)];
+  }
+
+  $effect(() => {
+    if (!hasMeme) return;
+
+    const id = setTimeout(() => {
+      src = phoebeSrc;
+    }, 200);
+
+    return () => {
+      clearTimeout(id);
+    };
+  });
 </script>
 
 <img class="charr" {src} alt="Silly lil charr" />
