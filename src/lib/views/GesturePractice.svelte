@@ -269,7 +269,7 @@
       transparent 8%
     );
     backdrop-filter: blur(8px);
-    border: 2px solid var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
     padding: var(--gutter);
     display: flex;
     align-items: center;
