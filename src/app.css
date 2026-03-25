@@ -8,20 +8,32 @@
 }
 
 :root {
-  --color-primary: oklab(82.19300000000001% 0.03389 0.16433);
-  --color-secondary: oklab(87.51% -0.20622 0.11891);
-  --color-background: #1b1b1c;
-  --color-accent: color-mix(in oklab, var(--color-background), white 8%);
-  --color-text: #ccc;
   --gutter: 0.8em;
   --spacing: 2em;
   --border-radius: 0.3em;
+  --font-family: "Merriweather Variable", serif;
+
+  --color-primary: oklab(84.495% 0.0057 0.16972);
+  --color-primary-text: color-mix(in oklab, var(--color-primary), black 80%);
+  --color-secondary: oklab(87.51% -0.20622 0.11891);
+  --color-background: #1b1b1c;
+  --color-accent: color-mix(in oklab, var(--color-background), white 8%);
+  --color-text: #d8d8d8;
+}
+
+:root.is-theme-light {
+  --color-primary: oklab(58.143% 0.04753 0.10292);
+  --color-primary-text: color-mix(in oklab, var(--color-primary), white 80%);
+  --color-secondary: oklab(87.51% -0.20622 0.11891);
+  --color-background: #d3cfcb;
+  --color-accent: color-mix(in oklab, var(--color-background), black 5%);
+  --color-text: #202020;
 }
 
 html {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: "Merriweather Variable", serif;
+  font-family: var(--font-family);
   font-size: 100%;
 }
 
@@ -44,12 +56,17 @@ button {
   all: unset;
 }
 
+select,
 input {
   font: inherit;
   color: inherit;
   border: none;
   background: transparent;
   padding: 0;
+}
+
+option {
+  font-family: var(--font-family);
 }
 
 input::-webkit-outer-spin-button,

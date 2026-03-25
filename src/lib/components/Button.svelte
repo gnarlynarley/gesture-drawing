@@ -29,6 +29,7 @@
     border-radius: var(--border-radius);
     flex-shrink: 0;
     border: 2px solid var(--color);
+    color: var(--color-text);
 
     :global(svg) {
       display: block;
@@ -36,7 +37,7 @@
 
     &.primary {
       --button-color: var(--color-primary);
-      color: var(--color-background);
+      color: var(--color-primary-text);
     }
 
     &:focus-visible {
@@ -49,7 +50,12 @@
     }
 
     &[disabled] {
-      opacity: 0.6;
+      --button-color: color-mix(
+        in oklab,
+        var(--color-accent),
+        var(--color-background) 50%
+      );
+      color: var(--color-accent);
       cursor: not-allowed;
     }
 

@@ -4,9 +4,10 @@
   import Checkbox from "$lib/components/Checkbox.svelte";
   import DragList from "$lib/components/DragList.svelte";
   import Input from "$lib/components/Input.svelte";
+  import Select from "$lib/components/Select.svelte";
   import TimeInput from "$lib/components/TimeInput.svelte";
   import { chooseDirectory } from "$lib/stores/directory.svelte";
-  import { settings } from "$lib/stores/setting.svelte";
+  import { settings, themes } from "$lib/stores/setting.svelte";
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
   import { blur } from "svelte/transition";
@@ -45,35 +46,42 @@
     <h1>Setup</h1>
 
     <div class="options">
-      <Box xl>
-        <Button onclick={chooseDirectory}>
-          {#if canStart}
-            Choose different folder
-          {:else}
-            Choose folder
-          {/if}
-        </Button>
+      <div class="stack">
+        <Box xl>
+          <Button onclick={chooseDirectory}>
+            {#if canStart}
+              Choose different folder
+            {:else}
+              Choose folder
+            {/if}
+          </Button>
 
-        <Input
-          label="Intermission time"
-          name="intermissiontime"
-          description="Time in seconds between every picture so you can adjust the canvas or etc."
-          bind:value={$settings.intermissionTime}
-        />
+          <Checkbox
+            label="Autoplay"
+            name="autoplay"
+            description="Automatically advance to the next picture"
+            bind:checked={$settings.autoPlay}
+          />
 
-        <Checkbox
-          label="Autoplay"
-          name="autoplay"
-          description="Automatically advance to the next picture"
-          bind:checked={$settings.autoPlay}
-        />
+          <Input
+            label="Intermission time"
+            name="intermissiontime"
+            description="Time in seconds between every picture so you can adjust the canvas or etc."
+            bind:value={$settings.intermissionTime}
+            disabled={!$settings.autoPlay}
+          />
 
-        <!-- <Checkbox
-          label="With sounds"
-          name="sound"
-          bind:checked={$settings.sound}
-        /> -->
-      </Box>
+          <!-- <Checkbox
+            label="With sounds"
+            name="sound"
+            bind:checked={$settings.sound}
+          /> -->
+        </Box>
+
+        <Box>
+          <Select label="Theme" bind:value={$settings.theme} items={themes} />
+        </Box>
+      </div>
 
       <Box>
         {#if $settings.schedules.length > 0}
@@ -122,9 +130,14 @@
     container-type: inline-size;
   }
 
+  .stack {
+    display: grid;
+    gap: var(--gutter);
+  }
+
   .options {
     display: grid;
-    gap: 1em;
+    gap: var(--gutter);
 
     @container (width > 1000px) {
       grid-template-columns: repeat(2, 1fr);

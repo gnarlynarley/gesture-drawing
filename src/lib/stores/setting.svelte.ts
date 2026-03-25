@@ -31,12 +31,15 @@ const SCHEDULES_DEFAULT: Schedule[] = [
 
 type SettingsState = v.InferOutput<typeof settingsStateSchema>;
 
+export const themes = ["dark" as const, "light" as const];
+
 const settingsStateSchema = v.object({
   directory: v.union([v.instance(FileSystemDirectoryHandle), v.null()]),
-  schedules: v.optional(v.array(scheduleSchema), SCHEDULES_DEFAULT),
-  intermissionTime: v.optional(v.number(), INTERMISSION_TIME_DEFAULT),
-  autoPlay: v.optional(v.boolean(), true),
-  sound: v.optional(v.boolean(), true),
+  schedules: v.fallback(v.array(scheduleSchema), SCHEDULES_DEFAULT),
+  intermissionTime: v.fallback(v.number(), INTERMISSION_TIME_DEFAULT),
+  autoPlay: v.fallback(v.boolean(), true),
+  sound: v.fallback(v.boolean(), true),
+  theme: v.fallback(v.picklist(themes), "dark"),
 });
 
 export const settings = writable<SettingsState>({
@@ -45,6 +48,7 @@ export const settings = writable<SettingsState>({
   autoPlay: true,
   intermissionTime: INTERMISSION_TIME_DEFAULT,
   sound: true,
+  theme: "dark",
 });
 
 export const pendingSettings = localforage
@@ -58,4 +62,9 @@ export const pendingSettings = localforage
 
 settings.subscribe((value) => {
   localforage.setItem(SETTINGS_KEY, value);
+
+  for (const theme of themes) {
+    document.documentElement.classList.remove(`is-theme-${theme}`);
+  }
+  document.documentElement.classList.add(`is-theme-${value.theme}`);
 });
