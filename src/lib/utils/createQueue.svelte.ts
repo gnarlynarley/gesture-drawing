@@ -29,10 +29,7 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
     if (state.current) {
       const next = random.get();
       if (next) {
-        state.current = {
-          ...state.current,
-          item: next,
-        };
+        state.current.item = next;
       }
     }
   }
