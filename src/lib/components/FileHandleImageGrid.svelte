@@ -4,18 +4,24 @@
   import parseTime from "$lib/utils/parseTime";
   import type { Schedule } from "$lib/utils/schedule";
   import FileHandleImage from "./FileImage.svelte";
+  import FilePath from "./FilePath.svelte";
 
   type Props = {
     entries: QueueItem<ImageFileHandle>[];
   };
 
+  type Item = {
+    file: File;
+    path: string;
+  };
+
   const { entries }: Props = $props();
-  let selectedFile = $state<File | null>(null);
+  let selectedFile = $state<Item | null>(null);
 
   const groupedPromise = $derived(
     Promise.all(
       entries
-        .reduce<{ schedule: Schedule; files: Promise<File>[] }[]>(
+        .reduce<{ schedule: Schedule; files: Promise<Item>[] }[]>(
           (acc, entry) => {
             let prevItem = acc[acc.length - 1];
             if (
@@ -25,7 +31,14 @@
               prevItem = { schedule: entry.schedule, files: [] };
               acc.push(prevItem);
             }
-            prevItem.files.push(entry.item.getFile());
+            prevItem.files.push(
+              new Promise<Item>(async (resolve) => {
+                resolve({
+                  file: await entry.item.getFile(),
+                  path: entry.item.path,
+                });
+              }),
+            );
             return acc;
           },
           [],
@@ -41,7 +54,7 @@
     ),
   );
 
-  function onImageClick(file: File) {
+  function onImageClick(file: Item) {
     selectedFile = file;
   }
 
@@ -76,7 +89,7 @@
               <span class="label">
                 Picture #{index + 1}
               </span>
-              <FileHandleImage {file} />
+              <FileHandleImage file={file.file} />
             </button>
           {/each}
         </div>
@@ -87,7 +100,10 @@
 {#if selectedFile}
   <button type="button" class="fullscreen" onclick={onImageClose}>
     <div class="inner">
-      <FileHandleImage fit cover file={selectedFile} />
+      <FileHandleImage fit cover file={selectedFile.file} />
+    </div>
+    <div class="path">
+      <FilePath path={selectedFile.path} />
     </div>
   </button>
 {/if}
@@ -129,19 +145,29 @@
     top: 0;
     left: 0;
     z-index: 2;
-    width: 100%;
-    height: 100%;
+    width: 100dvw;
+    height: 100dvh;
     background-color: color-mix(
       in oklab,
       var(--color-background),
       transparent 10%
     );
-    display: flex;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: var(--gutter);
 
     .inner {
-      width: 100%;
       position: relative;
-      margin: var(--spacing);
+      width: 100dvw;
+    }
+
+    .path {
+      margin-inline: auto;
+      padding: var(--gutter);
+      background: var(--color-background);
+      width: 100%;
+      display: grid;
+      justify-content: center;
     }
   }
 </style>

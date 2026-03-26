@@ -3,8 +3,7 @@ import { settings } from "./setting.svelte";
 import { addNotification } from "./notifications.svelte";
 import { ImageFileHandle } from "$lib/models";
 
-// const FILE_SYSTEM_API_SUPPORTED = "showDirectoryPicker" in self;
-const FILE_SYSTEM_API_SUPPORTED = false;
+const FILE_SYSTEM_API_SUPPORTED = "showDirectoryPicker" in self;
 
 function isImageName(name: string): boolean {
   const extension = name.split(".").pop();
@@ -25,14 +24,15 @@ function isImageName(name: string): boolean {
 
 async function delve(
   dirHandle: FileSystemDirectoryHandle,
-  files: FileSystemFileHandle[] = [],
-): Promise<FileSystemFileHandle[]> {
+  files: ImageFileHandle[] = [],
+  path: string,
+): Promise<ImageFileHandle[]> {
   for await (const handle of dirHandle.values()) {
     if (handle.kind === "directory") {
-      await delve(handle, files);
+      await delve(handle, files, `${path}/${handle.name}`);
     } else {
       if (isImageName(handle.name)) {
-        files.push(handle);
+        files.push(new ImageFileHandle(handle, `${path}/${handle.name}`));
       }
     }
   }
@@ -46,12 +46,16 @@ let lastDirectory: FileSystemDirectoryHandle | null = null;
 
 settings.subscribe((state) => {
   if (state.directory) {
-    if (state.directory !== lastDirectory) {
-      lastDirectory = state.directory;
-      delve(state.directory).then((value) => {
-        const handles = value.map((handle) => new ImageFileHandle(handle));
-        files.set(handles);
-      });
+    try {
+      if (state.directory !== lastDirectory) {
+        lastDirectory = state.directory;
+        delve(state.directory, [], state.directory.name).then((handles) => {
+          files.set(handles);
+        });
+      }
+    } catch {
+      settings.set({ ...state, directory: null });
+      lastDirectory = null;
     }
   }
 });

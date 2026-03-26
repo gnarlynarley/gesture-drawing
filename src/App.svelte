@@ -39,7 +39,5 @@
   .wrapper {
     height: 100dvh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 </style>

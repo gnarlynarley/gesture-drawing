@@ -7,7 +7,7 @@
   import Select from "$lib/components/Select.svelte";
   import TimeInput from "$lib/components/TimeInput.svelte";
   import { chooseDirectory } from "$lib/stores/directory.svelte";
-  import { settings, themes } from "$lib/stores/setting.svelte";
+  import { resetSettings, settings, themes } from "$lib/stores/setting.svelte";
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
   import { blur } from "svelte/transition";
@@ -80,6 +80,7 @@
 
         <Box>
           <Select label="Theme" bind:value={$settings.theme} items={themes} />
+          <Button onclick={resetSettings}>Reset</Button>
         </Box>
       </div>
 
@@ -122,7 +123,7 @@
 
 <style lang="scss">
   .wrapper {
-    margin: auto;
+    margin-top: calc(var(--spacing) * 3);
     flex-direction: column;
     width: 100%;
     padding: var(--gutter);

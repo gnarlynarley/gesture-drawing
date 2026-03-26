@@ -3,6 +3,7 @@ import { scheduleSchema, type Schedule } from "../utils/schedule";
 import localforage from "localforage";
 import * as v from "valibot";
 import createId from "$lib/utils/createId";
+import sleep from "$lib/utils/sleep";
 
 const SETTINGS_KEY = "gesture-app.settings";
 const INTERMISSION_TIME_DEFAULT = 3;
@@ -42,14 +43,16 @@ const settingsStateSchema = v.object({
   theme: v.fallback(v.picklist(themes), "dark"),
 });
 
-export const settings = writable<SettingsState>({
+const DEFAULT_SETTINGS: SettingsState = {
   directory: null,
   schedules: SCHEDULES_DEFAULT,
   autoPlay: true,
   intermissionTime: INTERMISSION_TIME_DEFAULT,
   sound: true,
   theme: "dark",
-});
+};
+
+export const settings = writable<SettingsState>(DEFAULT_SETTINGS);
 
 export const pendingSettings = localforage
   .getItem(SETTINGS_KEY)
@@ -68,3 +71,7 @@ settings.subscribe((value) => {
   }
   document.documentElement.classList.add(`is-theme-${value.theme}`);
 });
+
+export function resetSettings() {
+  settings.set(DEFAULT_SETTINGS);
+}

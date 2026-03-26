@@ -21,6 +21,7 @@
   import Spinner from "$lib/components/Spinner.svelte";
   import beep from "$lib/utils/beep";
   import createImage from "$lib/utils/createImage";
+  import PageLayout from "$lib/components/PageLayout.svelte";
 
   type Props = {
     files: ImageFileHandle[];
@@ -39,23 +40,12 @@
     autoPlay,
     sound,
   }: Props = $props();
+
   const queue = $derived(createQueue(files, schedules));
   let currentFile = $state<File | null>(null);
-
   let totalTime = $state(0);
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
-
-  let flipped = $state(false);
-  let grayscale = $state(false);
-
-  function toggleFlip() {
-    flipped = !flipped;
-  }
-
-  function toggleGrayscale() {
-    grayscale = !grayscale;
-  }
 
   type ViewState = "drawing" | "intermission" | "pending" | "end";
 
@@ -63,13 +53,17 @@
   let playing = $state(true);
 
   async function loadImage(file: File | null) {
-    if (file === null) {
+    try {
+      if (file === null) {
+        currentFile = null;
+      } else {
+        const src = URL.createObjectURL(file);
+        await createImage(src);
+        URL.revokeObjectURL(src);
+        currentFile = file;
+      }
+    } catch {
       currentFile = null;
-    } else {
-      const src = URL.createObjectURL(file);
-      await createImage(src);
-      URL.revokeObjectURL(src);
-      currentFile = file;
     }
   }
 
@@ -81,30 +75,14 @@
 
   async function next(skipIntermission = false) {
     if (view === "pending") return;
-    const isIntermission = view === "intermission";
-
-    time = 0;
+    const isIntermission = !(
+      skipIntermission ||
+      view === "intermission" ||
+      intermissionTime === 0
+    );
 
     // if intermission, set the practice. Else set the intermission state
-    if (skipIntermission || isIntermission || intermissionTime === 0) {
-      queue.next();
-      if (queue.state.reachedEnd) {
-        playing = false;
-        view = "end";
-        return;
-      }
-      view = "drawing";
-      if (queue.state.current) {
-        totalTime = queue.state.current.schedule.duration * 1000;
-        time = queue.state.current.schedule.duration * 1000;
-        view = "pending";
-        await loadImage(await queue.state.current.item.getFile());
-        view = "drawing";
-      } else {
-        playing = false;
-        view = "end";
-      }
-    } else {
+    if (isIntermission) {
       const next = queue.getNext();
       if (next !== null) {
         view = "intermission";
@@ -114,7 +92,22 @@
         playing = false;
         view = "end";
       }
+      return;
     }
+
+    queue.next();
+
+    if (queue.state.reachedEnd || !queue.state.current) {
+      playing = false;
+      view = "end";
+      return;
+    }
+
+    view = "pending";
+    await loadImage(await queue.state.current.item.getFile());
+    totalTime = queue.state.current.schedule.duration * 1000;
+    time = queue.state.current.schedule.duration * 1000;
+    view = "drawing";
   }
 
   async function skip() {
@@ -161,10 +154,24 @@
     };
   });
 
+  let flipped = $state(false);
+  let grayscale = $state(false);
+
+  function toggleFlip() {
+    flipped = !flipped;
+  }
+
+  function toggleGrayscale() {
+    grayscale = !grayscale;
+  }
+
   function onkeydown(ev: KeyboardEvent) {
     switch (ev.key.toLowerCase()) {
       case " ": {
         togglePlay();
+      }
+      case "arrowright": {
+        next();
       }
     }
   }
@@ -175,109 +182,90 @@
 <div
   class="wrapper"
   class:playing
-  class:scroll={view === "end"}
   class:flipped
   class:grayscale
   class:exceeded-time={currentTime > totalTime}
 >
-  <div class="toolbar">
-    {#if view === "end"}
-      <Button onclick={reset}>
-        <RefreshCcwIcon />
-      </Button>
-    {/if}
-    {#if view === "drawing" || view === "pending"}
-      <Button onclick={togglePlay} title={playing ? "Pause" : "Play"}>
-        {#if playing}
-          <PauseIcon width="3" />
-        {:else}
-          <PlayIcon />
+  <PageLayout scroll={view === "end"}>
+    {#snippet toolbar()}
+      <div class="toolbar">
+        {#if view === "end"}
+          <Button onclick={reset}>
+            <RefreshCcwIcon />
+          </Button>
         {/if}
-      </Button>
+        {#if view === "drawing" || view === "pending"}
+          <Button onclick={togglePlay} title={playing ? "Pause" : "Play"}>
+            {#if playing}
+              <PauseIcon width="3" />
+            {:else}
+              <PlayIcon />
+            {/if}
+          </Button>
 
-      <Button onclick={() => next(true)} title="Next">
-        <ArrowBigRightIcon />
-      </Button>
+          <Button onclick={() => next(true)} title="Next">
+            <ArrowBigRightIcon />
+          </Button>
 
-      <Button onclick={skip} title="Skip">
-        <ArrowBigRightDashIcon />
-      </Button>
+          <Button onclick={skip} title="Skip">
+            <ArrowBigRightDashIcon />
+          </Button>
 
-      <div class="divider"></div>
+          <div class="divider"></div>
 
-      <Button onclick={toggleFlip} primary={flipped} bordered>
-        <FlipHorizontal2Icon />
-      </Button>
+          <Button onclick={toggleFlip} primary={flipped} bordered>
+            <FlipHorizontal2Icon />
+          </Button>
 
-      <Button onclick={toggleGrayscale} primary={grayscale} bordered>
-        <PaletteIcon />
-      </Button>
-      {#if queue.state.current}
-        <div class="text">
-          <span class="highlighted">{parseTime(currentTime / 1000)} </span>
-          <span>/</span>
-          <span>{parseTime(queue.state.current.schedule.duration)}</span>
-        </div>
-        <div class="text">
-          {queue.state.current.page}/{queue.state.current.schedule.amount}
+          <Button onclick={toggleGrayscale} primary={grayscale} bordered>
+            <PaletteIcon />
+          </Button>
+          {#if queue.state.current}
+            <div class="text">
+              <span class="highlighted">{parseTime(currentTime / 1000)} </span>
+              <span>/</span>
+              <span>{parseTime(queue.state.current.schedule.duration)}</span>
+            </div>
+            <div class="text">
+              {queue.state.current.page}/{queue.state.current.schedule.amount}
+            </div>
+          {/if}
+        {/if}
+
+        <div class="push"></div>
+        <Button onclick={stopPractice} title="Exit">
+          <LogOutIcon />
+        </Button>
+      </div>
+    {/snippet}
+
+    <div class="content">
+      {#if view === "intermission"}
+        <Charr />
+        <h1>Intermission</h1>
+      {:else if view === "pending"}
+        <Spinner />
+      {:else if view === "end"}
+        <h1>Reached the end</h1>
+        <FileHandleImageGrid entries={queue.state.history} />
+      {:else if view === "drawing" && currentFile}
+        <div class="image">
+          <FileImage cover file={currentFile} />
         </div>
       {/if}
-    {/if}
+    </div>
 
-    <div class="push"></div>
-    <Button onclick={stopPractice} title="Exit">
-      <LogOutIcon />
-    </Button>
-  </div>
-
-  <div class="content">
-    {#if view === "intermission"}
-      <Charr />
-      <h1>Intermission</h1>
-    {:else if view === "pending"}
-      <Spinner />
-    {:else if view === "end"}
-      <h1>Reached the end</h1>
-      <FileHandleImageGrid entries={queue.state.history} />
-    {:else if view === "drawing" && currentFile}
-      <div class="image">
-        <FileImage cover file={currentFile} />
-      </div>
-    {/if}
-  </div>
-
-  <Timebar {totalTime} {currentTime} />
+    <Timebar {totalTime} {currentTime} />
+  </PageLayout>
 </div>
 
-<style>
+<style lang="scss">
   .wrapper {
-    flex-grow: 1;
-    overflow: hidden;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    width: 100%;
-
-    &.scroll {
-      overflow: auto;
-    }
+    display: contents;
   }
 
   .toolbar {
-    background-color: color-mix(
-      in oklab,
-      var(--color-background),
-      transparent 8%
-    );
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--color-accent);
-    padding: var(--gutter);
-    display: flex;
-    align-items: center;
-    gap: var(--gutter);
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    display: contents;
 
     .text {
       flex-shrink: 0;

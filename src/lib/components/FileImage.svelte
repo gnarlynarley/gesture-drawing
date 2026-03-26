@@ -21,7 +21,13 @@
 </script>
 
 {#if src}
-  <img class="image" class:cover class:fit {src} alt={file.name} />
+  <img
+    class="image"
+    class:cover
+    class:fit
+    {src}
+    alt={file.webkitRelativePath ?? file.name}
+  />
 {:else}
   <span>loading...</span>
 {/if}
