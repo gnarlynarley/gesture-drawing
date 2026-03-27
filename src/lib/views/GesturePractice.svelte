@@ -167,6 +167,7 @@
   }
 
   function onkeydown(ev: KeyboardEvent) {
+    if (view !== "drawing") return;
     switch (ev.key.toLowerCase()) {
       case " ": {
         togglePlay();
