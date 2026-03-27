@@ -1,5 +1,5 @@
 import getRandomFromArray from "./getRandomFromArray";
-import { getCurrentPageFromSchedules, type Schedule } from "./schedule";
+import { type Schedule } from "./schedule";
 
 export type QueueItem<T> = {
   item: T;
@@ -51,7 +51,7 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
         if (item === null) break outer;
         state.queue.push({
           item,
-          page: getCurrentPageFromSchedules(schedules, index + 1),
+          page: index + 1,
           schedule,
         });
       }
