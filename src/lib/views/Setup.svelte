@@ -129,6 +129,7 @@
     padding: var(--gutter);
     max-width: 80em;
     container-type: inline-size;
+    margin-inline: auto;
   }
 
   .stack {
