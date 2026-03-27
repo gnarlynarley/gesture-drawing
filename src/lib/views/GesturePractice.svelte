@@ -175,6 +175,9 @@
       case "arrowright": {
         next();
       }
+      case "f": {
+        toggleFlip();
+      }
     }
   }
 </script>
@@ -197,7 +200,10 @@
           </Button>
         {/if}
         {#if view === "drawing" || view === "pending"}
-          <Button onclick={togglePlay} tooltip={playing ? "Pause" : "Play"}>
+          <Button
+            onclick={togglePlay}
+            tooltip={playing ? "Pause (space)" : "Play (space)"}
+          >
             {#if playing}
               <PauseIcon width="3" />
             {:else}
@@ -205,7 +211,7 @@
             {/if}
           </Button>
 
-          <Button onclick={() => next(true)} tooltip="Next">
+          <Button onclick={() => next(true)} tooltip="Next (right)">
             <ArrowBigRightIcon />
           </Button>
 
@@ -219,7 +225,7 @@
             onclick={toggleFlip}
             primary={flipped}
             bordered
-            tooltip="Toggle flip"
+            tooltip="Toggle flip (F)"
           >
             <FlipHorizontal2Icon />
           </Button>
