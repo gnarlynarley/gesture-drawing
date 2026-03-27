@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { HTMLButtonAttributes } from "svelte/elements";
+  import Tooltip from "./Tooltip.svelte";
 
   type Props = HTMLButtonAttributes & {
     primary?: boolean;
     bordered?: boolean;
+    tooltip?: string;
   };
 
   const {
@@ -11,13 +13,27 @@
     bordered,
     children,
     type = "button",
+    tooltip,
     ...props
   }: Props = $props();
 </script>
 
-<button {type} class="u-focus" class:primary class:bordered {...props}>
-  {@render children?.()}
-</button>
+{#snippet button()}
+  <button {type} class="u-focus" class:primary class:bordered {...props}>
+    {@render children?.()}
+  </button>
+{/snippet}
+
+{#if tooltip}
+  <Tooltip>
+    {#snippet tooltip()}
+      <span>{tooltip}</span>
+    {/snippet}
+    {@render button()}
+  </Tooltip>
+{:else}
+  {@render button()}
+{/if}
 
 <style lang="scss">
   button {

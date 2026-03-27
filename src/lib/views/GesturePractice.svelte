@@ -76,6 +76,7 @@
   async function next(skipIntermission = false) {
     if (view === "pending") return;
     const isIntermission = !(
+      !autoPlay ||
       skipIntermission ||
       view === "intermission" ||
       intermissionTime === 0
@@ -195,7 +196,7 @@
           </Button>
         {/if}
         {#if view === "drawing" || view === "pending"}
-          <Button onclick={togglePlay} title={playing ? "Pause" : "Play"}>
+          <Button onclick={togglePlay} tooltip={playing ? "Pause" : "Play"}>
             {#if playing}
               <PauseIcon width="3" />
             {:else}
@@ -203,21 +204,31 @@
             {/if}
           </Button>
 
-          <Button onclick={() => next(true)} title="Next">
+          <Button onclick={() => next(true)} tooltip="Next">
             <ArrowBigRightIcon />
           </Button>
 
-          <Button onclick={skip} title="Skip">
+          <Button onclick={skip} tooltip="Skip">
             <ArrowBigRightDashIcon />
           </Button>
 
           <div class="divider"></div>
 
-          <Button onclick={toggleFlip} primary={flipped} bordered>
+          <Button
+            onclick={toggleFlip}
+            primary={flipped}
+            bordered
+            tooltip="Toggle flip"
+          >
             <FlipHorizontal2Icon />
           </Button>
 
-          <Button onclick={toggleGrayscale} primary={grayscale} bordered>
+          <Button
+            onclick={toggleGrayscale}
+            primary={grayscale}
+            bordered
+            tooltip="Toggle grayscale"
+          >
             <PaletteIcon />
           </Button>
           {#if queue.state.current}
@@ -233,7 +244,7 @@
         {/if}
 
         <div class="push"></div>
-        <Button onclick={stopPractice} title="Exit">
+        <Button onclick={stopPractice} title="Exit" tooltip="Exit to setup">
           <LogOutIcon />
         </Button>
       </div>

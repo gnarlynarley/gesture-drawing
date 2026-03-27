@@ -4,9 +4,10 @@
 
   type Props = {
     children?: Snippet;
+    tooltip: Snippet;
   };
 
-  const { children }: Props = $props();
+  const { children, tooltip }: Props = $props();
 </script>
 
 <Tooltip.Provider>
@@ -15,7 +16,7 @@
       {@render children?.()}
     </Tooltip.Trigger>
     <Tooltip.Content sideOffset={8}>
-      <div class="tooltip">Make some magic!</div>
+      <div class="tooltip">{@render tooltip()}</div>
     </Tooltip.Content>
   </Tooltip.Root>
 </Tooltip.Provider>
