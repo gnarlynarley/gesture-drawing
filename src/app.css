@@ -13,21 +13,28 @@
   --border-radius: 0.3em;
   --font-family: "Merriweather Variable", serif;
 
-  --color-primary: oklab(84.495% 0.0057 0.16972);
-  --color-primary-text: color-mix(in oklab, var(--color-primary), black 80%);
-  --color-secondary: oklab(87.51% -0.20622 0.11891);
-  --color-background: #1b1b1c;
-  --color-accent: color-mix(in oklab, var(--color-background), white 8%);
   --color-text: #d8d8d8;
+  --color-background: #1b1b1c;
+  --color-primary: oklch(84.495% 0.16982 88.075);
+  --color-primary-text: color-mix(
+    in oklab,
+    var(--color-primary),
+    var(--color-background) 90%
+  );
+  --color-secondary: oklch(87.51% 0.23804 150.031);
+  --color-accent: color-mix(in oklab, var(--color-background), white 8%);
+  --color-error: oklch(54.67% 0.22096 28.886);
+  --color-error-text: oklch(from var(--color-error) calc(l / l) c h);
 }
 
 :root.is-theme-light {
-  --color-primary: oklab(58.143% 0.04753 0.10292);
-  --color-primary-text: color-mix(in oklab, var(--color-primary), white 80%);
-  --color-secondary: oklab(87.51% -0.20622 0.11891);
+  --color-primary: oklch(63.334% 0.13775 62.04);
+  --color-secondary: oklch(87.51% 0.23804 150.031);
   --color-background: #d3cfcb;
   --color-accent: color-mix(in oklab, var(--color-background), black 5%);
   --color-text: #202020;
+
+  --color-error: oklch(51.124% 0.20409 28.622);
 }
 
 html {

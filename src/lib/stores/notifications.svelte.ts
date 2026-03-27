@@ -1,6 +1,4 @@
-import { writable } from "svelte/store";
-
-export type NotificationType = "message";
+export type NotificationType = "message" | "error";
 export type Notification = {
   id: string;
   type: NotificationType;

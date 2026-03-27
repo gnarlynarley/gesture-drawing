@@ -12,9 +12,13 @@
   const notificationId = $derived(notification.id);
   const notificationDuration = $derived(notification.duration);
 
+  function remove() {
+    removeNotification(notificationId);
+  }
+
   $effect(() => {
     const id = setTimeout(() => {
-      removeNotification(notificationId);
+      remove();
     }, notificationDuration);
 
     return () => {
@@ -23,9 +27,14 @@
   });
 </script>
 
-<div class="notification">
+<button
+  type="button"
+  class="notification"
+  class:error={notification.type === "error"}
+  onclick={remove}
+>
   {notification.text}
-</div>
+</button>
 
 <style>
   .notification {
@@ -33,5 +42,10 @@
     padding: var(--gutter);
     color: var(--color-background);
     border-radius: var(--border-radius);
+
+    &.error {
+      background-color: var(--color-error);
+      color: var(--color-error-text);
+    }
   }
 </style>

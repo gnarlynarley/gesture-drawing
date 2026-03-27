@@ -54,6 +54,7 @@ settings.subscribe((state) => {
         });
       }
     } catch {
+      addNotification(`Failed loading previous folder.`, "error");
       settings.set({ ...state, directory: null });
       lastDirectory = null;
     }
