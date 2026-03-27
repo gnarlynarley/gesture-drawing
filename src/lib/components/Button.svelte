@@ -1,5 +1,8 @@
 <script lang="ts">
-  import type { HTMLButtonAttributes } from "svelte/elements";
+  import type {
+    HTMLButtonAttributes,
+    MouseEventHandler,
+  } from "svelte/elements";
   import Tooltip from "./Tooltip.svelte";
 
   type Props = HTMLButtonAttributes & {
@@ -14,13 +17,35 @@
     children,
     type = "button",
     tooltip,
+    onclick,
     ...props
   }: Props = $props();
+  let pending = $state(false);
+
+  const onclickHandler: MouseEventHandler<HTMLButtonElement> = async (ev) => {
+    try {
+      pending = true;
+      await onclick?.(ev);
+    } catch (err) {
+      throw err;
+    } finally {
+      pending = false;
+    }
+  };
 </script>
 
 {#snippet button()}
-  <button {type} class="u-focus" class:primary class:bordered {...props}>
-    {@render children?.()}
+  <button
+    {type}
+    class:pending
+    class:primary
+    class:bordered
+    onclick={onclickHandler}
+    {...props}
+  >
+    <span class="inner">
+      {@render children?.()}
+    </span>
   </button>
 {/snippet}
 
@@ -46,6 +71,28 @@
     flex-shrink: 0;
     border: 2px solid var(--color);
     color: var(--color-text);
+    position: relative;
+
+    &.pending {
+      &::after {
+        --size: 1em;
+        content: "";
+        display: block;
+        width: 1em;
+        height: 1em;
+        border: 3px solid currentColor;
+        border-top-color: transparent;
+        position: absolute;
+        top: calc(50% - (var(--size) * 0.5));
+        left: calc(50% - (var(--size) * 0.5));
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .inner {
+        opacity: 0;
+      }
+    }
 
     :global(svg) {
       display: block;
@@ -83,6 +130,15 @@
       &:hover {
         background-color: transparent;
       }
+    }
+  }
+
+  @keyframes spin {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: 360deg;
     }
   }
 </style>
