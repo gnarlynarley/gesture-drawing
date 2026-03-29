@@ -19,7 +19,6 @@
   import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
   import FileImage from "$lib/components/FileImage.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
-  import beep from "$lib/utils/beep";
   import createImage from "$lib/utils/createImage";
   import PageLayout from "$lib/components/PageLayout.svelte";
 
@@ -64,12 +63,6 @@
       }
     } catch {
       currentFile = null;
-    }
-  }
-
-  function playsound() {
-    if (sound) {
-      beep();
     }
   }
 
@@ -146,7 +139,6 @@
         if (autoPlay) {
           next();
         }
-        playsound();
       }
     }, 10);
 
@@ -171,12 +163,15 @@
     switch (ev.key.toLowerCase()) {
       case " ": {
         togglePlay();
+        break;
       }
       case "arrowright": {
         next();
+        break;
       }
       case "f": {
         toggleFlip();
+        break;
       }
     }
   }
@@ -202,7 +197,7 @@
         {#if view === "drawing" || view === "pending"}
           <Button
             onclick={togglePlay}
-            tooltip={playing ? "Pause (space)" : "Play (space)"}
+            tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
           >
             {#if playing}
               <PauseIcon width="3" />

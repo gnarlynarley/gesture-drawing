@@ -3,7 +3,7 @@ import { settings } from "./setting.svelte";
 import { addNotification } from "./notifications.svelte";
 import { ImageFileHandle } from "$lib/models";
 
-const FILE_SYSTEM_API_SUPPORTED = "showDirectoryPicker" in self;
+const FILE_SYSTEM_API_SUPPORTED = false; // "showDirectoryPicker" in self;
 
 function isImageName(name: string): boolean {
   const extension = name.split(".").pop();
@@ -44,16 +44,15 @@ export let files = writable<ImageFileHandle[] | null>(null);
 
 let lastDirectory: FileSystemDirectoryHandle | null = null;
 
-settings.subscribe((state) => {
+settings.subscribe(async (state) => {
   if (state.directory) {
     try {
       if (state.directory !== lastDirectory) {
         lastDirectory = state.directory;
-        delve(state.directory, [], state.directory.name).then((handles) => {
-          files.set(handles);
-        });
+        const handles = await delve(state.directory, [], state.directory.name);
+        files.set(handles);
       }
-    } catch {
+    } catch (err) {
       addNotification(`Failed loading previous folder.`, "error");
       settings.set({ ...state, directory: null });
       lastDirectory = null;
