@@ -91,6 +91,12 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
+hr {
+  border: none;
+  height: 2px;
+  background-color: var(--color-accent);
+}
+
 ::selection {
   background-color: color-mix(in oklab, var(--color-primary), transparent 70%);
 }

@@ -45,46 +45,47 @@
   <Box xl>
     <h1>Setup</h1>
 
-    <div class="options">
-      <div class="stack">
-        <Box xl>
-          <Button onclick={chooseDirectory}>
-            {#if canStart}
-              Choose different folder
-            {:else}
-              Choose folder
-            {/if}
-          </Button>
+    <div class="stack">
+      <Box xl>
+        <Button onclick={chooseDirectory}>
+          {#if canStart}
+            Choose different folder
+          {:else}
+            Choose folder
+          {/if}
+        </Button>
 
-          <Checkbox
-            label="Autoplay"
-            name="autoplay"
-            description="Automatically advance to the next picture"
-            bind:checked={$settings.autoPlay}
-          />
+        <hr />
 
-          <Input
-            label="Intermission time"
-            name="intermissiontime"
-            description="Time in seconds between every picture so you can adjust the canvas or etc."
-            bind:value={$settings.intermissionTime}
-            disabled={!$settings.autoPlay}
-          />
+        <Checkbox
+          label="Autoplay"
+          name="autoplay"
+          description="Automatically advance to the next picture"
+          bind:checked={$settings.autoPlay}
+        />
 
-          <!-- <Checkbox
+        <Input
+          label="Intermission time"
+          name="intermissiontime"
+          description="Time in seconds between every picture so you can adjust the canvas or etc."
+          bind:value={$settings.intermissionTime}
+          disabled={!$settings.autoPlay}
+        />
+
+        <!-- <Checkbox
             label="With sounds"
             name="sound"
             bind:checked={$settings.sound}
           /> -->
-        </Box>
 
-        <Box>
-          <Select label="Theme" bind:value={$settings.theme} items={themes} />
-          <Button onclick={resetSettings}>Reset</Button>
-        </Box>
-      </div>
+        <hr />
+
+        <Select label="Theme" bind:value={$settings.theme} items={themes} />
+        <Button onclick={resetSettings}>Reset</Button>
+      </Box>
 
       <Box>
+        <h2>Schedules</h2>
         {#if $settings.schedules.length > 0}
           <div class="items" transition:blur>
             <div class="item">
@@ -133,11 +134,6 @@
   }
 
   .stack {
-    display: grid;
-    gap: var(--gutter);
-  }
-
-  .options {
     display: grid;
     gap: var(--gutter);
 
