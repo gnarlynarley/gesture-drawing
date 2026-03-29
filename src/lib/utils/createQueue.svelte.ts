@@ -1,10 +1,9 @@
 import getRandomFromArray from "./getRandomFromArray";
 import { type Schedule } from "./schedule";
 
-export type QueueItem<T> = {
+export type QueueItem<T> = Schedule & {
   item: T;
   page: number;
-  schedule: Schedule;
 };
 
 export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
@@ -50,9 +49,9 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
         const item = random.get();
         if (item === null) break outer;
         state.queue.push({
+          ...schedule,
           item,
           page: index + 1,
-          schedule,
         });
       }
     }

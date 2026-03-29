@@ -24,11 +24,8 @@
         .reduce<{ schedule: Schedule; files: Promise<Item>[] }[]>(
           (acc, entry) => {
             let prevItem = acc[acc.length - 1];
-            if (
-              !prevItem ||
-              prevItem.schedule.duration !== entry.schedule.duration
-            ) {
-              prevItem = { schedule: entry.schedule, files: [] };
+            if (!prevItem || prevItem.schedule.duration !== entry.duration) {
+              prevItem = { schedule: entry, files: [] };
               acc.push(prevItem);
             }
             prevItem.files.push(

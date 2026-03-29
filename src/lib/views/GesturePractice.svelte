@@ -106,8 +106,8 @@
 
     view = "pending";
     await loadImage(await queue.state.current.item.getFile());
-    totalTime = queue.state.current.schedule.duration * 1000;
-    time = queue.state.current.schedule.duration * 1000;
+    totalTime = queue.state.current.duration * 1000;
+    time = queue.state.current.duration * 1000;
     view = "drawing";
   }
 
@@ -117,7 +117,7 @@
     view = "pending";
     await loadImage(await queue.state.current.item.getFile());
     view = "drawing";
-    time = queue.state.current.schedule.duration * 1000;
+    time = queue.state.current.duration * 1000;
   }
 
   function reset() {
@@ -242,10 +242,10 @@
             <div class="text">
               <span class="highlighted">{parseTime(currentTime / 1000)} </span>
               <span>/</span>
-              <span>{parseTime(queue.state.current.schedule.duration)}</span>
+              <span>{parseTime(queue.state.current.duration)}</span>
             </div>
             <div class="text">
-              {queue.state.current.page}/{queue.state.current.schedule.amount}
+              {queue.state.current.page}/{queue.state.current.amount}
             </div>
           {/if}
         {/if}
