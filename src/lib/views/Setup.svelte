@@ -2,6 +2,7 @@
   import Box from "$lib/components/Box.svelte";
   import Button from "$lib/components/Button.svelte";
   import Checkbox from "$lib/components/Checkbox.svelte";
+  import CreditBox from "$lib/components/CreditBox.svelte";
   import DragList from "$lib/components/DragList.svelte";
   import Input from "$lib/components/Input.svelte";
   import Select from "$lib/components/Select.svelte";
@@ -120,6 +121,10 @@
 
     <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
   </Box>
+
+  <div class="footer">
+    <CreditBox />
+  </div>
 </div>
 
 <style lang="scss">
@@ -174,5 +179,9 @@
         );
       }
     }
+  }
+
+  .footer {
+    margin-top: var(--spacing);
   }
 </style>

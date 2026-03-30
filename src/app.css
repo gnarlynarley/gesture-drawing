@@ -91,6 +91,11 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
+a {
+  color: currentColor;
+  text-decoration: none;
+}
+
 hr {
   border: none;
   height: 2px;
