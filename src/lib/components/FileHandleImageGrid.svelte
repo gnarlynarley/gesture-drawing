@@ -1,6 +1,9 @@
 <script lang="ts">
   import { ImageFileHandle } from "$lib/models";
-  import type { QueueItem } from "$lib/utils/createQueue.svelte";
+  import type {
+    QueueItem,
+    PictureQueueItem,
+  } from "$lib/utils/createQueue.svelte";
   import parseTime from "$lib/utils/parseTime";
   import type { Schedule } from "$lib/utils/schedule";
   import FileHandleImage from "./FileImage.svelte";
@@ -14,6 +17,12 @@
     file: File;
     path: string;
   };
+  type ScheduleItem = {
+    kind: "pictures" | "break";
+    files: Item[];
+    promises: Promise<Item>[];
+    duration: number;
+  };
 
   const { entries }: Props = $props();
   let selectedFile = $state<Item | null>(null);
@@ -21,27 +30,43 @@
   const groupedPromise = $derived(
     Promise.all(
       entries
-        .reduce<{ schedule: Schedule; files: Promise<Item>[] }[]>(
-          (acc, entry) => {
-            let prevItem = acc[acc.length - 1];
-            if (!prevItem || prevItem.schedule.duration !== entry.duration) {
-              prevItem = { schedule: entry, files: [] };
-              acc.push(prevItem);
-            }
-            prevItem.files.push(
-              new Promise<Item>(async (resolve) => {
-                resolve({
-                  file: await entry.item.getFile(),
-                  path: entry.item.path,
-                });
-              }),
-            );
+        .reduce<ScheduleItem[]>((acc, entry) => {
+          let prevItem = acc[acc.length - 1];
+          if (entry.type === "break") {
+            acc.push({
+              kind: "break",
+              duration: entry.duration,
+              files: [],
+              promises: [],
+            });
+
             return acc;
-          },
-          [],
-        )
+          }
+          if (
+            !prevItem ||
+            prevItem.kind === "break" ||
+            prevItem.duration !== entry.duration
+          ) {
+            prevItem = {
+              kind: "pictures",
+              duration: entry.duration,
+              files: [],
+              promises: [],
+            };
+            acc.push(prevItem);
+          }
+          prevItem.promises.push(
+            new Promise<Item>(async (resolve) => {
+              resolve({
+                file: await entry.item.getFile(),
+                path: entry.item.path,
+              });
+            }),
+          );
+          return acc;
+        }, [])
         .map(async (entry) => {
-          const files = await Promise.all(entry.files);
+          const files = await Promise.all(entry.promises);
 
           return {
             ...entry,
@@ -74,23 +99,27 @@
 <div class="wrapper">
   {#await groupedPromise then grouped}
     {#each grouped as item}
-      <div class="item">
-        <h2>Duration: {parseTime(item.schedule.duration)}</h2>
-        <div class="grid">
-          {#each item.files as file, index}
-            <button
-              class="image"
-              type="button"
-              onclick={() => onImageClick(file)}
-            >
-              <span class="label">
-                Picture #{index + 1}
-              </span>
-              <FileHandleImage file={file.file} />
-            </button>
-          {/each}
+      {#if item.kind === "pictures"}
+        <div class="item">
+          <h2>Duration: {parseTime(item.duration)}</h2>
+          <div class="grid">
+            {#each item.files as file, index}
+              <button
+                class="image"
+                type="button"
+                onclick={() => onImageClick(file)}
+              >
+                <span class="label">
+                  Picture #{index + 1}
+                </span>
+                <FileHandleImage file={file.file} />
+              </button>
+            {/each}
+          </div>
         </div>
-      </div>
+      {:else}
+        <h1>Break of {parseTime(item.duration)}</h1>
+      {/if}
     {/each}
   {/await}
 </div>

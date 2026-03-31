@@ -12,6 +12,7 @@
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
   import { blur } from "svelte/transition";
+  import { CoffeeIcon, ImageIcon } from "@lucide/svelte";
 
   type Props = {
     files: unknown[] | null;
@@ -22,8 +23,18 @@
 
   function addSchedule() {
     $settings.schedules.push({
+      type: "picture",
       id: createId(),
       amount: 0,
+      duration: 0,
+    });
+    $settings.schedules = $settings.schedules;
+  }
+
+  function addBreak() {
+    $settings.schedules.push({
+      type: "break",
+      id: createId(),
       duration: 0,
     });
     $settings.schedules = $settings.schedules;
@@ -38,7 +49,9 @@
   }
 
   const canStart = $derived(
-    files && files.length > 0 && $settings.schedules.length > 0,
+    files &&
+      files.length > 0 &&
+      $settings.schedules.some((s) => s.type === "picture"),
   );
 </script>
 
@@ -89,8 +102,9 @@
         <h2>Schedules</h2>
         {#if $settings.schedules.length > 0}
           <div class="items" transition:blur>
-            <div class="item">
-              <span>Amount of pictures</span>
+            <div class="item item--header">
+              <span>Type</span>
+              <span>Amount</span>
               <span>Time</span>
             </div>
             <DragList bind:items={$settings.schedules}>
@@ -102,10 +116,14 @@
                   class:dragging
                   transition:blur
                 >
-                  <Input
-                    name="amount"
-                    bind:value={$settings.schedules[index].amount}
-                  />
+                  {#if $settings.schedules[index].type === "break"}
+                    <center>Break</center>
+                  {:else}
+                    <Input
+                      name="amount"
+                      bind:value={($settings.schedules[index] as any).amount}
+                    />
+                  {/if}
                   <TimeInput bind:value={$settings.schedules[index].duration} />
                   <Button onclick={() => deleteSchedule(schedule)}
                     >&times</Button
@@ -115,16 +133,18 @@
             </DragList>
           </div>
         {/if}
-        <Button onclick={addSchedule}>Add schedule</Button>
+        <div class="buttons">
+          <Button onclick={addSchedule}>Add schedule</Button>
+          <Button onclick={addBreak}>Add break</Button>
+        </div>
       </Box>
     </div>
 
     <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
+    <div class="footer">
+      <CreditBox />
+    </div>
   </Box>
-
-  <div class="footer">
-    <CreditBox />
-  </div>
 </div>
 
 <style lang="scss">
@@ -157,7 +177,13 @@
       grid-template-columns: subgrid;
       grid-column: 1 / -1;
       gap: var(--gutter);
-      align-items: flex-end;
+      align-items: center;
+
+      &.item--header {
+        align-items: center;
+        font-size: 0.85em;
+        opacity: 0.6;
+      }
 
       &.dragging {
         opacity: 0.5;
@@ -182,6 +208,14 @@
   }
 
   .footer {
-    margin-top: var(--spacing);
+    margin-inline: calc(var(--gutter) * -1);
+    margin-bottom: calc(var(--gutter) * -1);
+    background: var(--color-accent);
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+    gap: var(--gutter);
   }
 </style>

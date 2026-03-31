@@ -1,10 +1,24 @@
 import getRandomFromArray from "./getRandomFromArray";
 import { type Schedule } from "./schedule";
 
-export type QueueItem<T> = Schedule & {
+export type PictureQueueItem<T> = {
+  type: "picture";
+  id: string;
+  amount: number;
+  duration: number;
   item: T;
   page: number;
 };
+
+export type BreakQueueItem = {
+  type: "break";
+  id: string;
+  duration: number;
+  item: null;
+  page: number;
+};
+
+export type QueueItem<T> = PictureQueueItem<T> | BreakQueueItem;
 
 export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
   let random = getRandomFromArray(arr);
@@ -25,7 +39,7 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
   }
 
   function skip() {
-    if (state.current) {
+    if (state.current && state.current.type === "picture") {
       const next = random.get();
       if (next) {
         state.current.item = next;
@@ -45,14 +59,24 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
     random = getRandomFromArray(arr);
     state.queue = [];
     outer: for (const schedule of schedules) {
-      for (let index = 0; index < schedule.amount; index += 1) {
-        const item = random.get();
-        if (item === null) break outer;
+      if (schedule.type === "break") {
         state.queue.push({
-          ...schedule,
-          item,
-          page: index + 1,
+          type: "break",
+          id: schedule.id,
+          duration: schedule.duration,
+          item: null,
+          page: 1,
         });
+      } else {
+        for (let index = 0; index < schedule.amount; index += 1) {
+          const item = random.get();
+          if (item === null) break outer;
+          state.queue.push({
+            ...schedule,
+            item,
+            page: index + 1,
+          });
+        }
       }
     }
     state.history = [];

@@ -31,14 +31,8 @@
     sound: boolean;
   };
 
-  const {
-    files,
-    stopPractice,
-    schedules,
-    intermissionTime,
-    autoPlay,
-    sound,
-  }: Props = $props();
+  const { files, stopPractice, schedules, intermissionTime, autoPlay }: Props =
+    $props();
 
   const queue = $derived(createQueue(files, schedules));
   let currentFile = $state<File | null>(null);
@@ -46,7 +40,7 @@
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
 
-  type ViewState = "drawing" | "intermission" | "pending" | "end";
+  type ViewState = "drawing" | "intermission" | "break" | "pending" | "end";
 
   let view = $state<ViewState>("drawing");
   let playing = $state(true);
@@ -68,10 +62,18 @@
 
   async function next(skipIntermission = false) {
     if (view === "pending") return;
+
+    // Check if current or next item is a break to skip intermission
+    const currentIsBreak = queue.state.current?.type === "break";
+    const nextItem = queue.getNext();
+    const nextIsBreak = nextItem?.type === "break";
+
     const isIntermission = !(
       !autoPlay ||
       skipIntermission ||
       view === "intermission" ||
+      currentIsBreak ||
+      nextIsBreak ||
       intermissionTime === 0
     );
 
@@ -97,6 +99,14 @@
       return;
     }
 
+    if (queue.state.current.type === "break") {
+      currentFile = null;
+      totalTime = queue.state.current.duration * 1000;
+      time = queue.state.current.duration * 1000;
+      view = "break";
+      return;
+    }
+
     view = "pending";
     await loadImage(await queue.state.current.item.getFile());
     totalTime = queue.state.current.duration * 1000;
@@ -106,6 +116,10 @@
 
   async function skip() {
     if (!queue.state.current) return;
+    if (queue.state.current.type === "break") {
+      next(true);
+      return;
+    }
     queue.skip();
     view = "pending";
     await loadImage(await queue.state.current.item.getFile());
@@ -127,7 +141,8 @@
 
   $effect(() => {
     if (!playing) return;
-    if (!(view === "intermission" || view === "drawing")) return;
+    if (!(view === "intermission" || view === "break" || view === "drawing"))
+      return;
     let lastTime = performance.now();
     const intervalId = setInterval(() => {
       const currentTime = performance.now();
@@ -159,7 +174,7 @@
   }
 
   function onkeydown(ev: KeyboardEvent) {
-    if (view !== "drawing") return;
+    if (view !== "drawing" && view !== "break") return;
     switch (ev.key.toLowerCase()) {
       case " ": {
         togglePlay();
@@ -194,7 +209,30 @@
             <RefreshCcwIcon />
           </Button>
         {/if}
-        {#if view === "drawing" || view === "pending"}
+        {#if view === "break"}
+          <Button
+            onclick={togglePlay}
+            tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
+          >
+            {#if playing}
+              <PauseIcon width="3" />
+            {:else}
+              <PlayIcon />
+            {/if}
+          </Button>
+
+          <Button onclick={() => next(true)} tooltip="Next (right)">
+            <ArrowBigRightIcon />
+          </Button>
+
+          {#if queue.state.current}
+            <div class="text">
+              <span class="highlighted">{parseTime(currentTime / 1000)} </span>
+              <span>/</span>
+              <span>{parseTime(queue.state.current.duration)}</span>
+            </div>
+          {/if}
+        {:else if view === "drawing" || view === "pending"}
           <Button
             onclick={togglePlay}
             tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
@@ -239,9 +277,11 @@
               <span>/</span>
               <span>{parseTime(queue.state.current.duration)}</span>
             </div>
-            <div class="text">
-              {queue.state.current.page}/{queue.state.current.amount}
-            </div>
+            {#if queue.state.current.type === "picture"}
+              <div class="text">
+                {queue.state.current.page}/{queue.state.current.amount}
+              </div>
+            {/if}
           {/if}
         {/if}
 
@@ -256,6 +296,10 @@
       {#if view === "intermission"}
         <Charr />
         <h1>Intermission</h1>
+      {:else if view === "break"}
+        <Charr />
+        <h1>Break</h1>
+        <p>Take a short break. The next item will start automatically.</p>
       {:else if view === "pending"}
         <Spinner />
       {:else if view === "end"}

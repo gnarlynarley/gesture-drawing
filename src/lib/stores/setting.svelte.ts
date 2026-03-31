@@ -9,21 +9,25 @@ const SETTINGS_KEY = "gesture-app.settings";
 const INTERMISSION_TIME_DEFAULT = 3;
 const SCHEDULES_DEFAULT: Schedule[] = [
   {
+    type: "picture",
     id: createId(),
     amount: 10,
     duration: 30,
   },
   {
+    type: "picture",
     id: createId(),
     amount: 5,
     duration: 120,
   },
   {
+    type: "picture",
     id: createId(),
     amount: 2,
     duration: 300,
   },
   {
+    type: "picture",
     id: createId(),
     amount: 1,
     duration: 600,
