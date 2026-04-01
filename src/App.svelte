@@ -22,7 +22,7 @@
     needRefresh.set(false);
   }
 
-  const showUpdateBar = $derived($offlineReady || $needRefresh);
+  const showUpdateBar = $derived($needRefresh);
 </script>
 
 <div class="wrapper">
@@ -30,9 +30,7 @@
     <div class="update-bar" role="alert">
       <p>A new update is available</p>
 
-      {#if $needRefresh}
-        <button onclick={() => updateServiceWorker(true)}>Update</button>
-      {/if}
+      <Button primary onclick={() => updateServiceWorker(true)}>Update</Button>
 
       <div class="close">
         <Button onclick={closeUpdateBar}>&times;</Button>
@@ -65,6 +63,9 @@
   }
 
   .update-bar {
+    position: sticky;
+    top: 0;
+    left: 0;
     display: flex;
     align-items: center;
     padding: var(--gutter);
