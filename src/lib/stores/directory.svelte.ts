@@ -6,7 +6,7 @@ import { ImageFileHandle } from "$lib/models";
 const FILE_SYSTEM_API_SUPPORTED = false; // "showDirectoryPicker" in self;
 
 function isImageName(name: string): boolean {
-  const extension = name.split(".").pop();
+  const extension = name.split(".").pop()?.toLowerCase();
   switch (extension) {
     case "jpg":
     case "jpeg":
@@ -18,7 +18,6 @@ function isImageName(name: string): boolean {
     case "ico":
       return true;
     default:
-      console.log(name);
       return false;
   }
 }
