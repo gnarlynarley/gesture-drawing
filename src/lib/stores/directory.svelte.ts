@@ -18,6 +18,7 @@ function isImageName(name: string): boolean {
     case "ico":
       return true;
     default:
+      console.log(name);
       return false;
   }
 }
