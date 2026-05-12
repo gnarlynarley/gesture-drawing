@@ -9,6 +9,7 @@
     RefreshCcwIcon,
     FlipHorizontal2Icon,
     PaletteIcon,
+    FlipVertical2Icon,
   } from "@lucide/svelte";
   import { type Schedule } from "$lib/utils/schedule";
   import Timebar from "$lib/components/Timebar.svelte";
@@ -163,10 +164,14 @@
   });
 
   let flipped = $state(false);
+  let flippedVertical = $state(false);
   let grayscale = $state(false);
 
   function toggleFlip() {
     flipped = !flipped;
+  }
+  function toggleFlipVertical() {
+    flippedVertical = !flippedVertical;
   }
 
   function toggleGrayscale() {
@@ -198,6 +203,7 @@
   class="wrapper"
   class:playing
   class:flipped
+  class:flippedVertical
   class:grayscale
   class:exceeded-time={currentTime > totalTime}
 >
@@ -261,6 +267,15 @@
             tooltip="Toggle flip (F)"
           >
             <FlipHorizontal2Icon />
+          </Button>
+
+          <Button
+            onclick={toggleFlipVertical}
+            primary={flippedVertical}
+            bordered
+            tooltip="Toggle flip (F)"
+          >
+            <FlipVertical2Icon />
           </Button>
 
           <Button
@@ -362,6 +377,12 @@
 
       .wrapper.flipped & {
         scale: -1 1;
+      }
+      .wrapper.flippedVertical & {
+        scale: 1 -1;
+      }
+      .wrapper.flipped.flippedVertical & {
+        scale: -1 -1;
       }
       .wrapper.grayscale & {
         filter: saturate(0%);
