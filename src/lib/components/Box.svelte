@@ -4,12 +4,13 @@
   type Props = {
     children?: Snippet;
     xl?: boolean;
+    xlPadding?: boolean;
   };
 
-  const { children, xl }: Props = $props();
+  const { children, xl, xlPadding }: Props = $props();
 </script>
 
-<div class="box" class:xl>
+<div class="box" class:xl class:xlPadding>
   {@render children?.()}
 </div>
 
@@ -25,6 +26,10 @@
 
     &.xl {
       gap: var(--spacing);
+    }
+
+    &.xlPadding {
+      padding: var(--spacing);
     }
   }
 </style>

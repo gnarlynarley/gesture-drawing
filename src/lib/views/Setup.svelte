@@ -12,7 +12,7 @@
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
   import { blur } from "svelte/transition";
-  import { CoffeeIcon, ImageIcon } from "@lucide/svelte";
+  import ExplanationBox from "$lib/components/ExplanationBox.svelte";
 
   type Props = {
     files: unknown[] | null;
@@ -146,6 +146,7 @@
 
 <div class="footer">
   <CreditBox />
+  <ExplanationBox />
 </div>
 
 <style lang="scss">
@@ -211,6 +212,9 @@
   .footer {
     margin-top: auto;
     padding: var(--gutter);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 
   .buttons {
