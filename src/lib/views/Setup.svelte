@@ -141,10 +141,11 @@
     </div>
 
     <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
-    <div class="footer">
-      <CreditBox />
-    </div>
   </Box>
+</div>
+
+<div class="footer">
+  <CreditBox />
 </div>
 
 <style lang="scss">
@@ -208,9 +209,8 @@
   }
 
   .footer {
-    margin-inline: calc(var(--gutter) * -1);
-    margin-bottom: calc(var(--gutter) * -1);
-    background: var(--color-accent);
+    margin-top: auto;
+    padding: var(--gutter);
   }
 
   .buttons {

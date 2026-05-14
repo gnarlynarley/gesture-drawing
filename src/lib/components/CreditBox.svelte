@@ -18,12 +18,14 @@
     align-items: center;
     gap: var(--gutter);
     padding: var(--gutter);
-    background: var(--color-accent);
+    border: 2px solid var(--color-accent);
     border-radius: var(--border-radius);
+    background-color: var(--color-background);
 
     &:hover {
-      background-color: var(--color-primary);
+      border-color: var(--color-primary);
       color: var(--color-primary-text);
+      background-color: var(--color-primary);
     }
   }
 
