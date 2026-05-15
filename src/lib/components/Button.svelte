@@ -72,6 +72,7 @@
     border: 2px solid var(--color);
     color: var(--color-text);
     position: relative;
+    line-height: 1;
 
     &.pending {
       &::after {

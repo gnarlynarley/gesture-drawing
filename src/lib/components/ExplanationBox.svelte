@@ -1,14 +1,19 @@
 <script lang="ts">
   import Box from "./Box.svelte";
   import { CircleQuestionMarkIcon } from "@lucide/svelte";
+  import Button from "./Button.svelte";
   const links: [string, string][] = [
     [
-      "THIS Improves Your Gesture Drawing",
+      "THIS Improves Your Gesture Drawing - Proko",
       "https://www.youtube.com/watch?v=2fl5LYouyoY",
     ],
     [
-      "The 16 Line Gesture Method",
+      "The 16 Line Gesture Method - Steven Michael Hampton",
       "https://www.youtube.com/watch?v=tSyGOZjTs5A",
+    ],
+    [
+      "The Basics of Gesture Drawing - Steven Michael Hampton",
+      "https://www.youtube.com/watch?v=8c6Peo0ychw",
     ],
   ];
 </script>
@@ -20,6 +25,7 @@
 <dialog id="explanation-box">
   <Box xl xlPadding>
     <h1>What is gesture drawing?</h1>
+
     <p>
       Timed gesture drawing is a practice where you draw a subject, usually a
       human figure, in a short, fixed amount of time, typically anywhere from 30
@@ -48,6 +54,12 @@
         </li>
       {/each}
     </ul>
+
+    <div class="close-button">
+      <Button type="button" commandfor="explanation-box" command="close">
+        Close
+      </Button>
+    </div>
   </Box>
 </dialog>
 
@@ -72,5 +84,9 @@
 
   a {
     text-decoration: underline;
+  }
+
+  .close-button {
+    margin-left: auto;
   }
 </style>
