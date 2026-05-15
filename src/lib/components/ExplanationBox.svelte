@@ -15,6 +15,10 @@
       "The Basics of Gesture Drawing - Steven Michael Hampton",
       "https://www.youtube.com/watch?v=8c6Peo0ychw",
     ],
+    [
+      "Step by Step Gesture Drawing - Michael Mattesi",
+      "https://www.youtube.com/watch?v=c93T3DTsbo0",
+    ],
   ];
 </script>
 
