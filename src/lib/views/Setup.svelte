@@ -60,8 +60,6 @@
     }
   }
 
-  $inspect(hasValidationError);
-
   const canStart = $derived.by(
     () =>
       files &&
