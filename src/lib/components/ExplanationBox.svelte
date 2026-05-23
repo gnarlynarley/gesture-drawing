@@ -1,7 +1,7 @@
 <script lang="ts">
   import { CircleQuestionMarkIcon } from "@lucide/svelte";
   import Dialog from "./Dialog.svelte";
-  import Tooltip from "./Tooltip.svelte";
+  import Button from "./Button.svelte";
   const links: [string, string][] = [
     [
       "THIS Improves Your Gesture Drawing - Proko",
@@ -22,15 +22,13 @@
   ];
 </script>
 
-<Dialog>
+<Dialog title="What is gesture drawing?">
   {#snippet button()}
-    <Tooltip text="hello">
+    <Button bare tooltip="What is gesture drawing?">
       <CircleQuestionMarkIcon />
-    </Tooltip>
+    </Button>
   {/snippet}
   {#snippet content()}
-    <h1>What is gesture drawing?</h1>
-
     <p>
       Timed gesture drawing is a practice where you draw a subject, usually a
       human figure, in a short, fixed amount of time, typically anywhere from 30

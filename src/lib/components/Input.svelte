@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { HTMLInputAttributes } from "svelte/elements";
 
-  type Props = {
+  type Props = HTMLInputAttributes & {
     name: string;
     value: number | string;
     label?: string;
@@ -15,6 +15,7 @@
     label,
     description,
     disabled,
+    ...props
   }: Props = $props();
 
   const type = $derived.by((): HTMLInputAttributes["type"] => {
@@ -31,7 +32,7 @@
 </script>
 
 {#snippet input()}
-  <input {disabled} {id} bind:value {name} {type} />
+  <input {disabled} {id} bind:value {name} {type} {...props} />
 {/snippet}
 
 {#if label}

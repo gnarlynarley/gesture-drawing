@@ -113,6 +113,7 @@
                   <center>Break</center>
                 {:else}
                   <Input
+                    aria-label="Amount of images"
                     name="amount"
                     bind:value={($settings.schedules[index] as any).amount}
                   />

@@ -179,6 +179,14 @@
   }
 
   function onkeydown(ev: KeyboardEvent) {
+    switch (document.activeElement?.nodeName.toLowerCase()) {
+      case "input":
+      case "textarea":
+      case "select":
+      case "button": {
+        return;
+      }
+    }
     if (view !== "drawing" && view !== "break") return;
     switch (ev.key.toLowerCase()) {
       case " ": {

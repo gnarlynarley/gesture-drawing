@@ -4,10 +4,11 @@
   import type { Snippet } from "svelte";
 
   type Props = {
+    title: string;
     button: Snippet;
     content: Snippet;
   };
-  const { button, content }: Props = $props();
+  const { title, button, content }: Props = $props();
   const id = $props.id();
 </script>
 
@@ -17,11 +18,20 @@
 
 <dialog {id} closedby="any">
   <Box xl xlPadding>
-    {@render content()}
+    <header>
+      <h1>{title}</h1>
 
-    <div class="close-button">
-      <Button type="button" commandfor={id} command="close">Close</Button>
-    </div>
+      <button
+        class="close-button"
+        type="button"
+        commandfor={id}
+        command="close"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+    </header>
+    {@render content()}
   </Box>
 </dialog>
 
@@ -35,16 +45,28 @@
     background: transparent;
 
     &::backdrop {
-      backdrop-filter: blur(3px);
+      backdrop-filter: blur(10px);
       background-color: color-mix(
         in srgb,
         var(--color-background),
-        transparent 10%
+        transparent 5%
       );
     }
   }
 
+  header {
+    display: flex;
+    align-items: center;
+  }
+
   .close-button {
     margin-left: auto;
+    padding: var(--gutter);
+    line-height: 1;
+    border-radius: var(--border-radius);
+
+    &:hover {
+      background-color: var(--color-accent);
+    }
   }
 </style>

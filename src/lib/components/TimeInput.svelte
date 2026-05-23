@@ -17,6 +17,7 @@
   <div class="inputs">
     <input
       {id}
+      aria-label="Minutes"
       type="number"
       min="0"
       bind:value={
@@ -28,6 +29,7 @@
     />
     <span>:</span>
     <input
+      aria-label="Seconds"
       type="number"
       min="0"
       max="59"

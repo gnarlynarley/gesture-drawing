@@ -7,6 +7,7 @@
 
   type Props = HTMLButtonAttributes & {
     primary?: boolean;
+    bare?: boolean;
     bordered?: boolean;
     tooltip?: string;
     large?: boolean;
@@ -14,6 +15,7 @@
 
   const {
     primary,
+    bare,
     bordered,
     children,
     type = "button",
@@ -41,9 +43,11 @@
     {type}
     class:pending
     class:primary
+    class:bare
     class:bordered
     class:large
     onclick={onclickHandler}
+    aria-label={tooltip}
     {...props}
   >
     <span class="inner">
@@ -61,7 +65,7 @@
 {/if}
 
 <style lang="scss">
-  button {
+  button:not(.bare) {
     --button-color: var(--color-accent);
     --color: var(--button-color);
     padding: var(--gutter);

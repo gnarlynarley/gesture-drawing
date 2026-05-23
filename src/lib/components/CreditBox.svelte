@@ -1,16 +1,31 @@
 <script lang="ts">
   import src from "$public/logo.jpg?url";
+  import Dialog from "./Dialog.svelte";
 </script>
 
-<a
-  class="wrapper"
-  href="https://x.com/GnarlyNarley"
-  rel="noopener noreferrer"
-  target="_blank"
->
-  <img {src} alt="Narley" />
-  <span>Made with love by Narley</span>
-</a>
+<Dialog title="Warning, this guy draws smut.">
+  {#snippet button()}
+    <span class="wrapper">
+      <img {src} alt="Narley" />
+      <span>Made with love by Narley</span>
+    </span>
+  {/snippet}
+  {#snippet content()}
+    <p>
+      Why else you think I made this app, need to get better at anatomy and I
+      hope you will as well :D
+    </p>
+    <p>
+      <a
+        href="https://x.com/GnarlyNarley"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Twitter
+      </a>
+    </p>
+  {/snippet}
+</Dialog>
 
 <style>
   .wrapper {
