@@ -2,6 +2,7 @@
   import Box from "./Box.svelte";
   import { CircleQuestionMarkIcon } from "@lucide/svelte";
   import Button from "./Button.svelte";
+  import Dialog from "./Dialog.svelte";
   const links: [string, string][] = [
     [
       "THIS Improves Your Gesture Drawing - Proko",
@@ -22,12 +23,11 @@
   ];
 </script>
 
-<button type="button" command="show-modal" commandfor="explanation-box">
-  <CircleQuestionMarkIcon />
-</button>
-
-<dialog id="explanation-box">
-  <Box xl xlPadding>
+<Dialog>
+  {#snippet button()}
+    <CircleQuestionMarkIcon />
+  {/snippet}
+  {#snippet content()}
     <h1>What is gesture drawing?</h1>
 
     <p>
@@ -58,39 +58,11 @@
         </li>
       {/each}
     </ul>
-
-    <div class="close-button">
-      <Button type="button" commandfor="explanation-box" command="close">
-        Close
-      </Button>
-    </div>
-  </Box>
-</dialog>
+  {/snippet}
+</Dialog>
 
 <style>
-  dialog {
-    background: var(--color-background);
-    color: currentColor;
-    border: none;
-    max-width: 60em;
-    padding: 0;
-    background: transparent;
-
-    &::backdrop {
-      backdrop-filter: blur(3px);
-      background-color: color-mix(
-        in srgb,
-        var(--color-background),
-        transparent 10%
-      );
-    }
-  }
-
   a {
     text-decoration: underline;
-  }
-
-  .close-button {
-    margin-left: auto;
   }
 </style>

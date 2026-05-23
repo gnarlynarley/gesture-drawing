@@ -9,6 +9,7 @@
     primary?: boolean;
     bordered?: boolean;
     tooltip?: string;
+    large?: boolean;
   };
 
   const {
@@ -18,6 +19,7 @@
     type = "button",
     tooltip,
     onclick,
+    large,
     ...props
   }: Props = $props();
   let pending = $state(false);
@@ -40,6 +42,7 @@
     class:pending
     class:primary
     class:bordered
+    class:large
     onclick={onclickHandler}
     {...props}
   >
@@ -102,6 +105,10 @@
     &.primary {
       --button-color: var(--color-primary);
       color: var(--color-primary-text);
+    }
+
+    &.large {
+      font-size: 1.4em;
     }
 
     &:focus-visible {

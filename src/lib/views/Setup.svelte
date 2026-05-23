@@ -56,92 +56,87 @@
 </script>
 
 <div class="wrapper">
-  <Box xl>
-    <h1>Setup</h1>
+  <h1>Setup</h1>
 
-    <div class="stack">
-      <Box xl>
-        <Button onclick={chooseDirectory}>
-          {#if canStart}
-            Choose different folder
-          {:else}
-            Choose folder
-          {/if}
-        </Button>
+  <div class="stack">
+    <Box xl>
+      <Button onclick={chooseDirectory}>
+        {#if canStart}
+          Choose different folder
+        {:else}
+          Choose folder
+        {/if}
+      </Button>
 
-        <hr />
+      <hr />
 
-        <Checkbox
-          label="Autoplay"
-          name="autoplay"
-          description="Automatically advance to the next picture"
-          bind:checked={$settings.autoPlay}
-        />
+      <Checkbox
+        label="Autoplay"
+        name="autoplay"
+        description="Automatically advance to the next picture"
+        bind:checked={$settings.autoPlay}
+      />
 
-        <Input
-          label="Intermission time"
-          name="intermissiontime"
-          description="Time in seconds between every picture so you can adjust the canvas or etc."
-          bind:value={$settings.intermissionTime}
-          disabled={!$settings.autoPlay}
-        />
+      <Input
+        label="Intermission time"
+        name="intermissiontime"
+        description="Time in seconds between every picture so you can adjust the canvas or etc."
+        bind:value={$settings.intermissionTime}
+        disabled={!$settings.autoPlay}
+      />
 
-        <!-- <Checkbox
+      <!-- <Checkbox
             label="With sounds"
             name="sound"
             bind:checked={$settings.sound}
           /> -->
 
-        <hr />
+      <hr />
 
-        <Select label="Theme" bind:value={$settings.theme} items={themes} />
-        <Button onclick={resetSettings}>Reset</Button>
-      </Box>
+      <Select label="Theme" bind:value={$settings.theme} items={themes} />
+      <Button onclick={resetSettings}>Reset</Button>
+    </Box>
 
-      <Box>
-        <h2>Schedules</h2>
-        {#if $settings.schedules.length > 0}
-          <div class="items" transition:blur>
-            <div class="item item--header">
-              <span>Type</span>
-              <span>Amount</span>
-              <span>Time</span>
-            </div>
-            <DragList bind:items={$settings.schedules}>
-              {#snippet content(schedule, index, { before, after, dragging })}
-                <div
-                  class="item"
-                  class:before
-                  class:after
-                  class:dragging
-                  transition:blur
-                >
-                  {#if $settings.schedules[index].type === "break"}
-                    <center>Break</center>
-                  {:else}
-                    <Input
-                      name="amount"
-                      bind:value={($settings.schedules[index] as any).amount}
-                    />
-                  {/if}
-                  <TimeInput bind:value={$settings.schedules[index].duration} />
-                  <Button onclick={() => deleteSchedule(schedule)}
-                    >&times</Button
-                  >
-                </div>
-              {/snippet}
-            </DragList>
+    <Box>
+      <h2>Schedules</h2>
+      {#if $settings.schedules.length > 0}
+        <div class="items" transition:blur>
+          <div class="item item--header">
+            <span>Amount</span>
+            <span>Time</span>
           </div>
-        {/if}
-        <div class="buttons">
-          <Button onclick={addSchedule}>Add schedule</Button>
-          <Button onclick={addBreak}>Add break</Button>
+          <DragList bind:items={$settings.schedules}>
+            {#snippet content(schedule, index, { before, after, dragging })}
+              <div
+                class="item"
+                class:before
+                class:after
+                class:dragging
+                transition:blur
+              >
+                {#if $settings.schedules[index].type === "break"}
+                  <center>Break</center>
+                {:else}
+                  <Input
+                    name="amount"
+                    bind:value={($settings.schedules[index] as any).amount}
+                  />
+                {/if}
+                <TimeInput bind:value={$settings.schedules[index].duration} />
+                <Button onclick={() => deleteSchedule(schedule)}>&times</Button>
+              </div>
+            {/snippet}
+          </DragList>
         </div>
-      </Box>
-    </div>
+      {/if}
+      <div class="buttons">
+        <Button onclick={addSchedule}>Add schedule</Button>
+        <Button onclick={addBreak}>Add break</Button>
+      </div>
+    </Box>
+  </div>
 
-    <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
-  </Box>
+  <Button large primary onclick={startPractice} disabled={!canStart}>Start</Button>
 </div>
 
 <div class="footer">
@@ -151,10 +146,12 @@
 
 <style lang="scss">
   .wrapper {
-    margin-top: calc(var(--spacing) * 3);
+    margin-top: var(--spacing);
     flex-direction: column;
     width: 100%;
     padding: var(--gutter);
+    gap: var(--gutter);
+    display: grid;
     max-width: 80em;
     container-type: inline-size;
     margin-inline: auto;
@@ -221,5 +218,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
     gap: var(--gutter);
+    margin-top: auto;
   }
 </style>
