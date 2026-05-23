@@ -32,12 +32,11 @@
       flip-block,
       flip-inline,
       flip-block flip-inline;
-
     background: var(--color-primary);
     color: var(--color-primary-text);
     border-radius: var(--border-radius);
     padding: var(--gutter);
-    // pointer-events: none;
+    pointer-events: none;
     margin: var(--gutter);
     white-space: nowrap;
 
