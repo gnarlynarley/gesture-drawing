@@ -1,31 +1,49 @@
 <script lang="ts">
-  import { Tooltip } from "bits-ui";
   import type { Snippet } from "svelte";
 
   type Props = {
     children?: Snippet;
-    tooltip: Snippet;
+    text?: string | null | undefined;
   };
 
-  const { children, tooltip }: Props = $props();
+  const { children, text }: Props = $props();
+  const id = $props.id();
 </script>
 
-<Tooltip.Provider>
-  <Tooltip.Root delayDuration={200}>
-    <Tooltip.Trigger>
-      {@render children?.()}
-    </Tooltip.Trigger>
-    <Tooltip.Content sideOffset={8}>
-      <div class="tooltip">{@render tooltip()}</div>
-    </Tooltip.Content>
-  </Tooltip.Root>
-</Tooltip.Provider>
+<div class="wrapper" style={`--anchor-name: --${id};`}>
+  {@render children?.()}
+  <div class="tooltip">
+    {text}
+  </div>
+</div>
 
-<style>
+<style lang="scss">
+  .wrapper {
+    anchor-name: var(--anchor-name);
+    display: block;
+  }
+
   .tooltip {
+    position-anchor: var(--anchor-name);
+    position: fixed;
+    top: anchor(bottom);
+    justify-self: anchor-center;
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+
     background: var(--color-primary);
     color: var(--color-primary-text);
     border-radius: var(--border-radius);
     padding: var(--gutter);
+    // pointer-events: none;
+    margin: var(--gutter);
+    white-space: nowrap;
+
+    .wrapper:not(:hover) & {
+      display: none;
+      visibility: hidden;
+    }
   }
 </style>

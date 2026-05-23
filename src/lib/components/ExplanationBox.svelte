@@ -1,8 +1,7 @@
 <script lang="ts">
-  import Box from "./Box.svelte";
   import { CircleQuestionMarkIcon } from "@lucide/svelte";
-  import Button from "./Button.svelte";
   import Dialog from "./Dialog.svelte";
+  import Tooltip from "./Tooltip.svelte";
   const links: [string, string][] = [
     [
       "THIS Improves Your Gesture Drawing - Proko",
@@ -25,7 +24,9 @@
 
 <Dialog>
   {#snippet button()}
-    <CircleQuestionMarkIcon />
+    <Tooltip text="hello">
+      <CircleQuestionMarkIcon />
+    </Tooltip>
   {/snippet}
   {#snippet content()}
     <h1>What is gesture drawing?</h1>

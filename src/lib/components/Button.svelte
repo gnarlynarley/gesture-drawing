@@ -53,10 +53,7 @@
 {/snippet}
 
 {#if tooltip}
-  <Tooltip>
-    {#snippet tooltip()}
-      <span>{tooltip}</span>
-    {/snippet}
+  <Tooltip text={tooltip}>
     {@render button()}
   </Tooltip>
 {:else}

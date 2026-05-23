@@ -80,20 +80,15 @@
       <Input
         label="Intermission time"
         name="intermissiontime"
-        description="Time in seconds between every picture so you can adjust the canvas or etc."
+        description="Time in seconds between every picture so you can adjust the canvas or etc. (0 is none)"
         bind:value={$settings.intermissionTime}
         disabled={!$settings.autoPlay}
       />
 
-      <!-- <Checkbox
-            label="With sounds"
-            name="sound"
-            bind:checked={$settings.sound}
-          /> -->
-
       <hr />
 
       <Select label="Theme" bind:value={$settings.theme} items={themes} />
+
       <Button onclick={resetSettings}>Reset</Button>
     </Box>
 
@@ -136,7 +131,9 @@
     </Box>
   </div>
 
-  <Button large primary onclick={startPractice} disabled={!canStart}>Start</Button>
+  <Button large primary onclick={startPractice} disabled={!canStart}>
+    Start
+  </Button>
 </div>
 
 <div class="footer">
