@@ -20,6 +20,18 @@
   };
 
   let { startPractice, files }: Props = $props();
+  const scheduleValidationMap = $derived.by(() => {
+    return $settings.schedules.map((schedule): string | null => {
+      if (schedule.type === "break") return null;
+      if (schedule.amount === 0)
+        return "Schedule needs to have an amount greater than 0.";
+      if (schedule.duration <= 0) return "Schedule needs to have an duration.";
+      return null;
+    });
+  });
+  const hasValidationError = $derived(
+    scheduleValidationMap.every((value) => value === null),
+  );
 
   function addSchedule() {
     $settings.schedules.push({
@@ -48,10 +60,14 @@
     }
   }
 
-  const canStart = $derived(
-    files &&
+  $inspect(hasValidationError);
+
+  const canStart = $derived.by(
+    () =>
+      files &&
       files.length > 0 &&
-      $settings.schedules.some((s) => s.type === "picture"),
+      $settings.schedules.some((s) => s.type === "picture") &&
+      !hasValidationError,
   );
 </script>
 
@@ -121,6 +137,10 @@
                 <TimeInput bind:value={$settings.schedules[index].duration} />
                 <Button onclick={() => deleteSchedule(schedule)}>&times</Button>
               </div>
+              {@const validation = scheduleValidationMap[index] ?? null}
+              {#if validation}
+                <p class="error">{validation}</p>
+              {/if}
             {/snippet}
           </DragList>
         </div>
@@ -202,6 +222,13 @@
         );
       }
     }
+  }
+
+  .error {
+    font-weight: bold;
+    color: var(--color-error);
+    padding-block: var(--gutter);
+    grid-column: 1 / -1;
   }
 
   .footer {

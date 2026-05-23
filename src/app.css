@@ -22,7 +22,7 @@
   );
   --color-secondary: oklch(87.51% 0.23804 150.031);
   --color-accent: color-mix(in oklab, var(--color-background), white 8%);
-  --color-error: oklch(54.67% 0.22096 28.886);
+  --color-error: oklch(64.137% 0.19879 24.688);
   --color-error-text: oklch(from var(--color-error) calc(l / l) c h);
 }
 
