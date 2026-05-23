@@ -30,7 +30,7 @@
     });
   });
   const hasValidationError = $derived(
-    scheduleValidationMap.every((value) => value === null),
+    scheduleValidationMap.some((value) => value !== null),
   );
 
   function addSchedule() {
