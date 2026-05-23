@@ -35,6 +35,36 @@
 
   --color-error: oklch(51.124% 0.20409 28.622);
 }
+:root.is-theme-catppuccin {
+  --color-primary: oklch(74.51% 0.1567 16.288);
+  --color-secondary: oklch(71.735% 0.15648 262.501);
+  --color-background: #1e1e2e;
+  --color-accent: color-mix(in oklab, var(--color-background), white 12%);
+  --color-text: #cdd6f4;
+
+  --color-error: oklch(70.08% 0.257 25.375);
+}
+
+:root.is-theme-rainbow {
+  --hue: 0deg;
+  --color-primary: oklch(95% 0.3 var(--hue));
+  --color-secondary: oklch(90% 0.23804 calc(var(--hue) + 120deg));
+  --color-accent: oklch(30% 0.01 calc(var(--hue) + 30deg));
+
+  animation: hue-shift 10s infinite linear;
+}
+
+@property --hue {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes hue-shift {
+  to {
+    --hue: 360deg;
+  }
+}
 
 html {
   background-color: var(--color-background);

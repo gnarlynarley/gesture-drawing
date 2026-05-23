@@ -3,7 +3,6 @@ import { scheduleSchema, type Schedule } from "../utils/schedule";
 import localforage from "localforage";
 import * as v from "valibot";
 import createId from "$lib/utils/createId";
-import sleep from "$lib/utils/sleep";
 
 const SETTINGS_KEY = "gesture-app.settings";
 const INTERMISSION_TIME_DEFAULT = 3;
@@ -36,7 +35,12 @@ const SCHEDULES_DEFAULT: Schedule[] = [
 
 type SettingsState = v.InferOutput<typeof settingsStateSchema>;
 
-export const themes = ["dark" as const, "light" as const];
+export const themes = [
+  "dark" as const,
+  "light" as const,
+  "catppuccin" as const,
+  "rainbow" as const,
+];
 
 const settingsStateSchema = v.object({
   directory: v.union([v.instance(FileSystemDirectoryHandle), v.null()]),
