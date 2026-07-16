@@ -27,9 +27,9 @@
 }
 
 :root.is-theme-light {
-  --color-primary: oklch(63.334% 0.13775 62.04);
+  --color-primary: oklch(63.984% 0.17156 45.1);
   --color-secondary: oklch(87.51% 0.23804 150.031);
-  --color-background: #d3cfcb;
+  --color-background: #ece7e2;
   --color-accent: color-mix(in oklab, var(--color-background), black 5%);
   --color-text: #202020;
 

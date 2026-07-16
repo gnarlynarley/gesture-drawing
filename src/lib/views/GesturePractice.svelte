@@ -262,10 +262,6 @@
             <ArrowBigRightIcon />
           </Button>
 
-          <Button onclick={skip} tooltip="Skip">
-            <ArrowBigRightDashIcon />
-          </Button>
-
           <div class="divider"></div>
 
           <Button
@@ -309,6 +305,11 @@
         {/if}
 
         <div class="push"></div>
+
+        <Button onclick={skip} tooltip="Skip">
+          <ArrowBigRightDashIcon />
+        </Button>
+
         <Button onclick={stopPractice} title="Exit" tooltip="Exit to setup">
           <LogOutIcon />
         </Button>
