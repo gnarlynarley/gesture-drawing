@@ -7,6 +7,7 @@
     label?: string;
     description?: string;
     disabled?: boolean;
+    error?: boolean | string | null;
   };
 
   let {
@@ -15,6 +16,7 @@
     label,
     description,
     disabled,
+    error,
     ...props
   }: Props = $props();
 
@@ -32,7 +34,15 @@
 </script>
 
 {#snippet input()}
-  <input {disabled} {id} bind:value {name} {type} {...props} />
+  <input
+    class:is-error={!!error}
+    {disabled}
+    {id}
+    bind:value
+    {name}
+    {type}
+    {...props}
+  />
 {/snippet}
 
 {#if label}
@@ -90,6 +100,10 @@
     &:focus {
       border-color: var(--color-primary);
       outline: none;
+    }
+
+    &.is-error {
+      border-color: var(--color-error);
     }
   }
 </style>

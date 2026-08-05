@@ -23,7 +23,6 @@
     "checkJs": true,
     "moduleDetection": "force",
 
-    "rootDir": ".",
     "paths": {
       "$lib/*": ["./src/lib/*"],
       "$public/*": ["./public/*"]

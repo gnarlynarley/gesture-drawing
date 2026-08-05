@@ -2,15 +2,16 @@
   type Props = {
     value: number;
     label?: string;
+    error?: string | boolean | null;
   };
 
-  let { value = $bindable(), label }: Props = $props();
+  let { value = $bindable(), label, error }: Props = $props();
   const seconds = $derived(value % 60);
   const minutes = $derived(Math.floor(value / 60));
   const id = $props.id();
 </script>
 
-<div class="wrapper">
+<div class="wrapper" class:is-error={error}>
   {#if label}
     <label for={id}>{label}</label>
   {/if}
@@ -72,6 +73,10 @@
     &:focus-visible {
       border-color: var(--color-primary);
       outline: none;
+    }
+
+    .is-error & {
+      border-color: var(--color-error);
     }
   }
 </style>

@@ -3,7 +3,6 @@
   import Button from "$lib/components/Button.svelte";
   import Checkbox from "$lib/components/Checkbox.svelte";
   import CreditBox from "$lib/components/CreditBox.svelte";
-  import DragList from "$lib/components/DragList.svelte";
   import Input from "$lib/components/Input.svelte";
   import Select from "$lib/components/Select.svelte";
   import TimeInput from "$lib/components/TimeInput.svelte";
@@ -11,21 +10,36 @@
   import { resetSettings, settings, themes } from "$lib/stores/setting.svelte";
   import createId from "$lib/utils/createId";
   import type { Schedule } from "$lib/utils/schedule";
-  import { blur } from "svelte/transition";
   import ExplanationBox from "$lib/components/ExplanationBox.svelte";
+  import moveArrayItem from "$lib/utils/moveArrayItem";
+  import { ArrowUpIcon, ArrowDownIcon } from "@lucide/svelte";
+  import { flip } from "svelte/animate";
 
   type Props = {
     files: unknown[] | null;
     startPractice: () => void;
   };
 
+  type ValidationError = {
+    amount: string | null;
+    duration: string | null;
+  };
+
   let { startPractice, files }: Props = $props();
   const scheduleValidationMap = $derived.by(() => {
-    return $settings.schedules.map((schedule): string | null => {
+    return $settings.schedules.map((schedule): ValidationError | null => {
+      let amount: string | null = null;
+      let duration: string | null = null;
+
       if (schedule.type === "break") return null;
       if (schedule.amount === 0)
-        return "Schedule needs to have an amount greater than 0.";
-      if (schedule.duration <= 0) return "Schedule needs to have an duration.";
+        amount = "Schedule needs to have an amount greater than 0.";
+      if (schedule.duration <= 0)
+        duration = "Schedule needs to have an duration.";
+
+      if (amount || duration) {
+        return { amount, duration };
+      }
       return null;
     });
   });
@@ -60,10 +74,16 @@
     }
   }
 
+  function moveSchedule(index: number, offset: 1 | -1) {
+    let nextIndex = index + offset;
+    if (nextIndex < 0 || nextIndex > $settings.schedules.length - 1) return;
+    $settings.schedules = moveArrayItem($settings.schedules, index, nextIndex);
+  }
+
+  const hasFiles = $derived(!!(files && files.length > 0));
   const canStart = $derived.by(
     () =>
-      files &&
-      files.length > 0 &&
+      hasFiles &&
       $settings.schedules.some((s) => s.type === "picture") &&
       !hasValidationError,
   );
@@ -74,8 +94,8 @@
 
   <div class="stack">
     <Box xl>
-      <Button onclick={chooseDirectory}>
-        {#if canStart}
+      <Button onclick={chooseDirectory} primary={!hasFiles}>
+        {#if hasFiles}
           Choose different folder
         {:else}
           Choose folder
@@ -109,38 +129,39 @@
     <Box>
       <h2>Schedules</h2>
       {#if $settings.schedules.length > 0}
-        <div class="items" transition:blur>
+        <div class="items">
           <div class="item item--header">
             <span>Amount</span>
             <span>Time</span>
           </div>
-          <DragList bind:items={$settings.schedules}>
-            {#snippet content(schedule, index, { before, after, dragging })}
-              <div
-                class="item"
-                class:before
-                class:after
-                class:dragging
-                transition:blur
-              >
-                {#if $settings.schedules[index].type === "break"}
-                  <center>Break</center>
-                {:else}
-                  <Input
-                    aria-label="Amount of images"
-                    name="amount"
-                    bind:value={($settings.schedules[index] as any).amount}
-                  />
-                {/if}
-                <TimeInput bind:value={$settings.schedules[index].duration} />
-                <Button onclick={() => deleteSchedule(schedule)}>&times</Button>
-              </div>
-              {@const validation = scheduleValidationMap[index] ?? null}
-              {#if validation}
-                <p class="error">{validation}</p>
+          {#each $settings.schedules as schedule, index (schedule.id)}
+            {@const validation = scheduleValidationMap[index] ?? null}
+            <div class="item" animate:flip={{ duration: 150 }}>
+              {#if schedule.type === "break"}
+                <center>Break</center>
+              {:else}
+                <Input
+                  aria-label="Amount of images"
+                  name="amount"
+                  bind:value={schedule.amount}
+                  error={validation?.amount}
+                />
               {/if}
-            {/snippet}
-          </DragList>
+              <TimeInput
+                bind:value={schedule.duration}
+                error={validation?.duration}
+              />
+              <Button onclick={() => deleteSchedule(schedule)}>&times</Button>
+              <div class="move-buttons">
+                <button type="button" onclick={() => moveSchedule(index, -1)}>
+                  <ArrowUpIcon size="14" absoluteStrokeWidth />
+                </button>
+                <button type="button" onclick={() => moveSchedule(index, 1)}>
+                  <ArrowDownIcon size="14" absoluteStrokeWidth />
+                </button>
+              </div>
+            </div>
+          {/each}
         </div>
       {/if}
       <div class="buttons">
@@ -185,7 +206,7 @@
   .items {
     gap: var(--gutter);
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto auto auto;
 
     .item {
       display: grid;
@@ -199,34 +220,13 @@
         font-size: 0.85em;
         opacity: 0.6;
       }
-
-      &.dragging {
-        opacity: 0.5;
-      }
-      &.before {
-        border-color: var(--color-secondary);
-        background-image: linear-gradient(
-          to bottom,
-          color-mix(in srgb, var(--color-secondary), transparent 70%),
-          transparent
-        );
-      }
-      &.after {
-        border-color: var(--color-secondary);
-        background-image: linear-gradient(
-          to top,
-          color-mix(in srgb, var(--color-secondary), transparent 70%),
-          transparent
-        );
-      }
     }
-  }
 
-  .error {
-    font-weight: bold;
-    color: var(--color-error);
-    padding-block: var(--gutter);
-    grid-column: 1 / -1;
+    .move-buttons {
+      display: grid;
+      grid-row: auto auto;
+      align-items: center;
+    }
   }
 
   .footer {
