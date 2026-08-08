@@ -75,18 +75,12 @@ html {
 
 body {
   margin: 0;
-  background-size: 3em 3em;
-  background-image:
-    linear-gradient(
-      to right,
-      color-mix(in oklab, var(--color-accent), transparent 70%) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--color-accent), transparent 70%) 1px,
-      transparent 1px
-    );
+  background-size: 1.5em 1.5em;
+  background-image: radial-gradient(
+    circle,
+    var(--color-accent) 1px,
+    transparent 1px
+  );
 }
 
 button {

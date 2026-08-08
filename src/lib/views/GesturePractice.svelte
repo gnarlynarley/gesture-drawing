@@ -64,6 +64,7 @@
 
   async function next(skipIntermission = false) {
     if (view === "pending") return;
+    playing = true;
 
     // Check if current or next item is a break to skip intermission
     const currentIsBreak = queue.state.current?.type === "break";
@@ -180,6 +181,7 @@
   }
 
   function onkeydown(ev: KeyboardEvent) {
+    const key = ev.key.toLowerCase();
     switch (document.activeElement?.nodeName.toLowerCase()) {
       case "input":
       case "textarea":
@@ -188,12 +190,11 @@
         return;
       }
     }
+    if (key === " ") {
+      togglePlay();
+    }
     if (view !== "drawing" && view !== "break") return;
-    switch (ev.key.toLowerCase()) {
-      case " ": {
-        togglePlay();
-        break;
-      }
+    switch (key) {
       case "arrowright": {
         next();
         break;
@@ -324,15 +325,12 @@
       {#if view === "intermission"}
         <Charr />
         <h1>Intermission</h1>
+        <Button onclick={() => next()}>Skip</Button>
       {:else if view === "break"}
         <Charr />
         <h1>Break</h1>
-        {#if autoPlay}
-          <p>Take a short break. The next item will start automatically.</p>
-        {:else}
-          <p>Take a short break</p>
-          <Button onclick={() => next()}>Start next</Button>
-        {/if}
+        <p>Take a short break. The next item will start automatically.</p>
+        <Button onclick={() => next()}>Start next</Button>
       {:else if view === "pending"}
         <Spinner />
       {:else if view === "end"}
