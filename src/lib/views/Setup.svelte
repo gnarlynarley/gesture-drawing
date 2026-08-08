@@ -171,9 +171,7 @@
     </Box>
   </div>
 
-  <Button large primary onclick={startPractice} disabled={!canStart}>
-    Start
-  </Button>
+  <Button primary onclick={startPractice} disabled={!canStart}>Start</Button>
 </div>
 
 <div class="footer">

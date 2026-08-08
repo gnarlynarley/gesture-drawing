@@ -22,6 +22,7 @@
   import Spinner from "$lib/components/Spinner.svelte";
   import createImage from "$lib/utils/createImage";
   import PageLayout from "$lib/components/PageLayout.svelte";
+  import ScheduleProgress from "$lib/components/ScheduleProgress.svelte";
 
   type Props = {
     files: ImageFileHandle[];
@@ -296,15 +297,18 @@
               <span>/</span>
               <span>{parseTime(queue.state.current.duration)}</span>
             </div>
-            {#if queue.state.current.type === "picture"}
-              <div class="text">
-                {queue.state.current.page}/{queue.state.current.amount}
-              </div>
-            {/if}
           {/if}
         {/if}
 
-        <div class="push"></div>
+        <div class="push">
+          {#if queue.state.current}
+            <ScheduleProgress
+              previous={queue.state.history}
+              current={queue.state.current}
+              next={queue.state.queue}
+            />
+          {/if}
+        </div>
 
         <Button onclick={skip} tooltip="Skip">
           <ArrowBigRightDashIcon />
@@ -323,7 +327,12 @@
       {:else if view === "break"}
         <Charr />
         <h1>Break</h1>
-        <p>Take a short break. The next item will start automatically.</p>
+        {#if autoPlay}
+          <p>Take a short break. The next item will start automatically.</p>
+        {:else}
+          <p>Take a short break</p>
+          <Button onclick={() => next()}>Start next</Button>
+        {/if}
       {:else if view === "pending"}
         <Spinner />
       {:else if view === "end"}
@@ -358,6 +367,8 @@
 
     .push {
       width: 100%;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .divider {
