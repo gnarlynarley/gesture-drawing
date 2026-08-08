@@ -329,7 +329,7 @@
       {:else if view === "break"}
         <Charr />
         <h1>Break</h1>
-        <p>Take a short break. The next item will start automatically.</p>
+        <p>Take a short break.</p>
         <Button onclick={() => next()}>Start next</Button>
       {:else if view === "pending"}
         <Spinner />

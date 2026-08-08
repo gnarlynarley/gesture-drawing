@@ -19,7 +19,7 @@
 <style>
   .bar {
     --time: 1;
-    height: 0.3em;
+    height: 0.4em;
     position: relative;
     background: color-mix(in srgb, var(--color-primary), transparent);
 
@@ -34,20 +34,21 @@
       width: 100%;
       height: 100%;
       position: absolute;
-      top: 0;
+      bottom: 0;
       left: 0;
       transform-origin: top left;
       scale: var(--time) 1;
       background: var(--color-primary);
+      transition: height 150ms ease-in-out;
     }
   }
 
   @keyframes pulse {
     0% {
-      opacity: 0.5;
+      opacity: 1;
     }
     100% {
-      opacity: 1;
+      opacity: 0.5;
     }
   }
 </style>
