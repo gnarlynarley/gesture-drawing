@@ -20,13 +20,18 @@
   const length = $derived(items.length);
   const short = $derived.by(() => {
     if (currentIndex === null) return null;
-    const start = Math.max(0, currentIndex - 1);
+    const start = Math.max(0, currentIndex);
     const end = Math.min(length, start + OVERFLOW_AMOUNT);
     return items.slice(Math.max(0, Math.min(end - OVERFLOW_AMOUNT)), end);
   });
 </script>
 
-{#snippet entry(item: QueueItem<T>, current = false)}
+{#snippet entry(
+  item: QueueItem<T>,
+  items: QueueItem<T>[],
+  index: number,
+  current = false,
+)}
   {@const duration = parseTime(item.duration)}
   <div class="item" class:current>
     {#if item.type === "break"}
@@ -34,17 +39,25 @@
         <HourglassIcon size="16" />
       </Tooltip>
     {:else}
-      <Tooltip text={`Break of ${duration}`}>
-        <div class="dot"></div>
-      </Tooltip>
+      {@const prev = items[index - 1]}
+      {@const isSame = prev
+        ? prev.type === item.type && prev.duration === item.duration
+        : false}
+      <div class="schedule" class:isSame>
+        {duration}
+      </div>
     {/if}
   </div>
 {/snippet}
 
 <div class="wrapper">
-  {#each short as item}
-    {@render entry(item, item === current)}
-  {/each}
+  {#if short}
+    <div class="items">
+      {#each short as item, index}
+        {@render entry(item, short, index, item === current)}
+      {/each}
+    </div>
+  {/if}
   {#if currentCount !== null}
     <p class="more">{currentCount} / {length}</p>
   {/if}
@@ -57,6 +70,12 @@
     align-items: center;
   }
 
+  .items {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .item {
     :global(svg) {
       display: block;
@@ -67,18 +86,28 @@
     }
   }
 
-  .dot {
-    width: 0.6em;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    background: currentColor;
-  }
-
-  .more {
+  .schedule {
     font-size: 0.8em;
     alignment-baseline: middle;
     color: var(--color-background);
     background: color-mix(in srgb, var(--color-text) 50%, transparent);
+    border-radius: 4px;
+    padding: 4px;
+
+    &.isSame {
+      width: 2ch;
+      overflow: hidden;
+      margin-left: -6px;
+      color: transparent;
+    }
+
+    .current & {
+      background-color: var(--color-text);
+    }
+  }
+
+  .more {
+    alignment-baseline: middle;
     padding: 4px;
     border-radius: 4px;
   }
