@@ -279,7 +279,7 @@
             onclick={toggleFlipVertical}
             primary={flippedVertical}
             bordered
-            tooltip="Toggle flip (F)"
+            tooltip="Toggle vertical flip"
           >
             <FlipVertical2Icon />
           </Button>

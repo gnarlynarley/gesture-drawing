@@ -1,6 +1,8 @@
 <script lang="ts" generics="T">
   import type { QueueItem } from "$lib/utils/createQueue.svelte";
   import { HourglassIcon } from "@lucide/svelte";
+  import Tooltip from "./Tooltip.svelte";
+  import parseTime from "$lib/utils/parseTime";
 
   const OVERFLOW_AMOUNT = 5;
 
@@ -11,20 +13,30 @@
   };
   const { previous, next, current }: Props = $props();
   const items = $derived(previous.concat(next));
-  const [short, more] = $derived.by(() => {
-    if (!current) return [null, 0] as const;
-    const foundIndex = items.indexOf(current);
-    const short = items.slice(foundIndex, foundIndex + OVERFLOW_AMOUNT);
-    return [short, items.length - foundIndex - OVERFLOW_AMOUNT];
+  const currentIndex = $derived(current ? items.indexOf(current) : null);
+  const currentCount = $derived(
+    currentIndex !== null ? currentIndex + 1 : null,
+  );
+  const length = $derived(items.length);
+  const short = $derived.by(() => {
+    if (currentIndex === null) return null;
+    const start = Math.max(0, currentIndex - 1);
+    const end = Math.min(length, start + OVERFLOW_AMOUNT);
+    return items.slice(Math.max(0, Math.min(end - OVERFLOW_AMOUNT)), end);
   });
 </script>
 
 {#snippet entry(item: QueueItem<T>, current = false)}
+  {@const duration = parseTime(item.duration)}
   <div class="item" class:current>
     {#if item.type === "break"}
-      <HourglassIcon size="16" />
+      <Tooltip text={`Break of ${duration}`}>
+        <HourglassIcon size="16" />
+      </Tooltip>
     {:else}
-      <div class="dot"></div>
+      <Tooltip text={`Break of ${duration}`}>
+        <div class="dot"></div>
+      </Tooltip>
     {/if}
   </div>
 {/snippet}
@@ -33,8 +45,8 @@
   {#each short as item}
     {@render entry(item, item === current)}
   {/each}
-  {#if more > 0}
-    <p class="more">{more}+</p>
+  {#if currentCount !== null}
+    <p class="more">{currentCount} / {length}</p>
   {/if}
 </div>
 
@@ -46,14 +58,12 @@
   }
 
   .item {
-    opacity: 0.5;
-
     :global(svg) {
       display: block;
     }
 
-    &.current {
-      opacity: 1;
+    &:not(.current) {
+      color: color-mix(in srgb, var(--color-text) 30%, var(--color-background));
     }
   }
 

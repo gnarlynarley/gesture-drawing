@@ -39,6 +39,7 @@
     pointer-events: none;
     margin: var(--gutter);
     white-space: nowrap;
+    z-index: 9999;
 
     .wrapper:not(:hover) & {
       display: none;
