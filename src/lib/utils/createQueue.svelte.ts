@@ -16,6 +16,7 @@ export type BreakQueueItem = {
   duration: number;
   item: null;
   page: number;
+  label: string;
 };
 
 export type QueueItem<T> = PictureQueueItem<T> | BreakQueueItem;
@@ -66,6 +67,7 @@ export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
           duration: schedule.duration,
           item: null,
           page: 1,
+          label: schedule.label,
         });
       } else {
         for (let index = 0; index < schedule.amount; index += 1) {

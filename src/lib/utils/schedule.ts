@@ -1,20 +1,24 @@
-import * as v from 'valibot';
-import createId from './createId';
+import * as v from "valibot";
+import createId from "./createId";
 
 export const pictureScheduleSchema = v.object({
-  type: v.fallback(v.literal('picture'), () => 'picture' as const),
+  type: v.fallback(v.literal("picture"), () => "picture" as const),
   id: v.fallback(v.string(), createId),
   amount: v.number(),
   duration: v.number(),
 });
 
 export const breakScheduleSchema = v.object({
-  type: v.literal('break'),
+  type: v.literal("break"),
   id: v.fallback(v.string(), createId),
   duration: v.number(),
+  label: v.fallback(v.string(), "Break"),
 });
 
-export const scheduleSchema = v.union([breakScheduleSchema, pictureScheduleSchema]);
+export const scheduleSchema = v.union([
+  breakScheduleSchema,
+  pictureScheduleSchema,
+]);
 
 export type PictureSchedule = v.InferOutput<typeof pictureScheduleSchema>;
 export type BreakSchedule = v.InferOutput<typeof breakScheduleSchema>;

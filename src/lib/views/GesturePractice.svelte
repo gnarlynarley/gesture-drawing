@@ -42,9 +42,16 @@
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
 
-  type ViewState = "drawing" | "intermission" | "break" | "pending" | "end";
+  type ViewState =
+    | {
+        type: "drawing" | "intermission" | "pending" | "end";
+      }
+    | {
+        type: "break";
+        label: string;
+      };
 
-  let view = $state<ViewState>("drawing");
+  let view = $state<ViewState>({ type: "drawing" });
   let playing = $state(true);
 
   async function loadImage(file: File | null) {
@@ -63,7 +70,7 @@
   }
 
   async function next(skipIntermission = false) {
-    if (view === "pending") return;
+    if (view.type === "pending") return;
     playing = true;
 
     // Check if current or next item is a break to skip intermission
@@ -74,7 +81,7 @@
     const isIntermission = !(
       !autoPlay ||
       skipIntermission ||
-      view === "intermission" ||
+      view.type === "intermission" ||
       currentIsBreak ||
       nextIsBreak ||
       intermissionTime === 0
@@ -84,12 +91,12 @@
     if (isIntermission) {
       const next = queue.getNext();
       if (next !== null) {
-        view = "intermission";
+        view = { type: "intermission" };
         totalTime = intermissionTime * 1000;
         time = intermissionTime * 1000;
       } else {
         playing = false;
-        view = "end";
+        view = { type: "end" };
       }
       return;
     }
@@ -98,7 +105,7 @@
 
     if (queue.state.reachedEnd || !queue.state.current) {
       playing = false;
-      view = "end";
+      view = { type: "end" };
       return;
     }
 
@@ -106,15 +113,18 @@
       currentFile = null;
       totalTime = queue.state.current.duration * 1000;
       time = queue.state.current.duration * 1000;
-      view = "break";
+      view = {
+        type: "break",
+        label: queue.state.current.label,
+      };
       return;
     }
 
-    view = "pending";
+    view = { type: "pending" };
     await loadImage(await queue.state.current.item.getFile());
     totalTime = queue.state.current.duration * 1000;
     time = queue.state.current.duration * 1000;
-    view = "drawing";
+    view = { type: "drawing" };
   }
 
   async function skip() {
@@ -124,9 +134,9 @@
       return;
     }
     queue.skip();
-    view = "pending";
+    view = { type: "pending" };
     await loadImage(await queue.state.current.item.getFile());
-    view = "drawing";
+    view = { type: "drawing" };
     time = queue.state.current.duration * 1000;
   }
 
@@ -144,7 +154,13 @@
 
   $effect(() => {
     if (!playing) return;
-    if (!(view === "intermission" || view === "break" || view === "drawing"))
+    if (
+      !(
+        view.type === "intermission" ||
+        view.type === "break" ||
+        view.type === "drawing"
+      )
+    )
       return;
     let lastTime = performance.now();
     const intervalId = setInterval(() => {
@@ -193,7 +209,7 @@
     if (key === " ") {
       togglePlay();
     }
-    if (view !== "drawing" && view !== "break") return;
+    if (view.type !== "drawing" && view.type !== "break") return;
     switch (key) {
       case "arrowright": {
         next();
@@ -217,15 +233,15 @@
   class:grayscale
   class:exceeded-time={currentTime > totalTime}
 >
-  <PageLayout scroll={view === "end"}>
+  <PageLayout scroll={view.type === "end"}>
     {#snippet toolbar()}
       <div class="toolbar">
-        {#if view === "end"}
+        {#if view.type === "end"}
           <Button onclick={reset}>
             <RefreshCcwIcon />
           </Button>
         {/if}
-        {#if view === "break"}
+        {#if view.type === "break"}
           <Button
             onclick={togglePlay}
             tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
@@ -248,7 +264,7 @@
               <span>{parseTime(queue.state.current.duration)}</span>
             </div>
           {/if}
-        {:else if view === "drawing" || view === "pending"}
+        {:else if view.type === "drawing" || view.type === "pending"}
           <Button
             onclick={togglePlay}
             tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
@@ -322,21 +338,20 @@
     {/snippet}
 
     <div class="content">
-      {#if view === "intermission"}
+      {#if view.type === "intermission"}
         <Charr />
         <h1>Intermission</h1>
         <Button onclick={() => next()}>Skip</Button>
-      {:else if view === "break"}
+      {:else if view.type === "break"}
         <Charr />
-        <h1>Break</h1>
-        <p>Take a short break.</p>
+        <h1>{view.label}</h1>
         <Button onclick={() => next()}>Start next</Button>
-      {:else if view === "pending"}
+      {:else if view.type === "pending"}
         <Spinner />
-      {:else if view === "end"}
+      {:else if view.type === "end"}
         <h1>Reached the end</h1>
         <FileHandleImageGrid entries={queue.state.history} />
-      {:else if view === "drawing" && currentFile}
+      {:else if view.type === "drawing" && currentFile}
         <div class="image">
           <FileImage cover file={currentFile} />
         </div>

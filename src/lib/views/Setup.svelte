@@ -62,6 +62,7 @@
       type: "break",
       id: createId(),
       duration: 0,
+      label: "Break",
     });
     $settings.schedules = $settings.schedules;
   }
@@ -138,7 +139,7 @@
             {@const validation = scheduleValidationMap[index] ?? null}
             <div class="item" animate:flip={{ duration: 150 }}>
               {#if schedule.type === "break"}
-                <center>Break</center>
+                <Input name="label" bind:value={schedule.label} />
               {:else}
                 <Input
                   aria-label="Amount of images"
