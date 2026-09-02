@@ -11,6 +11,7 @@
     bordered?: boolean;
     tooltip?: string;
     large?: boolean;
+    padding?: "sm";
   };
 
   const {
@@ -22,6 +23,7 @@
     tooltip,
     onclick,
     large,
+    padding,
     ...props
   }: Props = $props();
   let pending = $state(false);
@@ -46,6 +48,7 @@
     class:bare
     class:bordered
     class:large
+    class:paddingSmall={padding === "sm"}
     onclick={onclickHandler}
     aria-label={tooltip}
     {...props}
@@ -77,6 +80,10 @@
     color: var(--color-text);
     position: relative;
     line-height: 1;
+
+    &.paddingSmall {
+      padding: calc(var(--gutter) * 0.25);
+    }
 
     &.pending {
       &::after {

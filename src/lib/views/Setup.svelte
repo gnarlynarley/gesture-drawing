@@ -12,8 +12,9 @@
   import type { Schedule } from "$lib/utils/schedule";
   import ExplanationBox from "$lib/components/ExplanationBox.svelte";
   import moveArrayItem from "$lib/utils/moveArrayItem";
-  import { ArrowUpIcon, ArrowDownIcon } from "@lucide/svelte";
+  import { ArrowUpIcon, ArrowDownIcon, CopyIcon, XIcon } from "@lucide/svelte";
   import { flip } from "svelte/animate";
+  import Tooltip from "$lib/components/Tooltip.svelte";
 
   type Props = {
     files: unknown[] | null;
@@ -73,6 +74,18 @@
       $settings.schedules.splice(foundIndex, 1);
       $settings.schedules = $settings.schedules;
     }
+  }
+
+  function duplicateSchedule(schedule: Schedule, index: number) {
+    const newSchedule = {
+      ...schedule,
+      id: createId(),
+    };
+    $settings.schedules = $settings.schedules.toSpliced(
+      index + 1,
+      0,
+      newSchedule,
+    );
   }
 
   function moveSchedule(index: number, offset: 1 | -1) {
@@ -152,7 +165,23 @@
                 bind:value={schedule.duration}
                 error={validation?.duration}
               />
-              <Button onclick={() => deleteSchedule(schedule)}>&times</Button>
+
+              <div>
+                <Button
+                  tooltip="Duplicate"
+                  padding="sm"
+                  onclick={() => duplicateSchedule(schedule, index)}
+                >
+                  <CopyIcon size="16" absoluteStrokeWidth />
+                </Button>
+                <Button
+                  tooltip="Delete"
+                  padding="sm"
+                  onclick={() => deleteSchedule(schedule)}
+                >
+                  <XIcon size="16" absoluteStrokeWidth />
+                </Button>
+              </div>
               <div class="move-buttons">
                 <button type="button" onclick={() => moveSchedule(index, -1)}>
                   <ArrowUpIcon size="14" absoluteStrokeWidth />
@@ -205,7 +234,7 @@
   .items {
     gap: var(--gutter);
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr auto auto auto auto;
 
     .item {
       display: grid;
