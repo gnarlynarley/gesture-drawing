@@ -21,7 +21,7 @@
     --time: 1;
     height: 0.4em;
     position: relative;
-    background: color-mix(in srgb, var(--color-primary), transparent);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 
     &.done {
       box-shadow: 0 0 10px var(--color-primary);
