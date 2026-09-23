@@ -14,7 +14,7 @@
   import { type Schedule } from "$lib/utils/schedule";
   import Timebar from "$lib/components/Timebar.svelte";
   import createQueue from "$lib/utils/createQueue.svelte";
-  import parseTime from "$lib/utils/parseTime";
+  import formatTime from "$lib/utils/formatTime";
   import type { ImageFileHandle } from "$lib/models";
   import Charr from "$lib/components/Charr.svelte";
   import FileHandleImageGrid from "$lib/components/FileHandleImageGrid.svelte";
@@ -259,9 +259,9 @@
 
           {#if queue.state.current}
             <div class="text">
-              <span class="highlighted">{parseTime(currentTime / 1000)} </span>
+              <span class="highlighted">{formatTime(currentTime / 1000)} </span>
               <span>/</span>
-              <span>{parseTime(queue.state.current.duration)}</span>
+              <span>{formatTime(queue.state.current.duration)}</span>
             </div>
           {/if}
         {:else if view.type === "drawing" || view.type === "pending"}
@@ -310,9 +310,9 @@
           </Button>
           {#if queue.state.current}
             <div class="text">
-              <span class="highlighted">{parseTime(currentTime / 1000)} </span>
+              <span class="highlighted">{formatTime(currentTime / 1000)} </span>
               <span>/</span>
-              <span>{parseTime(queue.state.current.duration)}</span>
+              <span>{formatTime(queue.state.current.duration)}</span>
             </div>
           {/if}
         {/if}

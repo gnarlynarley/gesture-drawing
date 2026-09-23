@@ -4,7 +4,7 @@
     QueueItem,
     PictureQueueItem,
   } from "$lib/utils/createQueue.svelte";
-  import parseTime from "$lib/utils/parseTime";
+  import formatTime from "$lib/utils/formatTime";
   import type { Schedule } from "$lib/utils/schedule";
   import FileHandleImage from "./FileImage.svelte";
   import FilePath from "./FilePath.svelte";
@@ -101,7 +101,7 @@
     {#each grouped as item}
       {#if item.kind === "pictures"}
         <div class="item">
-          <h2>Duration: {parseTime(item.duration)}</h2>
+          <h2>Duration: {formatTime(item.duration)}</h2>
           <div class="grid">
             {#each item.files as file, index}
               <button
@@ -118,7 +118,7 @@
           </div>
         </div>
       {:else}
-        <h1>Break of {parseTime(item.duration)}</h1>
+        <h1>Break of {formatTime(item.duration)}</h1>
       {/if}
     {/each}
   {/await}

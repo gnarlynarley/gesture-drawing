@@ -4,6 +4,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2023",
     "useDefineForClassFields": true,
+    "noUncheckedIndexedAccess": true,
     "module": "ESNext",
     "types": [
       "svelte",

@@ -19,7 +19,7 @@ export type BreakQueueItem = {
   label: string;
 };
 
-export type QueueItem<T> = PictureQueueItem<T> | BreakQueueItem;
+export type QueueItem<T = unknown> = PictureQueueItem<T> | BreakQueueItem;
 
 export default function createQueue<T>(arr: T[], schedules: Schedule[]) {
   let random = getRandomFromArray(arr);
