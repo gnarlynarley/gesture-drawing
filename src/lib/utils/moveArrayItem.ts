@@ -4,7 +4,7 @@ export default function moveArrayItem<T>(
   toIndex: number,
 ): T[] {
   const result = Array.from(arr);
-  var element = result[fromIndex];
+  var element = result[fromIndex]!;
   result.splice(fromIndex, 1);
   result.splice(toIndex, 0, element);
 
