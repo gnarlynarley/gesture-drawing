@@ -1,11 +1,10 @@
 <script lang="ts">
   import { ImageFileHandle } from "$lib/models";
-  import type {
-    QueueItem,
-    PictureQueueItem,
-  } from "$lib/utils/createQueue.svelte";
+  import type { QueueItem } from "$lib/utils/createQueue.svelte";
+  import downloadBlob from "$lib/utils/downloadBlob";
   import formatTime from "$lib/utils/formatTime";
-  import type { Schedule } from "$lib/utils/schedule";
+  import { type FileEntry, zipFiles } from "$lib/utils/zipFiles";
+  import Button from "./Button.svelte";
   import FileHandleImage from "./FileImage.svelte";
   import FilePath from "./FilePath.svelte";
 
@@ -92,6 +91,25 @@
       }
     }
   }
+
+  async function downloadAll() {
+    let count = 0;
+    const files = await Promise.all(
+      entries.map<Promise<FileEntry | null>>(async (entry, index) => {
+        if (entry.type === "break") return null;
+        count++;
+        const extension = entry.item.extension;
+        const name = `${count.toString().padStart(4, "0")} (${formatTime(entry.duration, "written")})${extension}`;
+        const blob = await entry.item.getFile();
+
+        return { blob, name };
+      }),
+    );
+    const filtered = files.filter((e) => e !== null);
+    console.log(filtered);
+    const zipBlob = await zipFiles(filtered);
+    downloadBlob(`Practice files.zip`, zipBlob);
+  }
 </script>
 
 <svelte:window {onkeydown} />
@@ -123,6 +141,9 @@
     {/each}
   {/await}
 </div>
+
+<Button onclick={downloadAll}>Download all</Button>
+
 {#if selectedFile}
   <button type="button" class="fullscreen" onclick={onImageClose}>
     <div class="inner">

@@ -4,6 +4,7 @@ export class ImageFileHandle {
   name: string;
   #value: File | FileSystemFileHandle;
   path: string;
+  extension: string;
 
   constructor(value: File | FileSystemFileHandle, path?: string) {
     this.#value = value;
@@ -12,6 +13,8 @@ export class ImageFileHandle {
       value instanceof File
         ? (value.webkitRelativePath ?? value.name)
         : (path ?? "");
+    const extension = this.path.split(".").pop();
+    this.extension = extension ? `.${extension}` : "";
   }
 
   getFile = async (): Promise<File> => {

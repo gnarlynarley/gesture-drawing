@@ -225,6 +225,109 @@
 
 <svelte:window {onkeydown} />
 
+{#snippet defaultToolbar()}
+  <div class="toolbar">
+    {#if view.type === "end"}
+      <Button onclick={reset}>
+        <RefreshCcwIcon />
+      </Button>
+    {/if}
+    {#if view.type === "break"}
+      <Button
+        onclick={togglePlay}
+        tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
+      >
+        {#if playing}
+          <PauseIcon width="3" />
+        {:else}
+          <PlayIcon />
+        {/if}
+      </Button>
+
+      <Button onclick={() => next(true)} tooltip="Next (right)">
+        <ArrowBigRightIcon />
+      </Button>
+
+      {#if queue.state.current}
+        <div class="text">
+          <span class="highlighted">{formatTime(currentTime / 1000)} </span>
+          <span>/</span>
+          <span>{formatTime(queue.state.current.duration)}</span>
+        </div>
+      {/if}
+    {:else if view.type === "drawing" || view.type === "pending"}
+      <Button
+        onclick={togglePlay}
+        tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
+      >
+        {#if playing}
+          <PauseIcon width="3" />
+        {:else}
+          <PlayIcon />
+        {/if}
+      </Button>
+
+      <Button onclick={() => next(true)} tooltip="Next (right)">
+        <ArrowBigRightIcon />
+      </Button>
+
+      <div class="divider"></div>
+
+      <Button
+        onclick={toggleFlip}
+        primary={flipped}
+        bordered
+        tooltip="Toggle flip (F)"
+      >
+        <FlipHorizontal2Icon />
+      </Button>
+
+      <Button
+        onclick={toggleFlipVertical}
+        primary={flippedVertical}
+        bordered
+        tooltip="Toggle vertical flip"
+      >
+        <FlipVertical2Icon />
+      </Button>
+
+      <Button
+        onclick={toggleGrayscale}
+        primary={grayscale}
+        bordered
+        tooltip="Toggle grayscale"
+      >
+        <PaletteIcon />
+      </Button>
+      {#if queue.state.current}
+        <div class="text">
+          <span class="highlighted">{formatTime(currentTime / 1000)} </span>
+          <span>/</span>
+          <span>{formatTime(queue.state.current.duration)}</span>
+        </div>
+      {/if}
+    {/if}
+
+    <div class="push">
+      {#if queue.state.current}
+        <ScheduleProgress
+          previous={queue.state.history}
+          current={queue.state.current}
+          next={queue.state.queue}
+        />
+      {/if}
+    </div>
+
+    <Button onclick={skip} tooltip="Skip">
+      <ArrowBigRightDashIcon />
+    </Button>
+
+    <Button onclick={stopPractice} title="Exit" tooltip="Exit to setup">
+      <LogOutIcon />
+    </Button>
+  </div>
+{/snippet}
+
 <div
   class="wrapper"
   class:playing
@@ -235,106 +338,7 @@
 >
   <PageLayout scroll={view.type === "end"}>
     {#snippet toolbar()}
-      <div class="toolbar">
-        {#if view.type === "end"}
-          <Button onclick={reset}>
-            <RefreshCcwIcon />
-          </Button>
-        {/if}
-        {#if view.type === "break"}
-          <Button
-            onclick={togglePlay}
-            tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
-          >
-            {#if playing}
-              <PauseIcon width="3" />
-            {:else}
-              <PlayIcon />
-            {/if}
-          </Button>
-
-          <Button onclick={() => next(true)} tooltip="Next (right)">
-            <ArrowBigRightIcon />
-          </Button>
-
-          {#if queue.state.current}
-            <div class="text">
-              <span class="highlighted">{formatTime(currentTime / 1000)} </span>
-              <span>/</span>
-              <span>{formatTime(queue.state.current.duration)}</span>
-            </div>
-          {/if}
-        {:else if view.type === "drawing" || view.type === "pending"}
-          <Button
-            onclick={togglePlay}
-            tooltip={playing ? "Pause (Spacebar)" : "Play (Spacebar)"}
-          >
-            {#if playing}
-              <PauseIcon width="3" />
-            {:else}
-              <PlayIcon />
-            {/if}
-          </Button>
-
-          <Button onclick={() => next(true)} tooltip="Next (right)">
-            <ArrowBigRightIcon />
-          </Button>
-
-          <div class="divider"></div>
-
-          <Button
-            onclick={toggleFlip}
-            primary={flipped}
-            bordered
-            tooltip="Toggle flip (F)"
-          >
-            <FlipHorizontal2Icon />
-          </Button>
-
-          <Button
-            onclick={toggleFlipVertical}
-            primary={flippedVertical}
-            bordered
-            tooltip="Toggle vertical flip"
-          >
-            <FlipVertical2Icon />
-          </Button>
-
-          <Button
-            onclick={toggleGrayscale}
-            primary={grayscale}
-            bordered
-            tooltip="Toggle grayscale"
-          >
-            <PaletteIcon />
-          </Button>
-          {#if queue.state.current}
-            <div class="text">
-              <span class="highlighted">{formatTime(currentTime / 1000)} </span>
-              <span>/</span>
-              <span>{formatTime(queue.state.current.duration)}</span>
-            </div>
-          {/if}
-        {/if}
-
-        <div class="push">
-          {#if queue.state.current}
-            <ScheduleProgress
-              previous={queue.state.history}
-              current={queue.state.current}
-              next={queue.state.queue}
-            />
-          {/if}
-        </div>
-
-        <Button onclick={skip} tooltip="Skip">
-          <ArrowBigRightDashIcon />
-        </Button>
-
-        <Button onclick={stopPractice} title="Exit" tooltip="Exit to setup">
-          <LogOutIcon />
-        </Button>
-      </div>
+      {@render defaultToolbar()}
     {/snippet}
 
     <div class="content">
@@ -358,7 +362,9 @@
       {/if}
     </div>
 
-    <Timebar {totalTime} {currentTime} />
+    {#if view.type !== "end"}
+      <Timebar {totalTime} {currentTime} />
+    {/if}
   </PageLayout>
 </div>
 
