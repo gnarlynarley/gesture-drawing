@@ -2,7 +2,7 @@
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "ES2023",
+    "target": "es2025",
     "useDefineForClassFields": true,
     "noUncheckedIndexedAccess": true,
     "module": "ESNext",
