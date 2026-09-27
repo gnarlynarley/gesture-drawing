@@ -18,7 +18,7 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: "auto",
       pwaAssets: {
-        preset,
+        preset: preset as any,
         image: "public/logo.jpg",
       },
     }),

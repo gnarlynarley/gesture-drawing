@@ -1,26 +1,19 @@
-<script lang="ts" generics="T">
-  import type { QueueItem } from "$lib/utils/createQueue.svelte";
+<script lang="ts">
+  import type { QueueItem, ScheduleQueue } from "$lib/utils/queue.svelte";
   import { HourglassIcon } from "@lucide/svelte";
   import Tooltip from "./Tooltip.svelte";
   import formatTime from "$lib/utils/formatTime";
 
   type Props = {
-    previous: QueueItem<T>[];
-    next: QueueItem<T>[];
-    current: QueueItem<T> | null;
+    queue: ScheduleQueue;
   };
-  const { previous, next, current }: Props = $props();
-  const items = $derived(previous.concat(next));
-  const currentIndex = $derived(current ? items.indexOf(current) : null);
+  const { queue }: Props = $props();
+  const items = $derived(queue.queue);
+  const currentIndex = $derived(queue.currentIndex);
   const currentCount = $derived(
     currentIndex !== null ? currentIndex + 1 : null,
   );
   const length = $derived(items.length);
-  const short = $derived.by(() => {
-    if (currentIndex === null) return null;
-    const start = Math.max(0, currentIndex);
-    return items.slice(start);
-  });
 
   type RenderItem = {
     current: boolean;
@@ -28,7 +21,7 @@
     duration: number;
     amount: number;
   };
-  const f = $derived.by(() => {
+  const blocks = $derived.by(() => {
     if (currentIndex === null) return null;
     const sliced = items.slice(currentIndex);
     return sliced.reduce<RenderItem[]>((acc, item, index, arr) => {
@@ -49,13 +42,12 @@
       return acc;
     }, []);
   });
-  $inspect(f);
 </script>
 
 <div class="wrapper">
-  {#if f}
+  {#if blocks}
     <div class="items">
-      {#each f as { kind, current, duration, amount }}
+      {#each blocks as { kind, current, duration, amount }}
         <div class="item" class:current>
           {#if kind === "break"}
             <Tooltip text={`Break of ${duration}`}>
@@ -72,7 +64,11 @@
     </div>
   {/if}
   {#if currentCount !== null}
-    <p class="more">{currentCount} / {length}</p>
+    <div class="item">
+      <div class="schedule">
+        {currentCount} / {length}
+      </div>
+    </div>
   {/if}
 </div>
 
@@ -125,11 +121,5 @@
     .current & {
       background-color: var(--color-text);
     }
-  }
-
-  .more {
-    alignment-baseline: middle;
-    padding: 4px;
-    border-radius: 4px;
   }
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { ImageFileHandle } from "$lib/models";
-  import type { QueueItem } from "$lib/utils/createQueue.svelte";
+  import type { QueueItem } from "$lib/utils/queue.svelte";
   import downloadBlob from "$lib/utils/downloadBlob";
   import formatTime from "$lib/utils/formatTime";
   import { type FileEntry, zipFiles } from "$lib/utils/zipFiles";
@@ -9,7 +8,7 @@
   import FilePath from "./FilePath.svelte";
 
   type Props = {
-    entries: QueueItem<ImageFileHandle>[];
+    entries: QueueItem[];
   };
 
   type Item = {
@@ -57,8 +56,8 @@
           prevItem.promises.push(
             new Promise<Item>(async (resolve) => {
               resolve({
-                file: await entry.item.getFile(),
-                path: entry.item.path,
+                file: await entry.image.getFile(),
+                path: entry.image.path,
               });
             }),
           );
@@ -98,15 +97,14 @@
       entries.map<Promise<FileEntry | null>>(async (entry, index) => {
         if (entry.type === "break") return null;
         count++;
-        const extension = entry.item.extension;
+        const extension = entry.image.extension;
         const name = `${count.toString().padStart(4, "0")} (${formatTime(entry.duration, "written")})${extension}`;
-        const blob = await entry.item.getFile();
+        const blob = await entry.image.getFile();
 
         return { blob, name };
       }),
     );
     const filtered = files.filter((e) => e !== null);
-    console.log(filtered);
     const zipBlob = await zipFiles(filtered);
     downloadBlob(`Practice files.zip`, zipBlob);
   }
@@ -159,6 +157,7 @@
   .wrapper {
     display: grid;
     gap: var(--spacing);
+    width: 100%;
   }
 
   .item {

@@ -1,5 +1,10 @@
-export default function getRandomFromArray<T>(arr: T[]) {
-  const queue = Array.from(arr);
+export type RandomGenerator<T> = {
+  get(): T | null;
+  reset(): void;
+};
+
+export default function getRandomFromArray<T>(arr: T[]): RandomGenerator<T> {
+  let queue = Array.from(arr);
 
   return {
     get(): T | null {
@@ -8,6 +13,9 @@ export default function getRandomFromArray<T>(arr: T[]) {
       queue.splice(index, 1);
 
       return found;
+    },
+    reset() {
+      queue = Array.from(arr);
     },
   };
 }

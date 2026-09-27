@@ -10,10 +10,11 @@
     FlipHorizontal2Icon,
     PaletteIcon,
     FlipVertical2Icon,
+    CogIcon,
   } from "@lucide/svelte";
   import { type Schedule } from "$lib/utils/schedule";
   import Timebar from "$lib/components/Timebar.svelte";
-  import createQueue from "$lib/utils/createQueue.svelte";
+  import { ScheduleQueue } from "$lib/utils/queue.svelte";
   import formatTime from "$lib/utils/formatTime";
   import type { ImageFileHandle } from "$lib/models";
   import Charr from "$lib/components/Charr.svelte";
@@ -23,6 +24,7 @@
   import createImage from "$lib/utils/createImage";
   import PageLayout from "$lib/components/PageLayout.svelte";
   import ScheduleProgress from "$lib/components/ScheduleProgress.svelte";
+  import { confirm as _confirm } from "$lib/utils/confirm";
 
   type Props = {
     files: ImageFileHandle[];
@@ -36,11 +38,20 @@
   const { files, stopPractice, schedules, intermissionTime, autoPlay }: Props =
     $props();
 
-  const queue = $derived(createQueue(files, schedules));
+  const queue = $derived(new ScheduleQueue(files, schedules));
   let currentFile = $state<File | null>(null);
   let totalTime = $state(0);
   let time = $state(0);
   const currentTime = $derived(totalTime - time);
+
+  async function confirm(question: string) {
+    const originalPlaying = $state.snapshot(playing);
+    playing = false;
+    const answer = await _confirm(question);
+    playing = originalPlaying;
+
+    return answer;
+  }
 
   type ViewState =
     | {
@@ -74,7 +85,7 @@
     playing = true;
 
     // Check if current or next item is a break to skip intermission
-    const currentIsBreak = queue.state.current?.type === "break";
+    const currentIsBreak = queue.current?.type === "break";
     const nextItem = queue.getNext();
     const nextIsBreak = nextItem?.type === "break";
 
@@ -103,41 +114,42 @@
 
     queue.next();
 
-    if (queue.state.reachedEnd || !queue.state.current) {
+    if (queue.reachedEnd || !queue.current) {
       playing = false;
       view = { type: "end" };
       return;
     }
 
-    if (queue.state.current.type === "break") {
+    if (queue.current.type === "break") {
       currentFile = null;
-      totalTime = queue.state.current.duration * 1000;
-      time = queue.state.current.duration * 1000;
+      totalTime = queue.current.duration * 1000;
+      time = queue.current.duration * 1000;
       view = {
         type: "break",
-        label: queue.state.current.label,
+        label: queue.current.label,
       };
+
       return;
     }
 
     view = { type: "pending" };
-    await loadImage(await queue.state.current.item.getFile());
-    totalTime = queue.state.current.duration * 1000;
-    time = queue.state.current.duration * 1000;
+    await loadImage(await queue.current.image.getFile());
+    totalTime = queue.current.duration * 1000;
+    time = queue.current.duration * 1000;
     view = { type: "drawing" };
   }
 
   async function skip() {
-    if (!queue.state.current) return;
-    if (queue.state.current.type === "break") {
+    if (!queue.current) return;
+    if (queue.current.type === "break") {
       next(true);
       return;
     }
     queue.skip();
     view = { type: "pending" };
-    await loadImage(await queue.state.current.item.getFile());
+    await loadImage(await queue.current.image.getFile());
     view = { type: "drawing" };
-    time = queue.state.current.duration * 1000;
+    time = queue.current.duration * 1000;
   }
 
   function reset() {
@@ -221,6 +233,12 @@
       }
     }
   }
+
+  async function exit() {
+    if (await confirm("Are you sure you want to exit?")) {
+      view = { type: "end" };
+    }
+  }
 </script>
 
 <svelte:window {onkeydown} />
@@ -248,11 +266,11 @@
         <ArrowBigRightIcon />
       </Button>
 
-      {#if queue.state.current}
+      {#if queue.current}
         <div class="text">
           <span class="highlighted">{formatTime(currentTime / 1000)} </span>
           <span>/</span>
-          <span>{formatTime(queue.state.current.duration)}</span>
+          <span>{formatTime(queue.current.duration)}</span>
         </div>
       {/if}
     {:else if view.type === "drawing" || view.type === "pending"}
@@ -299,32 +317,41 @@
       >
         <PaletteIcon />
       </Button>
-      {#if queue.state.current}
+      {#if queue.current}
         <div class="text">
           <span class="highlighted">{formatTime(currentTime / 1000)} </span>
           <span>/</span>
-          <span>{formatTime(queue.state.current.duration)}</span>
+          <span>{formatTime(queue.current.duration)}</span>
         </div>
       {/if}
     {/if}
 
     <div class="push">
-      {#if queue.state.current}
-        <ScheduleProgress
-          previous={queue.state.history}
-          current={queue.state.current}
-          next={queue.state.queue}
-        />
+      {#if queue.current}
+        <ScheduleProgress {queue} />
       {/if}
     </div>
 
-    <Button onclick={skip} tooltip="Skip">
+    <Button
+      onclick={skip}
+      tooltip="Skip the current and replace with a new image"
+    >
       <ArrowBigRightDashIcon />
     </Button>
 
-    <Button onclick={stopPractice} title="Exit" tooltip="Exit to setup">
-      <LogOutIcon />
-    </Button>
+    {#if view.type === "end"}
+      <Button
+        onclick={stopPractice}
+        title="Back to setup"
+        tooltip="Back to setup"
+      >
+        <CogIcon />
+      </Button>
+    {:else}
+      <Button onclick={exit} title="Stop practice" tooltip="Stop practice">
+        <LogOutIcon />
+      </Button>
+    {/if}
   </div>
 {/snippet}
 
@@ -354,7 +381,10 @@
         <Spinner />
       {:else if view.type === "end"}
         <h1>Reached the end</h1>
-        <FileHandleImageGrid entries={queue.state.history} />
+        <FileHandleImageGrid
+          entries={queue.queue.slice(0, queue.currentIndex + 1)}
+        />
+        <Button onclick={stopPractice}>Go to setup</Button>
       {:else if view.type === "drawing" && currentFile}
         <div class="image">
           <FileImage cover file={currentFile} />
