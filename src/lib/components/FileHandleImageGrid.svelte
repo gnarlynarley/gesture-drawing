@@ -12,7 +12,8 @@
   };
 
   type Item = {
-    file: File;
+    image: File;
+    thumbnail: File;
     path: string;
   };
   type ScheduleItem = {
@@ -56,7 +57,8 @@
           prevItem.promises.push(
             new Promise<Item>(async (resolve) => {
               resolve({
-                file: await entry.image.getFile(),
+                image: await entry.image.getFile(),
+                thumbnail: await entry.image.getThumbnail(),
                 path: entry.image.path,
               });
             }),
@@ -74,23 +76,6 @@
     ),
   );
 
-  function onImageClick(file: Item) {
-    selectedFile = file;
-  }
-
-  function onImageClose() {
-    selectedFile = null;
-  }
-
-  function onkeydown(ev: KeyboardEvent) {
-    switch (ev.key) {
-      case "Escape": {
-        onImageClose();
-        break;
-      }
-    }
-  }
-
   async function downloadAll() {
     let count = 0;
     const files = await Promise.all(
@@ -107,6 +92,23 @@
     const filtered = files.filter((e) => e !== null);
     const zipBlob = await zipFiles(filtered);
     downloadBlob(`Practice files.zip`, zipBlob);
+  }
+
+  function onImageClick(file: Item) {
+    selectedFile = file;
+  }
+
+  function onImageClose() {
+    selectedFile = null;
+  }
+
+  function onkeydown(ev: KeyboardEvent) {
+    switch (ev.key) {
+      case "Escape": {
+        onImageClose();
+        break;
+      }
+    }
   }
 </script>
 
@@ -128,7 +130,7 @@
                 <span class="label">
                   Picture #{index + 1}
                 </span>
-                <FileHandleImage file={file.file} />
+                <FileHandleImage file={file.thumbnail} />
               </button>
             {/each}
           </div>
@@ -145,7 +147,7 @@
 {#if selectedFile}
   <button type="button" class="fullscreen" onclick={onImageClose}>
     <div class="inner">
-      <FileHandleImage fit cover file={selectedFile.file} />
+      <FileHandleImage fit cover file={selectedFile.image} />
     </div>
     <div class="path">
       <FilePath path={selectedFile.path} />
