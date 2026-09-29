@@ -133,6 +133,13 @@
         disabled={!$settings.autoPlay}
       />
 
+      <Select
+        label="Character"
+        value="phoebe"
+        items={["phoebe", "bird", "not a lizard"]}
+        disabled={!$settings.autoPlay}
+      />
+
       <hr />
 
       <Select label="Theme" bind:value={$settings.theme} items={themes} />

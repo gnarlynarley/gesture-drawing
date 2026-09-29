@@ -4,14 +4,21 @@
     value: T;
     label?: string;
     description?: string;
+    disabled?: boolean;
   };
 
-  let { value = $bindable(), items, label, description }: Props = $props();
+  let {
+    value = $bindable(),
+    items,
+    label,
+    description,
+    disabled,
+  }: Props = $props();
   const id = $props.id();
 </script>
 
 {#snippet input()}
-  <select {id} bind:value>
+  <select {id} bind:value {disabled}>
     {#each items as item}
       <option value={item}>{item}</option>
     {/each}
@@ -41,6 +48,10 @@
   label {
     flex-shrink: 0;
     flex-grow: 1;
+
+    .wrapper:has(select:disabled) & {
+      opacity: 0.5;
+    }
   }
 
   .description {
@@ -58,6 +69,16 @@
     width: 100%;
     border-radius: var(--border-radius);
     border: 2px solid var(--color-accent);
+
+    &[disabled] {
+      background-color: color-mix(
+        in oklab,
+        var(--color-accent),
+        var(--color-background) 50%
+      );
+      color: var(--color-accent);
+      cursor: not-allowed;
+    }
 
     &:focus {
       border-color: var(--color-primary);
