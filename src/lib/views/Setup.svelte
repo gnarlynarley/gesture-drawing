@@ -133,12 +133,12 @@
         disabled={!$settings.autoPlay}
       />
 
-      <Select
+      <!-- <Select
         label="Character"
         value="phoebe"
         items={["phoebe", "bird", "not a lizard"]}
         disabled={!$settings.autoPlay}
-      />
+      /> -->
 
       <hr />
 
