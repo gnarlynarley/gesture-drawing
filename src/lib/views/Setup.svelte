@@ -133,6 +133,13 @@
         disabled={!$settings.autoPlay}
       />
 
+      <Checkbox
+        label="Enable sound"
+        name="soundEnabled"
+        description="Adds a small beep when the time finishes"
+        bind:checked={$settings.soundEnabled}
+      />
+
       <!-- <Select
         label="Character"
         value="phoebe"

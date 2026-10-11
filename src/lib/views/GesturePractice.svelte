@@ -25,6 +25,7 @@
   import PageLayout from "$lib/components/PageLayout.svelte";
   import ScheduleProgress from "$lib/components/ScheduleProgress.svelte";
   import { confirm as _confirm } from "$lib/utils/confirm";
+  import beep from "$lib/utils/beep";
 
   type Props = {
     files: ImageFileHandle[];
@@ -175,6 +176,7 @@
     )
       return;
     let lastTime = performance.now();
+    let soundPlayed = false;
     const intervalId = setInterval(() => {
       const currentTime = performance.now();
       const ellapsed = currentTime - lastTime;
@@ -182,6 +184,11 @@
       time -= ellapsed;
 
       if (time <= 0) {
+        if (!soundPlayed) {
+          beep();
+          soundPlayed = true;
+        }
+
         if (autoPlay) {
           next();
         }
@@ -245,6 +252,7 @@
 
 {#snippet defaultToolbar()}
   <div class="toolbar">
+    <Button onclick={beep}>Beep</Button>
     {#if view.type === "end"}
       <Button onclick={reset}>
         <RefreshCcwIcon />

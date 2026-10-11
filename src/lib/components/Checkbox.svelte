@@ -36,6 +36,10 @@
     padding-inline: var(--gutter);
   }
 
+  small {
+    opacity: 0.8;
+  }
+
   .checkbox {
     --offset: 2px;
     --size: 1.6em;

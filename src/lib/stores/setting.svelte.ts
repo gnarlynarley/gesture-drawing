@@ -49,6 +49,7 @@ const settingsStateSchema = v.object({
   autoPlay: v.fallback(v.boolean(), true),
   sound: v.fallback(v.boolean(), true),
   theme: v.fallback(v.picklist(themes), "dark"),
+  soundEnabled: v.fallback(v.boolean(), true),
 });
 
 const DEFAULT_SETTINGS: SettingsState = {
@@ -58,6 +59,7 @@ const DEFAULT_SETTINGS: SettingsState = {
   intermissionTime: INTERMISSION_TIME_DEFAULT,
   sound: true,
   theme: "dark",
+  soundEnabled: true,
 };
 
 export const settings = writable<SettingsState>(DEFAULT_SETTINGS);

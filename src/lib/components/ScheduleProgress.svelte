@@ -10,10 +10,6 @@
   const { queue }: Props = $props();
   const items = $derived(queue.queue);
   const currentIndex = $derived(queue.currentIndex);
-  const currentCount = $derived(
-    currentIndex !== null ? currentIndex + 1 : null,
-  );
-  const length = $derived(items.length);
 
   type RenderItem = {
     current: boolean;
@@ -21,10 +17,11 @@
     duration: number;
     amount: number;
   };
-  const blocks = $derived.by(() => {
-    if (currentIndex === null) return null;
+  const [blocks, hasMore] = $derived.by(() => {
+    if (currentIndex === null) return [null, false] as const;
+
     const sliced = items.slice(currentIndex);
-    return sliced.reduce<RenderItem[]>((acc, item, index, arr) => {
+    const blocks = sliced.reduce<RenderItem[]>((acc, item, index, arr) => {
       const prev = arr[index - 1];
       if (prev && prev.duration === item.duration && prev.type === item.type) {
         const prevRenderItem = acc[acc.length - 1];
@@ -41,6 +38,9 @@
       }
       return acc;
     }, []);
+    const slicedBlocks = blocks.slice(0, 3);
+
+    return [slicedBlocks, slicedBlocks.length !== blocks.length] as const;
   });
 </script>
 
@@ -51,7 +51,7 @@
         <div class="item" class:current>
           {#if kind === "break"}
             <Tooltip text={`Break of ${duration}`}>
-              <HourglassIcon size="16" />
+              <HourglassIcon size="16" absoluteStrokeWidth />
             </Tooltip>
           {:else}
             <div class="schedule">
@@ -61,13 +61,9 @@
           {/if}
         </div>
       {/each}
-    </div>
-  {/if}
-  {#if currentCount !== null}
-    <div class="item">
-      <div class="schedule">
-        {currentCount} / {length}
-      </div>
+      {#if hasMore}
+        <p>...</p>
+      {/if}
     </div>
   {/if}
 </div>
@@ -76,38 +72,38 @@
   .wrapper {
     display: flex;
     align-items: center;
+    gap: var(--gutter);
   }
 
   .items {
-    --overflow-width: var(--gutter);
     display: flex;
     align-items: center;
     gap: 8px;
-    max-width: 600px;
     overflow: hidden;
-    padding-right: var(--overflow-width);
-    mask-image: linear-gradient(
-      to left,
-      transparent,
-      black var(--overflow-width)
-    );
+    white-space: nowrap;
   }
 
   .item {
+    --color: white;
+    color: var(--color);
+
     :global(svg) {
       display: block;
     }
 
     &:not(.current) {
-      color: color-mix(in srgb, var(--color-text) 30%, var(--color-background));
+      --color: color-mix(
+        in srgb,
+        var(--color-background) 60%,
+        var(--color-text)
+      );
     }
   }
 
   .schedule {
-    font-size: 0.8em;
     alignment-baseline: middle;
     color: var(--color-background);
-    background: color-mix(in srgb, var(--color-text) 50%, transparent);
+    background: var(--color);
     border-radius: 4px;
     padding: 4px;
     display: flex;
@@ -119,7 +115,7 @@
     }
 
     .current & {
-      background-color: var(--color-text);
+      /* background-color: var(--color-text); */
     }
   }
 </style>
